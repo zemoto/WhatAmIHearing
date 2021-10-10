@@ -1,0 +1,3 @@
+[submodule "ZemotoCommon"]
+	path = ZemotoCommon
+	url = https://github.com/zemoto/ZemotoCommon.git
