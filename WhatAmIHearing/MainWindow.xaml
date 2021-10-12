@@ -4,19 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WhatAmIHearing"
-        xmlns:ui="clr-namespace:ZemotoUI"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="What Am I Hearing?"
-        Height="400"
-        Width="800">
+        Height="200"
+        Width="400">
    <Window.DataContext>
       <local:MainViewModel />
    </Window.DataContext>
-   <Window.Resources>
-      <ui:EqualityConverter x:Key="EqualityConverter" />
-   </Window.Resources>
-   
+
    <Grid>
       <Grid.RowDefinitions>
          <RowDefinition Height="*" />
@@ -27,7 +23,7 @@
                 SelectedValue="{Binding SelectedDevice, Mode=TwoWay}"
                 SelectedIndex="0"
                 DisplayMemberPath="FriendlyName"
-                Width="160"
+                Width="300"
                 Height="24">
          <ComboBox.ItemContainerStyle>
             <Style TargetType="ComboBoxItem">
@@ -36,20 +32,14 @@
             </Style>
          </ComboBox.ItemContainerStyle>
       </ComboBox>
-      
-      <StackPanel Grid.Row="1" 
-                  Orientation="Horizontal"
-                  Height="24"
-                  Margin="8"
-                  HorizontalAlignment="Right">
-         <Button Content="Record"
-                 Width="80"
-                 Command="{Binding RecordCommand}"
-                 IsEnabled="{Binding State, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static local:RecordingState.Stopped}}" />
-         <Button Content="Stop"
-                 Width="80"
-                 Command="{Binding StopCommand}"
-                 IsEnabled="{Binding State, Converter={StaticResource EqualityConverter}, ConverterParameter={x:Static local:RecordingState.Recording}}" />
-      </StackPanel>
+
+      <Button Grid.Row="1"
+              Content="Record"
+              HorizontalAlignment="Center"
+              Width="80"
+              Height="24"
+              Margin="8"
+              Command="{Binding RecordCommand}"
+              IsEnabled="{Binding CanStartRecording, Mode=OneWay}" />
    </Grid>
 </Window>

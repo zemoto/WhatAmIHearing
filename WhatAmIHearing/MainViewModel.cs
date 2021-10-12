@@ -2,21 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using WhatAmIHearing.Api;
 using ZemotoUI;
 
 namespace WhatAmIHearing
 {
-   internal enum RecordingState
-   {
-      Stopped = 0,
-      Recording = 1
-   }
-
    internal sealed class MainViewModel : ViewModelBase
    {
-      private readonly RecordingManager _recordingManager = new RecordingManager();
+      private readonly Recorder _recorder = new Recorder();
 
-      public MainViewModel() => _recordingManager.RecordingStateChanged += ( s, a ) => State = a.NewState;
+      public MainViewModel()
+      {
+         _recorder.RecordingStopped += ( s, args ) =>
+         {
+            CanStartRecording = true;
+            var result = ShazamApi.DetectSong( args.RecordedData );
+         };
+      }
 
       public IEnumerable<MMDevice> DeviceList { get; } = new MMDeviceEnumerator().EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active );
 
@@ -27,17 +29,18 @@ namespace WhatAmIHearing
          set => SetProperty( ref _selectedDevice, value );
       }
 
-      private RecordingState _state;
-      public RecordingState State
+      private bool _canStartRecording = true;
+      public bool CanStartRecording
       {
-         get => _state;
-         private set => SetProperty( ref _state, value );
+         get => _canStartRecording;
+         set => SetProperty( ref _canStartRecording, value );
       }
 
       private ICommand _recordCommand;
-      public ICommand RecordCommand => _recordCommand ??= new RelayCommand( () => _recordingManager.StartRecording( _selectedDevice ) );
-
-      private ICommand _stopCommand;
-      public ICommand StopCommand => _stopCommand ??= new RelayCommand( _recordingManager.StopRecording );
+      public ICommand RecordCommand => _recordCommand ??= new RelayCommand( () =>
+      {
+         CanStartRecording = false;
+         _recorder.StartRecording( _selectedDevice );
+      } );
    }
 }
