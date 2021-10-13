@@ -42,12 +42,13 @@ namespace WhatAmIHearing
          };
       }
 
-      public IEnumerable<MMDevice> DeviceList { get; } = new MMDeviceEnumerator().EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active );
+      public IEnumerable<MMDevice> DeviceList { get; } = new MMDeviceEnumerator().EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active ).ToList();
+      public IEnumerable<string> DeviceNameList => DeviceList.Select( x => x.FriendlyName ).ToList();
 
-      private MMDevice _selectedDevice;
-      public MMDevice SelectedDevice
+      private string _selectedDevice;
+      public string SelectedDevice
       {
-         get => _selectedDevice ??= DeviceList.FirstOrDefault();
+         get => _selectedDevice;
          set => SetProperty( ref _selectedDevice, value );
       }
 
@@ -69,7 +70,7 @@ namespace WhatAmIHearing
       public ICommand RecordCommand => _recordCommand ??= new RelayCommand( () =>
       {
          Recording = true;
-         _recorder.StartRecording( _selectedDevice );
+         _recorder.StartRecording( DeviceList.First( x => x.FriendlyName == SelectedDevice ) );
       } );
 
       private ICommand _stopCommand;

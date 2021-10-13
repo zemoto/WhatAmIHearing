@@ -100,11 +100,10 @@
                <RowDefinition Height="Auto" />
                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ComboBox Grid.Row="0" 
-                      ItemsSource="{Binding DeviceList, Mode=OneWay}"
+            <ComboBox Grid.Row="0"
+                      ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
                       SelectedValue="{Binding SelectedDevice, Mode=TwoWay}"
                       SelectedIndex="0"
-                      DisplayMemberPath="FriendlyName"
                       Width="300"
                       Height="24">
                <ComboBox.ItemContainerStyle>
