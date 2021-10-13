@@ -17,15 +17,20 @@ namespace WhatAmIHearing
       {
          _recorder.RecordingStopped += ( s, args ) =>
          {
-            CanStartRecording = true;
+            Recording = false;
+            if ( args.RecordedData == null )
+            {
+               return;
+            }
+
             var result = ShazamApi.DetectSong( args.RecordedData );
             if ( !string.IsNullOrEmpty( result ) )
             {
-               Process.Start( new ProcessStartInfo( result ) { UseShellExecute = true } );
+               _ = Process.Start( new ProcessStartInfo( result ) { UseShellExecute = true } );
             }
             else
             {
-               MessageBox.Show( "No song detected" );
+               _ = MessageBox.Show( "No song detected" );
             }
          };
       }
@@ -39,18 +44,21 @@ namespace WhatAmIHearing
          set => SetProperty( ref _selectedDevice, value );
       }
 
-      private bool _canStartRecording = true;
-      public bool CanStartRecording
+      private bool _recording;
+      public bool Recording
       {
-         get => _canStartRecording;
-         set => SetProperty( ref _canStartRecording, value );
+         get => _recording;
+         private set => SetProperty( ref _recording, value );
       }
 
       private ICommand _recordCommand;
       public ICommand RecordCommand => _recordCommand ??= new RelayCommand( () =>
       {
-         CanStartRecording = false;
+         Recording = true;
          _recorder.StartRecording( _selectedDevice );
       } );
+
+      private ICommand _stopCommand;
+      public ICommand StopCommand => _stopCommand ??= new RelayCommand( _recorder.CancelRecording );
    }
 }

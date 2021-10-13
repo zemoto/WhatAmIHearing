@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WhatAmIHearing"
+        xmlns:ui="clr-namespace:ZemotoUI"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="What Am I Hearing?"
@@ -12,6 +13,16 @@
    <Window.DataContext>
       <local:MainViewModel />
    </Window.DataContext>
+   <Window.Resources>
+      <ResourceDictionary>
+         <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="ControlStyles.xaml" />
+         </ResourceDictionary.MergedDictionaries>
+
+         <ui:BoolVisibilityConverter x:Key="VisibleIfFalse"
+                                     Invert="True" />
+      </ResourceDictionary>
+   </Window.Resources>
 
    <Grid>
       <Grid.RowDefinitions>
@@ -33,13 +44,33 @@
          </ComboBox.ItemContainerStyle>
       </ComboBox>
 
-      <Button Grid.Row="1"
-              Content="Record"
-              HorizontalAlignment="Center"
-              Width="80"
-              Height="24"
-              Margin="8"
-              Command="{Binding RecordCommand}"
-              IsEnabled="{Binding CanStartRecording, Mode=OneWay}" />
+      <Grid Grid.Row="1"
+            HorizontalAlignment="Center"
+            Margin="8">
+         <Grid.Effect>
+            <DropShadowEffect BlurRadius="4"
+                              Direction="270"
+                              ShadowDepth="1" />
+         </Grid.Effect>
+         <Button Style="{StaticResource PlayStopButtonStyle}"
+                 Command="{Binding StopCommand}">
+            <Path Fill="White"
+                  Stretch="UniformToFill">
+               <Path.Data>
+                  <PathGeometry Figures="M 0,0 L 0,1 1,1 1,0 Z" />
+               </Path.Data>
+            </Path>
+         </Button>
+         <Button Style="{StaticResource PlayStopButtonStyle}"
+                 Command="{Binding RecordCommand}"
+                 Visibility="{Binding Recording, Converter={StaticResource VisibleIfFalse}}">
+            <Path Fill="White"
+                  Stretch="UniformToFill">
+               <Path.Data>
+                  <PathGeometry Figures="M 0,0 V 2 L 2,1 Z" />
+               </Path.Data>
+            </Path>
+         </Button>
+      </Grid>
    </Grid>
 </Window>

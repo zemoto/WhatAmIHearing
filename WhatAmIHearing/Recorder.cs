@@ -18,6 +18,7 @@ namespace WhatAmIHearing
       private const double OutputBytesPerSecond = 2 * 44100; // Bytes per sample * sample rate
       private const int MaxOutputSize = 500 * 1000; // 500KB
       private int _maxRecordingSize;
+      private bool _cancelled;
 
       private WasapiLoopbackCapture _audioCapturer;
       private WaveFileWriter _audioWriter;
@@ -39,13 +40,17 @@ namespace WhatAmIHearing
          _audioCapturer.StartRecording();
       }
 
-      public void StopRecording() => _audioCapturer.StopRecording();
+      public void CancelRecording()
+      {
+         _cancelled = true;
+         _audioCapturer.StopRecording();
+      }
 
       private void OnDataCaptured( object sender, WaveInEventArgs e )
       {
          if ( _audioWriter.Position + e.BytesRecorded >= _maxRecordingSize )
          {
-            StopRecording();
+            _audioCapturer.StopRecording();
          }
          else
          {
@@ -55,10 +60,15 @@ namespace WhatAmIHearing
 
       private void OnRecordingStopped( object sender, StoppedEventArgs e )
       {
-         _audioWriter.Flush();
-         var resampledData = GetResampledData();
-         RecordingStopped.Invoke( this, new RecordingFinishedEventArgs( resampledData ) );
+         byte[] data = null;
 
+         if ( !_cancelled )
+         {
+            _audioWriter.Flush();
+            data = GetResampledData();
+         }
+
+         RecordingStopped.Invoke( this, new RecordingFinishedEventArgs( data ) );
          Cleanup();
       }
 
@@ -86,6 +96,8 @@ namespace WhatAmIHearing
 
       private void Cleanup()
       {
+         _cancelled = false;
+
          _audioWriter?.Dispose();
          _audioWriter = null;
          _recordedFileStream = null;
