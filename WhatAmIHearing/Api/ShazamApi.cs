@@ -1,4 +1,6 @@
-﻿namespace WhatAmIHearing.Api
+﻿using System.Text.Json;
+
+namespace WhatAmIHearing.Api
 {
    internal static class ShazamApi
    {
@@ -11,7 +13,8 @@
 
          if ( !string.IsNullOrEmpty( detectResponse ) )
          {
-            // TODO
+            var parsedResponse = JsonSerializer.Deserialize<DetectSongResponse>( detectResponse );
+            return parsedResponse?.Track.Share?.SongUrl;
          }
 
          return string.Empty;

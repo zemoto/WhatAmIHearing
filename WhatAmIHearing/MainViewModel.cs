@@ -1,6 +1,8 @@
 ﻿using NAudio.CoreAudioApi;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using WhatAmIHearing.Api;
 using ZemotoUI;
@@ -17,6 +19,14 @@ namespace WhatAmIHearing
          {
             CanStartRecording = true;
             var result = ShazamApi.DetectSong( args.RecordedData );
+            if ( !string.IsNullOrEmpty( result ) )
+            {
+               Process.Start( new ProcessStartInfo( result ) { UseShellExecute = true } );
+            }
+            else
+            {
+               MessageBox.Show( "No song detected" );
+            }
          };
       }
 
