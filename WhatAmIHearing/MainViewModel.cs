@@ -11,10 +11,18 @@ namespace WhatAmIHearing
 {
    internal sealed class MainViewModel : ViewModelBase, IStatusTextDisplayer
    {
+      private const string DefaultDeviceName = "Default Input Device";
+
       private readonly Recorder _recorder;
+      private readonly MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
 
       public MainViewModel()
       {
+         DeviceList = _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active ).ToList();
+         DeviceNameList = DeviceList.ConvertAll( x => x.FriendlyName );
+         DeviceNameList.Insert( 0, DefaultDeviceName );
+         SelectedDeviceName = DefaultDeviceName;
+
          _recorder = new Recorder( this );
          _recorder.RecordingStopped += async ( s, args ) =>
          {
@@ -42,14 +50,14 @@ namespace WhatAmIHearing
          };
       }
 
-      public IEnumerable<MMDevice> DeviceList { get; } = new MMDeviceEnumerator().EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active ).ToList();
-      public IEnumerable<string> DeviceNameList => DeviceList.Select( x => x.FriendlyName ).ToList();
+      public List<MMDevice> DeviceList { get; }
+      public List<string> DeviceNameList { get; }
 
-      private string _selectedDevice;
-      public string SelectedDevice
+      private string _selectedDeviceName;
+      public string SelectedDeviceName
       {
-         get => _selectedDevice;
-         set => SetProperty( ref _selectedDevice, value );
+         get => _selectedDeviceName;
+         set => SetProperty( ref _selectedDeviceName, value );
       }
 
       private bool _recording;
@@ -69,8 +77,12 @@ namespace WhatAmIHearing
       private ICommand _recordCommand;
       public ICommand RecordCommand => _recordCommand ??= new RelayCommand( () =>
       {
+         var selectedDevice = SelectedDeviceName == DefaultDeviceName
+            ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
+            : DeviceList.First( x => x.FriendlyName == SelectedDeviceName );
+
          Recording = true;
-         _recorder.StartRecording( DeviceList.First( x => x.FriendlyName == SelectedDevice ) );
+         _recorder.StartRecording( selectedDevice );
       } );
 
       private ICommand _stopCommand;

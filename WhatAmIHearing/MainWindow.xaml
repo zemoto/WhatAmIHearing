@@ -102,8 +102,7 @@
             </Grid.RowDefinitions>
             <ComboBox Grid.Row="0"
                       ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
-                      SelectedValue="{Binding SelectedDevice, Mode=TwoWay}"
-                      SelectedIndex="0"
+                      SelectedValue="{Binding SelectedDeviceName, Mode=TwoWay}"
                       Width="300"
                       Height="24">
                <ComboBox.ItemContainerStyle>
