@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Api
 {
@@ -6,10 +7,10 @@ namespace WhatAmIHearing.Api
    {
       private const string DetectApiEndpoint = "https://shazam.p.rapidapi.com/songs/detect";
 
-      public static string DetectSong( byte[] audioData )
+      public static async Task<string> DetectSongAsync( byte[] audioData )
       {
          using var httpClient = new ApiClient();
-         var detectResponse = httpClient.SendPostRequest( DetectApiEndpoint, audioData );
+         var detectResponse = await httpClient.SendPostRequestAsync( DetectApiEndpoint, audioData ).ConfigureAwait( false );
 
          if ( !string.IsNullOrEmpty( detectResponse ) )
          {

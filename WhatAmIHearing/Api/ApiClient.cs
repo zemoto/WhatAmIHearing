@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Api
 {
@@ -16,7 +17,7 @@ namespace WhatAmIHearing.Api
 
       public void Dispose() => _client?.Dispose();
 
-      public string SendPostRequest( string endpoint, byte[] data )
+      public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
       {
          var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( Convert.ToBase64String( data ) ) };
 
@@ -25,9 +26,9 @@ namespace WhatAmIHearing.Api
             message.Headers.Add( key, value );
          }
 
-         var response = _client.SendAsync( message ).Result;
+         var response = await _client.SendAsync( message ).ConfigureAwait( false );
 
-         return response.IsSuccessStatusCode ? response.Content.ReadAsStringAsync().Result : string.Empty;
+         return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync().ConfigureAwait( false ) : string.Empty;
       }
    }
 }

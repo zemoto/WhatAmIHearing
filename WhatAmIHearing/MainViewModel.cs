@@ -16,20 +16,19 @@ namespace WhatAmIHearing
       public MainViewModel()
       {
          _recorder = new Recorder( this );
-         _recorder.RecordingStopped += ( s, args ) =>
+         _recorder.RecordingStopped += async ( s, args ) =>
          {
             Recording = false;
             if ( args.RecordedData != null )
             {
-               StatusText = $"Recording Done: Sending resampled {args.RecordedData.Length} bits to Shazam";
-               var result = ShazamApi.DetectSong( args.RecordedData );
+               StatusText = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
+               var result = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
                if ( !string.IsNullOrEmpty( result ) )
                {
                   _ = Process.Start( new ProcessStartInfo( result ) { UseShellExecute = true } );
                }
                else
                {
-                  StatusText = "Recording Done: No song detected";
                   var msgBoxResult = MessageBox.Show( "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
                   if ( msgBoxResult == MessageBoxResult.Yes )
                   {
