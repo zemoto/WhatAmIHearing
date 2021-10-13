@@ -21,7 +21,9 @@ namespace WhatAmIHearing
          DeviceList = _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active ).ToList();
          DeviceNameList = DeviceList.ConvertAll( x => x.FriendlyName );
          DeviceNameList.Insert( 0, DefaultDeviceName );
-         SelectedDeviceName = DefaultDeviceName;
+
+         var lastSelectedDevice = Properties.UserSettings.Default.SelectedDevice;
+         SelectedDeviceName = string.IsNullOrEmpty( lastSelectedDevice ) ? DefaultDeviceName : lastSelectedDevice;
 
          _recorder = new Recorder( this );
          _recorder.RecordingStopped += async ( s, args ) =>
@@ -80,6 +82,9 @@ namespace WhatAmIHearing
          var selectedDevice = SelectedDeviceName == DefaultDeviceName
             ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
             : DeviceList.First( x => x.FriendlyName == SelectedDeviceName );
+
+         Properties.UserSettings.Default.SelectedDevice = SelectedDeviceName;
+         Properties.UserSettings.Default.Save();
 
          Recording = true;
          _recorder.StartRecording( selectedDevice );
