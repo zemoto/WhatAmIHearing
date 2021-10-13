@@ -4,9 +4,11 @@
    <Style x:Key="PlayStopButtonStyle"
           TargetType="{x:Type Button}">
       <Setter Property="Width"
-              Value="40" />
+              Value="50" />
       <Setter Property="Height"
-              Value="40" />
+              Value="50" />
+      <Setter Property="Padding"
+              Value="12" />
       <Setter Property="Template">
          <Setter.Value>
             <ControlTemplate TargetType="{x:Type Button}">
@@ -15,7 +17,7 @@
                              Fill="#4682B4"
                              RadiusX="8"
                              RadiusY="8" />
-                  <ContentPresenter Margin="10" />
+                  <ContentPresenter Margin="{TemplateBinding Padding}" />
                </Grid>
                <ControlTemplate.Triggers>
                   <Trigger Property="IsMouseOver"
@@ -40,5 +42,43 @@
          </Setter.Value>
       </Setter>
    </Style>
-    
+
+   <Style x:Key="MenuButtonStyle"
+          TargetType="{x:Type Button}">
+      <Setter Property="Width"
+              Value="44" />
+      <Setter Property="Height"
+              Value="24" />
+      <Setter Property="Template">
+         <Setter.Value>
+            <ControlTemplate TargetType="{x:Type Button}">
+               <Grid>
+                  <Rectangle x:Name="Background"
+                             Fill="Transparent" />
+                  <Rectangle x:Name="MouseoverBackground"
+                             Fill="White"
+                             Opacity="0" />
+                  <ContentPresenter HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Width="10"
+                                    Height="10" />
+               </Grid>
+               <ControlTemplate.Triggers>
+                  <Trigger Property="IsMouseOver"
+                           Value="True">
+                     <Setter TargetName="MouseoverBackground"
+                             Property="Opacity"
+                             Value="0.4" />
+                  </Trigger>
+                  <Trigger Property="IsPressed"
+                           Value="True">
+                     <Setter TargetName="MouseoverBackground"
+                             Property="Opacity"
+                             Value="0.2" />
+                  </Trigger>
+               </ControlTemplate.Triggers>
+            </ControlTemplate>
+         </Setter.Value>
+      </Setter>
+   </Style>
 </ResourceDictionary>
