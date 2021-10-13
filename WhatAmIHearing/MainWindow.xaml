@@ -93,22 +93,36 @@
             <ColumnDefinition Width="*" />
          </Grid.ColumnDefinitions>
 
-         <ComboBox Grid.Column="0"
-                   Margin="16,0,0,0"
-                   ItemsSource="{Binding DeviceList, Mode=OneWay}"
-                   SelectedValue="{Binding SelectedDevice, Mode=TwoWay}"
-                   SelectedIndex="0"
-                   DisplayMemberPath="FriendlyName"
-                   Width="300"
-                   Height="24">
-            <ComboBox.ItemContainerStyle>
-               <Style TargetType="ComboBoxItem">
-                  <Setter Property="Width"
-                          Value="300" />
-               </Style>
-            </ComboBox.ItemContainerStyle>
-         </ComboBox>
-
+         <Grid Grid.Column="0"
+               Margin="16,0,0,0"
+               VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+               <RowDefinition Height="Auto" />
+               <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ComboBox Grid.Row="0" 
+                      ItemsSource="{Binding DeviceList, Mode=OneWay}"
+                      SelectedValue="{Binding SelectedDevice, Mode=TwoWay}"
+                      SelectedIndex="0"
+                      DisplayMemberPath="FriendlyName"
+                      Width="300"
+                      Height="24">
+               <ComboBox.ItemContainerStyle>
+                  <Style TargetType="ComboBoxItem">
+                     <Setter Property="Width"
+                             Value="300" />
+                  </Style>
+               </ComboBox.ItemContainerStyle>
+            </ComboBox>
+            <TextBlock Grid.Row="1"
+                       Text="{Binding StatusText, Mode=OneWay}"
+                       Padding="4,3,4,0"
+                       Background="White"
+                       Margin="0,4,0,0"
+                       Width="300"
+                       Height="24" />
+         </Grid>
+         
          <Grid Grid.Column="1"
                HorizontalAlignment="Center">
             <Grid.Effect>

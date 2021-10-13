@@ -9,34 +9,37 @@ using ZemotoUI;
 
 namespace WhatAmIHearing
 {
-   internal sealed class MainViewModel : ViewModelBase
+   internal sealed class MainViewModel : ViewModelBase, IStatusTextDisplayer
    {
-      private readonly Recorder _recorder = new Recorder();
+      private readonly Recorder _recorder;
 
       public MainViewModel()
       {
+         _recorder = new Recorder( this );
          _recorder.RecordingStopped += ( s, args ) =>
          {
             Recording = false;
-            if ( args.RecordedData == null )
+            if ( args.RecordedData != null )
             {
-               return;
-            }
-
-            var result = ShazamApi.DetectSong( args.RecordedData );
-            if ( !string.IsNullOrEmpty( result ) )
-            {
-               _ = Process.Start( new ProcessStartInfo( result ) { UseShellExecute = true } );
-            }
-            else
-            {
-               var msgBoxResult = MessageBox.Show( "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
-               if ( msgBoxResult == MessageBoxResult.Yes )
+               StatusText = $"Recording Done: Sending resampled {args.RecordedData.Length} bits to Shazam";
+               var result = ShazamApi.DetectSong( args.RecordedData );
+               if ( !string.IsNullOrEmpty( result ) )
                {
-                  var player = new AudioPlayer( args.RecordedData, args.Format );
-                  player.PlayAudio();
+                  _ = Process.Start( new ProcessStartInfo( result ) { UseShellExecute = true } );
+               }
+               else
+               {
+                  StatusText = "Recording Done: No song detected";
+                  var msgBoxResult = MessageBox.Show( "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
+                  if ( msgBoxResult == MessageBoxResult.Yes )
+                  {
+                     var player = new AudioPlayer( args.RecordedData, args.Format );
+                     player.PlayAudio();
+                  }
                }
             }
+
+            StatusText = string.Empty;
          };
       }
 
@@ -54,6 +57,13 @@ namespace WhatAmIHearing
       {
          get => _recording;
          private set => SetProperty( ref _recording, value );
+      }
+
+      private string _statusText;
+      public string StatusText
+      {
+         get => _statusText;
+         set => SetProperty( ref _statusText, value );
       }
 
       private ICommand _recordCommand;
