@@ -30,7 +30,12 @@ namespace WhatAmIHearing
             }
             else
             {
-               _ = MessageBox.Show( "No song detected" );
+               var msgBoxResult = MessageBox.Show( "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
+               if ( msgBoxResult == MessageBoxResult.Yes )
+               {
+                  var player = new AudioPlayer( args.RecordedData, args.Format );
+                  player.PlayAudio();
+               }
             }
          };
       }

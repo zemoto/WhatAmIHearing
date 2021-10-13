@@ -16,7 +16,7 @@ namespace WhatAmIHearing.Api
          return (int)( (double)recordingDeviceBytesPerSecond / requiredBytesPerSecond * MaxAudioDataSize );
       }
 
-      public static byte[] ResampleAudioToMatchSpec( MemoryStream waveFileStream )
+      public static byte[] ResampleAudioToMatchSpec( MemoryStream waveFileStream, out WaveFormat format )
       {
          waveFileStream.Position = 0;
          using var reader = new WaveFileReader( waveFileStream );
@@ -36,6 +36,7 @@ namespace WhatAmIHearing.Api
             resampledStream.Write( buffer, 0, bytesRead );
          }
 
+         format = resampledWave.WaveFormat;
          return resampledStream.ToArray();
       }
    }

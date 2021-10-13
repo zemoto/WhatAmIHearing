@@ -9,8 +9,13 @@ namespace WhatAmIHearing
    internal sealed class RecordingFinishedEventArgs : EventArgs
    {
       public byte[] RecordedData { get; }
+      public WaveFormat Format { get; }
 
-      public RecordingFinishedEventArgs( byte[] recordedData ) => RecordedData = recordedData;
+      public RecordingFinishedEventArgs( byte[] recordedData, WaveFormat format )
+      {
+         RecordedData = recordedData;
+         Format = format;
+      }
    }
 
    internal sealed class Recorder
@@ -57,15 +62,16 @@ namespace WhatAmIHearing
 
       private void OnRecordingStopped( object sender, StoppedEventArgs e )
       {
+         WaveFormat format = null;
          byte[] data = null;
 
          if ( !_cancelled )
          {
             _audioWriter.Flush();
-            data = ShazamSpecEnforcer.ResampleAudioToMatchSpec( _recordedFileStream );
+            data = ShazamSpecEnforcer.ResampleAudioToMatchSpec( _recordedFileStream, out format );
          }
 
-         RecordingStopped.Invoke( this, new RecordingFinishedEventArgs( data ) );
+         RecordingStopped.Invoke( this, new RecordingFinishedEventArgs( data, format ) );
          Cleanup();
       }
 
