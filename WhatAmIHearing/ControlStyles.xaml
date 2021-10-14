@@ -12,6 +12,7 @@
       <Setter Property="Effect">
          <Setter.Value>
             <DropShadowEffect BlurRadius="4"
+                              Opacity="0.6"
                               Direction="270"
                               ShadowDepth="1" />
          </Setter.Value>

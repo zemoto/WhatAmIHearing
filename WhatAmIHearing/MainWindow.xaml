@@ -18,7 +18,8 @@
    </Window.DataContext>
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24"
-                    ResizeBorderThickness="0" />
+                    ResizeBorderThickness="0"
+                    CornerRadius="4" />
    </WindowChrome.WindowChrome>
    <Window.Resources>
       <ResourceDictionary>
@@ -35,8 +36,9 @@
    <Grid Margin="4">
       <Grid.Effect>
          <DropShadowEffect BlurRadius="8"
+                           Opacity="0.25"
                            Direction="270"
-                           ShadowDepth="1" />
+                           ShadowDepth="2" />
       </Grid.Effect>
       <Grid.RowDefinitions>
          <RowDefinition Height="Auto" />
