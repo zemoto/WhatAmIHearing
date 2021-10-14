@@ -9,11 +9,11 @@ using ZemotoUI;
 
 namespace WhatAmIHearing
 {
-   internal sealed class MainViewModel : ViewModelBase, IStatusTextDisplayer
+   internal sealed class MainViewModel : ViewModelBase
    {
       private const string DefaultDeviceName = "Default Input Device";
 
-      private readonly Recorder _recorder;
+      private readonly Recorder _recorder = new Recorder();
       private readonly MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
 
       public MainViewModel()
@@ -25,13 +25,12 @@ namespace WhatAmIHearing
          var lastSelectedDevice = Properties.UserSettings.Default.SelectedDevice;
          SelectedDeviceName = string.IsNullOrEmpty( lastSelectedDevice ) ? DefaultDeviceName : lastSelectedDevice;
 
-         _recorder = new Recorder( this );
          _recorder.RecordingStopped += async ( s, args ) =>
          {
             Recording = false;
             if ( args.RecordedData != null )
             {
-               StatusText = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
+               StatusReport.Status.Text = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
                var result = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
                if ( !string.IsNullOrEmpty( result ) )
                {
@@ -48,7 +47,7 @@ namespace WhatAmIHearing
                }
             }
 
-            StatusText = string.Empty;
+            StatusReport.Status.Text = string.Empty;
          };
       }
 
@@ -67,13 +66,6 @@ namespace WhatAmIHearing
       {
          get => _recording;
          private set => SetProperty( ref _recording, value );
-      }
-
-      private string _statusText;
-      public string StatusText
-      {
-         get => _statusText;
-         set => SetProperty( ref _statusText, value );
       }
 
       private ICommand _recordCommand;

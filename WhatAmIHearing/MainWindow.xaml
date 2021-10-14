@@ -113,7 +113,7 @@
                </ComboBox.ItemContainerStyle>
             </ComboBox>
             <TextBlock Grid.Row="1"
-                       Text="{Binding StatusText, Mode=OneWay}"
+                       Text="{Binding Source={x:Static local:StatusReport.Status}, Path=Text, Mode=OneWay}"
                        Padding="4,3,4,0"
                        Background="White"
                        Margin="0,4,0,0"

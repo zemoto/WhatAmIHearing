@@ -20,8 +20,6 @@ namespace WhatAmIHearing
 
    internal sealed class Recorder
    {
-      private readonly IStatusTextDisplayer _statusText;
-
       private int _maxRecordingSize;
       private bool _cancelled;
 
@@ -30,8 +28,6 @@ namespace WhatAmIHearing
       private MemoryStream _recordedFileStream;
 
       public event EventHandler<RecordingFinishedEventArgs> RecordingStopped;
-
-      public Recorder( IStatusTextDisplayer statusText ) => _statusText = statusText;
 
       public void StartRecording( MMDevice device )
       {
@@ -43,7 +39,7 @@ namespace WhatAmIHearing
          _audioWriter = new WaveFileWriter( _recordedFileStream, _audioCapturer.WaveFormat );
          _maxRecordingSize = ShazamSpecEnforcer.GetMaxRecordingSize( _audioCapturer.WaveFormat.AverageBytesPerSecond );
 
-         _statusText.StatusText = $"Recording: 0/{_maxRecordingSize} bits";
+         StatusReport.Status.Text = $"Recording: 0/{_maxRecordingSize} bits";
 
          _audioCapturer.StartRecording();
       }
@@ -63,7 +59,7 @@ namespace WhatAmIHearing
          else
          {
             _audioWriter.Write( e.Buffer, 0, e.BytesRecorded );
-            _statusText.StatusText = $"Recording: {_audioWriter.Position}/{_maxRecordingSize} bits";
+            StatusReport.Status.Text = $"Recording: {_audioWriter.Position}/{_maxRecordingSize} bits";
          }
       }
 
