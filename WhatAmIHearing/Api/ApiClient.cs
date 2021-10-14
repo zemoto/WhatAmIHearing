@@ -7,13 +7,13 @@ namespace WhatAmIHearing.Api
 {
    internal sealed class ApiClient : IDisposable
    {
-      private static readonly Dictionary<string, string> ApiHeaders = new Dictionary<string, string>
+      private static readonly Dictionary<string, string> ApiHeaders = new()
       {
          ["x-rapidapi-host"] = "shazam.p.rapidapi.com",
          ["x-rapidapi-key"] = ApiConstants.ApiKey
       };
 
-      private readonly HttpClient _client = new HttpClient();
+      private readonly HttpClient _client = new();
 
       public void Dispose() => _client?.Dispose();
 

@@ -14,8 +14,8 @@ namespace WhatAmIHearing
    {
       private const string DefaultDeviceName = "Default Input Device";
 
-      private readonly Recorder _recorder = new Recorder();
-      private readonly MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
+      private readonly Recorder _recorder = new();
+      private readonly MMDeviceEnumerator _deviceEnumerator = new();
 
       public MainViewModel()
       {
