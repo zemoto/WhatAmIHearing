@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="What Am I Hearing?"
-        Height="150"
+        Height="110"
         Width="400"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -94,7 +94,7 @@
          </Grid.ColumnDefinitions>
 
          <Grid Grid.Column="0"
-               Margin="16,0,0,0"
+               Margin="16,4,0,0"
                VerticalAlignment="Center">
             <Grid.RowDefinitions>
                <RowDefinition Height="Auto" />
@@ -112,12 +112,15 @@
                   </Style>
                </ComboBox.ItemContainerStyle>
             </ComboBox>
+            <ProgressBar Grid.Row="1"
+                         Background="White"
+                         Foreground="#69C3FF"
+                         Value="{Binding Source={x:Static local:StatusReport.Status}, Path=Progress, Mode=OneWay}"
+                         Height="24" />
             <TextBlock Grid.Row="1"
                        Text="{Binding Source={x:Static local:StatusReport.Status}, Path=Text, Mode=OneWay}"
-                       Padding="4,3,4,0"
-                       Background="White"
-                       Margin="0,4,0,0"
-                       Width="300"
+                       Margin="4,6,4,0"
+                       VerticalAlignment="Center"
                        Height="24" />
          </Grid>
          

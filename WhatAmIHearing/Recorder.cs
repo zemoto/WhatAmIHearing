@@ -40,6 +40,7 @@ namespace WhatAmIHearing
          _maxRecordingSize = ShazamSpecEnforcer.GetMaxRecordingSize( _audioCapturer.WaveFormat.AverageBytesPerSecond );
 
          StatusReport.Status.Text = $"Recording: 0/{_maxRecordingSize} bits";
+         StatusReport.Status.Progress = 0;
 
          _audioCapturer.StartRecording();
       }
@@ -60,6 +61,7 @@ namespace WhatAmIHearing
          {
             _audioWriter.Write( e.Buffer, 0, e.BytesRecorded );
             StatusReport.Status.Text = $"Recording: {_audioWriter.Position}/{_maxRecordingSize} bits";
+            StatusReport.Status.Progress = (int)( (double)_audioWriter.Position / _maxRecordingSize * 100 );
          }
       }
 

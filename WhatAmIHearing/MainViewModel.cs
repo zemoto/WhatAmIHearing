@@ -31,6 +31,8 @@ namespace WhatAmIHearing
             if ( args.RecordedData != null )
             {
                StatusReport.Status.Text = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
+               StatusReport.Status.Progress = 100;
+
                var result = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
                if ( !string.IsNullOrEmpty( result ) )
                {
@@ -47,7 +49,7 @@ namespace WhatAmIHearing
                }
             }
 
-            StatusReport.Status.Text = string.Empty;
+            StatusReport.Reset();
          };
       }
 
