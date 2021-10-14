@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using WhatAmIHearing.Api;
 
-namespace WhatAmIHearing
+namespace WhatAmIHearing.Audio
 {
    internal sealed class RecordingFinishedEventArgs : EventArgs
    {
@@ -27,7 +27,7 @@ namespace WhatAmIHearing
       private WaveFileWriter _audioWriter;
       private MemoryStream _recordedFileStream;
 
-      public event EventHandler<RecordingFinishedEventArgs> RecordingStopped;
+      public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
 
       public void StartRecording( MMDevice device )
       {
@@ -76,7 +76,7 @@ namespace WhatAmIHearing
             data = ShazamSpecEnforcer.ResampleAudioToMatchSpec( _recordedFileStream, out format );
          }
 
-         RecordingStopped.Invoke( this, new RecordingFinishedEventArgs( data, format ) );
+         RecordingFinished.Invoke( this, new RecordingFinishedEventArgs( data, format ) );
          Cleanup();
       }
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using WhatAmIHearing.Api;
+using WhatAmIHearing.Audio;
 using ZemotoUI;
 
 namespace WhatAmIHearing
@@ -25,32 +26,36 @@ namespace WhatAmIHearing
          var lastSelectedDevice = Properties.UserSettings.Default.SelectedDevice;
          SelectedDeviceName = string.IsNullOrEmpty( lastSelectedDevice ) ? DefaultDeviceName : lastSelectedDevice;
 
-         _recorder.RecordingStopped += async ( s, args ) =>
+         _recorder.RecordingFinished += OnRecordingStopped;
+      }
+
+      private async void OnRecordingStopped( object sender, RecordingFinishedEventArgs args )
+      {
+         Recording = false;
+         if ( args.RecordedData == null )
          {
-            Recording = false;
-            if ( args.RecordedData != null )
-            {
-               StatusReport.Status.Text = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
-               StatusReport.Status.Progress = 100;
-
-               var result = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
-               if ( !string.IsNullOrEmpty( result ) )
-               {
-                  _ = Process.Start( new ProcessStartInfo( result ) { UseShellExecute = true } );
-               }
-               else
-               {
-                  var msgBoxResult = MessageBox.Show( "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
-                  if ( msgBoxResult == MessageBoxResult.Yes )
-                  {
-                     var player = new AudioPlayer( args.RecordedData, args.Format );
-                     player.PlayAudio();
-                  }
-               }
-            }
-
             StatusReport.Reset();
-         };
+            return;
+         }
+
+         StatusReport.Status.Text = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
+         StatusReport.Status.Progress = 100;
+
+         var songInfoUrl = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
+         StatusReport.Reset();
+
+         if ( !string.IsNullOrEmpty( songInfoUrl ) )
+         {
+            _ = Process.Start( new ProcessStartInfo( songInfoUrl ) { UseShellExecute = true } );
+         }
+         else
+         {
+            var result = MessageBox.Show( Application.Current.MainWindow, "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
+            if ( result == MessageBoxResult.Yes )
+            {
+               Player.PlayAudio( args.RecordedData, args.Format );
+            }
+         }
       }
 
       public List<MMDevice> DeviceList { get; }
@@ -71,20 +76,24 @@ namespace WhatAmIHearing
       }
 
       private ICommand _recordCommand;
-      public ICommand RecordCommand => _recordCommand ??= new RelayCommand( () =>
+      public ICommand RecordStopCommand => _recordCommand ??= new RelayCommand( () =>
       {
-         var selectedDevice = SelectedDeviceName == DefaultDeviceName
+         if ( Recording )
+         {
+            _recorder.CancelRecording();
+         }
+         else
+         {
+            var selectedDevice = SelectedDeviceName == DefaultDeviceName
             ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
             : DeviceList.First( x => x.FriendlyName == SelectedDeviceName );
 
-         Properties.UserSettings.Default.SelectedDevice = SelectedDeviceName;
-         Properties.UserSettings.Default.Save();
+            Properties.UserSettings.Default.SelectedDevice = SelectedDeviceName;
+            Properties.UserSettings.Default.Save();
 
-         Recording = true;
-         _recorder.StartRecording( selectedDevice );
+            Recording = true;
+            _recorder.StartRecording( selectedDevice );
+         }
       } );
-
-      private ICommand _stopCommand;
-      public ICommand StopCommand => _stopCommand ??= new RelayCommand( _recorder.CancelRecording );
    }
 }
