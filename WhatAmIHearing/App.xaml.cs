@@ -17,7 +17,7 @@ namespace WhatAmIHearing
 
       public App()
       {
-         _model.PropertyChanged += OnModelPropertyChanged;
+         _model.DetectionFinished += OnDetectionFinished;
 
          _window = new MainWindow( _model );
          _window.Closing += OnWindowClosing;
@@ -44,12 +44,14 @@ namespace WhatAmIHearing
          _trayIcon.Dispose();
       }
 
-      private void OnModelPropertyChanged( object sender, PropertyChangedEventArgs e )
+      private void OnDetectionFinished( object sender, bool detectionSuccess )
       {
-         if ( e.PropertyName == nameof( _model.Recording ) && !_model.Recording && _windowShownFromHotkey )
+         if ( detectionSuccess && _windowShownFromHotkey )
          {
             HideWindow();
          }
+
+         _windowShownFromHotkey = false;
       }
 
       private void OnWindowClosing( object sender, CancelEventArgs e )

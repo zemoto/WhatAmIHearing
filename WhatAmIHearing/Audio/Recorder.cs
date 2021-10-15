@@ -10,6 +10,7 @@ namespace WhatAmIHearing.Audio
    {
       public byte[] RecordedData { get; }
       public WaveFormat Format { get; }
+      public bool Cancelled => RecordedData is null;
 
       public RecordingFinishedEventArgs( byte[] recordedData, WaveFormat format )
       {

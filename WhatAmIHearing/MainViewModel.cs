@@ -1,4 +1,5 @@
 ﻿using NAudio.CoreAudioApi;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace WhatAmIHearing
       private readonly Recorder _recorder = new();
       private readonly MMDeviceEnumerator _deviceEnumerator = new();
 
+      public event EventHandler<bool> DetectionFinished;
+
       public MainViewModel()
       {
          DeviceList = _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active ).ToList();
@@ -34,7 +37,7 @@ namespace WhatAmIHearing
       private async void OnRecordingStopped( object sender, RecordingFinishedEventArgs args )
       {
          Recording = false;
-         if ( args.RecordedData == null )
+         if ( args.Cancelled )
          {
             StatusReport.Reset();
             return;
@@ -46,6 +49,7 @@ namespace WhatAmIHearing
          var songInfoUrl = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
          StatusReport.Reset();
 
+         DetectionFinished?.Invoke( this, !string.IsNullOrEmpty( songInfoUrl ) );
          if ( !string.IsNullOrEmpty( songInfoUrl ) )
          {
             _ = Process.Start( new ProcessStartInfo( songInfoUrl ) { UseShellExecute = true } );
