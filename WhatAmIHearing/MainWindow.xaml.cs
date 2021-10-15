@@ -4,8 +4,9 @@ namespace WhatAmIHearing
 {
    internal partial class MainWindow
    {
-      public MainWindow()
+      public MainWindow( MainViewModel model )
       {
+         DataContext = model;
          InitializeComponent();
       }
 

@@ -12,10 +12,8 @@
         WindowStyle="None"
         ResizeMode="CanMinimize"
         AllowsTransparency="True"
-        Background="Transparent">
-   <Window.DataContext>
-      <local:MainViewModel />
-   </Window.DataContext>
+        Background="Transparent"
+        d:DataContext="{d:DesignData Type={x:Type local:MainViewModel}}">
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24"
                     ResizeBorderThickness="0"

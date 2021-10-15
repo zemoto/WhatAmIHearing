@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -7,26 +7,33 @@ namespace WhatAmIHearing
    public partial class App
    {
       private readonly System.Windows.Forms.NotifyIcon _trayIcon = new() { Visible = false };
-      private readonly MainWindow _window = new();
+      private readonly GlobalHotkeyHook _globalHotkeyHook = new();
+      private readonly MainViewModel _model = new();
+      private readonly MainWindow _window;
 
       private Properties.UserSettings Settings => WhatAmIHearing.Properties.UserSettings.Default;
 
       public App()
       {
+         _window = new MainWindow( _model );
          _window.Closing += OnWindowClosing;
 
          _trayIcon.Icon = new System.Drawing.Icon( "Icon.ico" );
          _trayIcon.MouseClick += OnTrayIconClicked;
-
          _trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
          _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, OnTrayIconMenuClose );
+
+         _globalHotkeyHook.KeyPressed += OnRecordHotkey;
       }
 
       private void OnStartup( object sender, StartupEventArgs e )
       {
+         _globalHotkeyHook.RegisterHotKey( ModifierKeys.Shift, System.Windows.Forms.Keys.F2 );
+
          _ = _window.ShowDialog();
 
          Settings.Save();
+         _globalHotkeyHook.Dispose();
          _trayIcon.Dispose();
       }
 
@@ -49,16 +56,30 @@ namespace WhatAmIHearing
             return;
          }
 
-         _trayIcon.Visible = false;
-         _window.ShowInTaskbar = true;
-         _window.WindowState = WindowState.Normal;
-         _window.Show();
+         ShowAndForegroundMainWindow();
       }
 
       private void OnTrayIconMenuClose( object sender, EventArgs e )
       {
          _window.Closing -= OnWindowClosing;
          _window.Close();
+      }
+
+      private void OnRecordHotkey( object sender, KeyPressedEventArgs e )
+      {
+         if ( !_model.Recording )
+         {
+            ShowAndForegroundMainWindow();
+            _model.RecordStopCommand.Execute( null );
+         }
+      }
+
+      private void ShowAndForegroundMainWindow()
+      {
+         _trayIcon.Visible = false;
+         _window.ShowInTaskbar = true;
+         _window.WindowState = WindowState.Normal;
+         _window.Show();
       }
    }
 }
