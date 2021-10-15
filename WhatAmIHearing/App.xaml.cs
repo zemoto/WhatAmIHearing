@@ -11,10 +11,14 @@ namespace WhatAmIHearing
       private readonly MainViewModel _model = new();
       private readonly MainWindow _window;
 
+      private bool _windowShownFromHotkey;
+
       private Properties.UserSettings Settings => WhatAmIHearing.Properties.UserSettings.Default;
 
       public App()
       {
+         _model.PropertyChanged += OnModelPropertyChanged;
+
          _window = new MainWindow( _model );
          _window.Closing += OnWindowClosing;
 
@@ -40,16 +44,21 @@ namespace WhatAmIHearing
          _trayIcon.Dispose();
       }
 
+      private void OnModelPropertyChanged( object sender, PropertyChangedEventArgs e )
+      {
+         if ( e.PropertyName == nameof( _model.Recording ) && !_model.Recording && _windowShownFromHotkey )
+         {
+            HideWindow();
+         }
+      }
+
       private void OnWindowClosing( object sender, CancelEventArgs e )
       {
          if ( Settings.KeepOpenInTray )
          {
             e.Cancel = true;
 
-            _trayIcon.Visible = true;
-            _window.ShowInTaskbar = false;
-            _window.WindowState = WindowState.Minimized;
-            _window.Opacity = 0;
+            HideWindow();
          }
       }
 
@@ -60,7 +69,7 @@ namespace WhatAmIHearing
             return;
          }
 
-         ShowAndForegroundMainWindow();
+         ShowAndForegroundMainWindow( false );
       }
 
       private void OnTrayIconMenuClose( object sender, EventArgs e )
@@ -73,13 +82,23 @@ namespace WhatAmIHearing
       {
          if ( !_model.Recording )
          {
-            ShowAndForegroundMainWindow();
+            ShowAndForegroundMainWindow( true );
             _model.RecordStopCommand.Execute( null );
          }
       }
 
-      private void ShowAndForegroundMainWindow()
+      private void HideWindow()
       {
+         _trayIcon.Visible = true;
+         _window.ShowInTaskbar = false;
+         _window.WindowState = WindowState.Minimized;
+         _window.Opacity = 0;
+      }
+
+      private void ShowAndForegroundMainWindow( bool showFromHotkey )
+      {
+         _windowShownFromHotkey = showFromHotkey;
+
          _trayIcon.Visible = false;
          _window.ShowInTaskbar = true;
          _window.WindowState = WindowState.Normal;
