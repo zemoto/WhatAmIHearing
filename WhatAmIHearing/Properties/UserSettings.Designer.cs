@@ -34,5 +34,17 @@ namespace WhatAmIHearing.Properties {
                 this["SelectedDevice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool KeepOpenInTray {
+            get {
+                return ((bool)(this["KeepOpenInTray"]));
+            }
+            set {
+                this["KeepOpenInTray"] = value;
+            }
+        }
     }
 }

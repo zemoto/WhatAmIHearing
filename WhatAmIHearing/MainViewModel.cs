@@ -85,11 +85,10 @@ namespace WhatAmIHearing
          else
          {
             var selectedDevice = SelectedDeviceName == DefaultDeviceName
-            ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
-            : DeviceList.First( x => x.FriendlyName == SelectedDeviceName );
+               ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
+               : DeviceList.First( x => x.FriendlyName == SelectedDeviceName );
 
             Properties.UserSettings.Default.SelectedDevice = SelectedDeviceName;
-            Properties.UserSettings.Default.Save();
 
             Recording = true;
             _recorder.StartRecording( selectedDevice );

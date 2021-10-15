@@ -51,7 +51,7 @@
       </Setter>
    </Style>
 
-   <Style x:Key="MenuButtonStyle"
+   <Style x:Key="CloseButtonStyle"
           TargetType="{x:Type Button}">
       <Setter Property="Width"
               Value="44" />
@@ -66,10 +66,17 @@
                   <Rectangle x:Name="MouseoverBackground"
                              Fill="White"
                              Opacity="0" />
-                  <ContentPresenter HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Width="10"
-                                    Height="10" />
+
+                  <Path HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="10"
+                        Height="10"
+                        Stroke="Black"
+                        StrokeThickness="1">
+                     <Path.Data>
+                        <PathGeometry Figures="M 0,0 L 10,10 M 0,10 L 10,0" />
+                     </Path.Data>
+                  </Path>
                </Grid>
                <ControlTemplate.Triggers>
                   <Trigger Property="IsMouseOver"

@@ -2,7 +2,7 @@
 
 namespace WhatAmIHearing
 {
-   public partial class MainWindow
+   internal partial class MainWindow
    {
       public MainWindow()
       {
@@ -10,6 +10,5 @@ namespace WhatAmIHearing
       }
 
       private void OnCloseClicked( object s, RoutedEventArgs e ) => Close();
-      private void OnMinimizeClicked( object s, RoutedEventArgs e ) => WindowState = WindowState.Minimized;
    }
 }
