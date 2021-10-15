@@ -44,7 +44,7 @@
          <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
-      <Rectangle Grid.RowSpan="3"
+      <Rectangle Grid.RowSpan="99"
                  Fill="#D9E8FF"
                  RadiusX="4"
                  RadiusY="4" />
@@ -114,5 +114,11 @@
                 Margin="12,2,12,12"
                 Content="Keep open in system tray"
                 IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
+
+      <TextBlock Grid.Row="2"
+                 Margin="12,2,12,12"
+                 HorizontalAlignment="Right">
+         <Run Text="Hotkey: " /><Run Text="{Binding HotkeyStatusText, Mode=OneWay}" />
+      </TextBlock>
    </Grid>
 </Window>

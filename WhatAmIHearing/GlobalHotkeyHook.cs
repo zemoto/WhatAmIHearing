@@ -61,14 +61,10 @@ namespace WhatAmIHearing
       private readonly MessageReceivingWindow _window = new ();
       private int _currentHotkeyId;
 
-      public void RegisterHotKey( ModifierKeys modifier, Keys key )
+      public bool RegisterHotKey( ModifierKeys modifier, Keys key )
       {
          _currentHotkeyId++;
-
-         if ( !RegisterHotKey( _window.Handle, _currentHotkeyId, (uint)modifier, (uint)key ) )
-         {
-            // Failed to register: TODO
-         }
+         return RegisterHotKey( _window.Handle, _currentHotkeyId, (uint)modifier, (uint)key );
       }
 
       public event EventHandler<KeyPressedEventArgs> KeyPressed

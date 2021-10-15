@@ -72,6 +72,13 @@ namespace WhatAmIHearing
          private set => SetProperty( ref _recording, value );
       }
 
+      private string _hotkeyStatusText;
+      public string HotkeyStatusText
+      {
+         get => _hotkeyStatusText;
+         set => SetProperty( ref _hotkeyStatusText, value );
+      }
+
       private ICommand _recordCommand;
       public ICommand RecordStopCommand => _recordCommand ??= new RelayCommand( () =>
       {

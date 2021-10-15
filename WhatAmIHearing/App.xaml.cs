@@ -28,7 +28,10 @@ namespace WhatAmIHearing
 
       private void OnStartup( object sender, StartupEventArgs e )
       {
-         _globalHotkeyHook.RegisterHotKey( ModifierKeys.Shift, System.Windows.Forms.Keys.F2 );
+         _model.HotkeyStatusText =
+            _globalHotkeyHook.RegisterHotKey( ModifierKeys.Shift, System.Windows.Forms.Keys.F2 )
+            ? "Shift + F2"
+            : "Failed to register";
 
          _ = _window.ShowDialog();
 
