@@ -81,7 +81,7 @@
             </Grid.RowDefinitions>
             <ComboBox Grid.Row="0"
                       ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
-                      SelectedValue="{Binding SelectedDeviceName, Mode=TwoWay}"
+                      SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
                       Height="24" />
             <ProgressBar Grid.Row="1"
                          Background="White"
@@ -115,6 +115,6 @@
       <CheckBox Grid.Row="2"
                 Margin="12,2,12,12"
                 Content="Keep open in system tray"
-                IsChecked="{Binding Source={x:Static local:Properties.UserSettings.Default}, Path=KeepOpenInTray, Mode=TwoWay}" />
+                IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
    </Grid>
 </Window>

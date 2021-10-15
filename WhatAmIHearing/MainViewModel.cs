@@ -23,8 +23,10 @@ namespace WhatAmIHearing
          DeviceNameList = DeviceList.ConvertAll( x => x.FriendlyName );
          DeviceNameList.Insert( 0, DefaultDeviceName );
 
-         var lastSelectedDevice = Properties.UserSettings.Default.SelectedDevice;
-         SelectedDeviceName = string.IsNullOrEmpty( lastSelectedDevice ) ? DefaultDeviceName : lastSelectedDevice;
+         if ( string.IsNullOrEmpty( Settings.SelectedDevice ) )
+         {
+            Settings.SelectedDevice = DefaultDeviceName;
+         }
 
          _recorder.RecordingFinished += OnRecordingStopped;
       }
@@ -61,12 +63,7 @@ namespace WhatAmIHearing
       public List<MMDevice> DeviceList { get; }
       public List<string> DeviceNameList { get; }
 
-      private string _selectedDeviceName;
-      public string SelectedDeviceName
-      {
-         get => _selectedDeviceName;
-         set => SetProperty( ref _selectedDeviceName, value );
-      }
+      public Properties.UserSettings Settings => Properties.UserSettings.Default;
 
       private bool _recording;
       public bool Recording
@@ -84,11 +81,9 @@ namespace WhatAmIHearing
          }
          else
          {
-            var selectedDevice = SelectedDeviceName == DefaultDeviceName
+            var selectedDevice = Settings.SelectedDevice == DefaultDeviceName
                ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
-               : DeviceList.First( x => x.FriendlyName == SelectedDeviceName );
-
-            Properties.UserSettings.Default.SelectedDevice = SelectedDeviceName;
+               : DeviceList.First( x => x.FriendlyName == Settings.SelectedDevice );
 
             Recording = true;
             _recorder.StartRecording( selectedDevice );
