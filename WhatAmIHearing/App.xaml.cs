@@ -46,6 +46,7 @@ namespace WhatAmIHearing
             _trayIcon.Visible = true;
             _window.ShowInTaskbar = false;
             _window.WindowState = WindowState.Minimized;
+            _window.Opacity = 0;
          }
       }
 
@@ -79,7 +80,7 @@ namespace WhatAmIHearing
          _trayIcon.Visible = false;
          _window.ShowInTaskbar = true;
          _window.WindowState = WindowState.Normal;
-         _window.Show();
+         _window.Opacity = 1.0;
       }
    }
 }
