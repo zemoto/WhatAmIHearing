@@ -7,8 +7,7 @@
         xmlns:ui="clr-namespace:ZemotoUI"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Height="110"
-        Width="400"
+        SizeToContent="WidthAndHeight"
         WindowStyle="None"
         ResizeMode="CanMinimize"
         AllowsTransparency="True"
@@ -42,7 +41,7 @@
       </Grid.Effect>
       <Grid.RowDefinitions>
          <RowDefinition Height="Auto" />
-         <RowDefinition Height="*" />
+         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
       <Rectangle Grid.RowSpan="2"
@@ -81,14 +80,16 @@
          </Button>
       </StackPanel>
 
-      <Grid Grid.Row="1">
+      <Grid Grid.Row="1"
+            Width="350"
+            Margin="12">
          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition Width="Auto" />
          </Grid.ColumnDefinitions>
 
          <Grid Grid.Column="0"
-               Margin="16,4,0,0"
                VerticalAlignment="Center">
             <Grid.RowDefinitions>
                <RowDefinition Height="Auto" />
@@ -97,15 +98,7 @@
             <ComboBox Grid.Row="0"
                       ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
                       SelectedValue="{Binding SelectedDeviceName, Mode=TwoWay}"
-                      Width="300"
-                      Height="24">
-               <ComboBox.ItemContainerStyle>
-                  <Style TargetType="ComboBoxItem">
-                     <Setter Property="Width"
-                             Value="300" />
-                  </Style>
-               </ComboBox.ItemContainerStyle>
-            </ComboBox>
+                      Height="24" />
             <ProgressBar Grid.Row="1"
                          Background="White"
                          Foreground="#69C3FF"
@@ -117,7 +110,8 @@
                        Height="24" />
          </Grid>
 
-         <Button Grid.Column="1"
+         <Button Grid.Column="2"
+                 Margin="0,-4,0,0"
                  Style="{StaticResource PlayStopButtonStyle}"
                  Command="{Binding RecordStopCommand}">
             <Grid>
