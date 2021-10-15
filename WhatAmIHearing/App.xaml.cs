@@ -25,7 +25,7 @@ namespace WhatAmIHearing
          _trayIcon.Icon = new System.Drawing.Icon( "Icon.ico" );
          _trayIcon.MouseClick += OnTrayIconClicked;
          _trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-         _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, OnTrayIconMenuClose );
+         _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, ( s, a ) => Shutdown() );
 
          _globalHotkeyHook.KeyPressed += OnRecordHotkey;
       }
@@ -37,8 +37,11 @@ namespace WhatAmIHearing
             ? "Shift + F2"
             : "Failed to register";
 
-         _ = _window.ShowDialog();
+         _window.Show();
+      }
 
+      private void OnExit( object sender, ExitEventArgs e )
+      {
          Settings.Save();
          _globalHotkeyHook.Dispose();
          _trayIcon.Dispose();
@@ -62,6 +65,10 @@ namespace WhatAmIHearing
 
             HideWindow();
          }
+         else
+         {
+            Shutdown();
+         }
       }
 
       private void OnTrayIconClicked( object sender, System.Windows.Forms.MouseEventArgs e )
@@ -72,12 +79,6 @@ namespace WhatAmIHearing
          }
 
          ShowAndForegroundMainWindow( false );
-      }
-
-      private void OnTrayIconMenuClose( object sender, EventArgs e )
-      {
-         _window.Closing -= OnWindowClosing;
-         _window.Close();
       }
 
       private void OnRecordHotkey( object sender, KeyPressedEventArgs e )
@@ -94,7 +95,7 @@ namespace WhatAmIHearing
          _trayIcon.Visible = true;
          _window.ShowInTaskbar = false;
          _window.WindowState = WindowState.Minimized;
-         _window.Opacity = 0;
+         _window.Hide();
       }
 
       private void ShowAndForegroundMainWindow( bool showFromHotkey )
@@ -102,9 +103,11 @@ namespace WhatAmIHearing
          _windowShownFromHotkey = showFromHotkey;
 
          _trayIcon.Visible = false;
+
+         _window.Show();
          _window.ShowInTaskbar = true;
          _window.WindowState = WindowState.Normal;
-         _window.Opacity = 1.0;
+         _window.Activate();
       }
    }
 }

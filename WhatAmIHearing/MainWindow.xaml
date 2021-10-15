@@ -13,6 +13,7 @@
         ResizeMode="CanMinimize"
         AllowsTransparency="True"
         Background="Transparent"
+        ShowActivated="True"
         d:DataContext="{d:DesignData Type={x:Type local:MainViewModel}}">
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24"
