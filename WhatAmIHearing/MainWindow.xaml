@@ -26,9 +26,7 @@
             <ResourceDictionary Source="ControlStyles.xaml" />
          </ResourceDictionary.MergedDictionaries>
 
-         <ui:BoolVisibilityConverter x:Key="VisibleIfFalse"
-                                     Invert="True" />
-         <ui:BoolVisibilityConverter x:Key="VisibleIfTrue" />
+         <ui:EqualityToVisibilityConverter x:Key="VisibleIfEqual" />
       </ResourceDictionary>
    </Window.Resources>
 
@@ -101,13 +99,30 @@
             <Grid>
                <Path Fill="White"
                      Stretch="UniformToFill"
-                     Visibility="{Binding Recording, Converter={StaticResource VisibleIfTrue}}">
+                     Visibility="{Binding RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static local:State.Recording}}">
                   <Path.Data>
                      <PathGeometry Figures="M 0,0 L 0,1 1,1 1,0 Z" />
                   </Path.Data>
                </Path>
+               <Path Stroke="White"
+                     StrokeThickness="4"
+                     Stretch="UniformToFill"
+                     Visibility="{Binding RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static local:State.SendingToShazam}}">
+                  <Path.Data>
+                     <PathGeometry>
+                        <PathGeometry.Figures>
+                           <PathFigure StartPoint="0,0">
+                              <LineSegment Point="5,5" />
+                           </PathFigure>
+                           <PathFigure StartPoint="0,5">
+                              <LineSegment Point="5,0" />
+                           </PathFigure>
+                        </PathGeometry.Figures>
+                     </PathGeometry>
+                  </Path.Data>
+               </Path>
                <Ellipse Fill="White"
-                        Visibility="{Binding Recording, Converter={StaticResource VisibleIfFalse}}" />
+                        Visibility="{Binding RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static local:State.Stopped}}" />
             </Grid>
          </Button>
       </Grid>

@@ -3,14 +3,23 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using WhatAmIHearing.Api;
 using WhatAmIHearing.Audio;
 using ZemotoUI;
+using ZemotoUtils;
 
 namespace WhatAmIHearing
 {
+   internal enum State
+   {
+      Stopped = 0,
+      Recording = 1,
+      SendingToShazam = 2
+   }
+
    internal sealed class MainViewModel : ViewModelBase
    {
       private const string DefaultDeviceName = "Default Input Device";
@@ -36,32 +45,49 @@ namespace WhatAmIHearing
 
       private async void OnRecordingStopped( object sender, RecordingFinishedEventArgs args )
       {
-         Recording = false;
-         if ( args.Cancelled )
+         string songInfoUrl = string.Empty;
+         using ( new ScopeGuard( () => DetectionFinished?.Invoke( this, !string.IsNullOrEmpty( songInfoUrl ) ) ) )
          {
-            StatusReport.Reset();
-            return;
-         }
-
-         StatusReport.Status.Text = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
-         StatusReport.Status.Progress = 100;
-
-         var songInfoUrl = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
-         StatusReport.Reset();
-
-         DetectionFinished?.Invoke( this, !string.IsNullOrEmpty( songInfoUrl ) );
-         if ( !string.IsNullOrEmpty( songInfoUrl ) )
-         {
-            _ = Process.Start( new ProcessStartInfo( songInfoUrl ) { UseShellExecute = true } );
-         }
-         else
-         {
-            var result = MessageBox.Show( Application.Current.MainWindow, "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
-            if ( result == MessageBoxResult.Yes )
+            using ( new ScopeGuard( Reset ) )
             {
-               Player.PlayAudio( args.RecordedData, args.Format );
+               if ( args.Cancelled )
+               {
+                  return;
+               }
+
+               StatusReport.Status.Text = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
+               StatusReport.Status.Progress = 100;
+
+               RecorderState = State.SendingToShazam;
+               try
+               {
+                  songInfoUrl = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
+               }
+               catch ( TaskCanceledException )
+               {
+                  return;
+               }
+            }
+
+            if ( !string.IsNullOrEmpty( songInfoUrl ) )
+            {
+               _ = Process.Start( new ProcessStartInfo( songInfoUrl ) { UseShellExecute = true } );
+            }
+            else
+            {
+               var result = MessageBox.Show( Application.Current.MainWindow, "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
+               if ( result == MessageBoxResult.Yes )
+               {
+                  Player.PlayAudio( args.RecordedData, args.Format );
+               }
             }
          }
+      }
+
+      private void Reset()
+      {
+         RecorderState = State.Stopped;
+         StatusReport.Reset();
       }
 
       public List<MMDevice> DeviceList { get; }
@@ -69,11 +95,11 @@ namespace WhatAmIHearing
 
       public Properties.UserSettings Settings => Properties.UserSettings.Default;
 
-      private bool _recording;
-      public bool Recording
+      private State _recorderState;
+      public State RecorderState
       {
-         get => _recording;
-         private set => SetProperty( ref _recording, value );
+         get => _recorderState;
+         private set => SetProperty( ref _recorderState, value );
       }
 
       private string _hotkeyStatusText;
@@ -86,9 +112,13 @@ namespace WhatAmIHearing
       private ICommand _recordCommand;
       public ICommand RecordStopCommand => _recordCommand ??= new RelayCommand( () =>
       {
-         if ( Recording )
+         if ( RecorderState is State.Recording )
          {
             _recorder.CancelRecording();
+         }
+         else if ( RecorderState is State.SendingToShazam )
+         {
+            ApiClient.CancelRequests();
          }
          else
          {
@@ -96,7 +126,7 @@ namespace WhatAmIHearing
                ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
                : DeviceList.First( x => x.FriendlyName == Settings.SelectedDevice );
 
-            Recording = true;
+            RecorderState = State.Recording;
             _recorder.StartRecording( selectedDevice );
          }
       } );

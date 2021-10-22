@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Api
@@ -13,9 +14,21 @@ namespace WhatAmIHearing.Api
          ["x-rapidapi-key"] = ApiConstants.ApiKey
       };
 
-      private readonly HttpClient _client = new();
+      private static readonly List<ApiClient> _apiClients = new();
 
-      public void Dispose() => _client?.Dispose();
+      public static void CancelRequests() => _apiClients.ForEach( x => x._cancelToken.Cancel() );
+
+      private readonly HttpClient _client = new();
+      private readonly CancellationTokenSource _cancelToken = new();
+
+      public ApiClient() => _apiClients.Add( this );
+
+      public void Dispose()
+      {
+         _client?.Dispose();
+         _cancelToken?.Dispose();
+         _apiClients.Remove( this );
+      }
 
       public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
       {
@@ -26,7 +39,7 @@ namespace WhatAmIHearing.Api
             message.Headers.Add( key, value );
          }
 
-         var response = await _client.SendAsync( message ).ConfigureAwait( false );
+         var response = await _client.SendAsync( message, _cancelToken.Token ).ConfigureAwait( false );
 
          return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync().ConfigureAwait( false ) : string.Empty;
       }

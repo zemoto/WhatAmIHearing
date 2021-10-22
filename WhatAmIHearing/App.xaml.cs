@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 
 namespace WhatAmIHearing
@@ -66,7 +65,6 @@ namespace WhatAmIHearing
          if ( Settings.KeepOpenInTray )
          {
             e.Cancel = true;
-
             HideWindowAndShowTrayIcon();
          }
          else
@@ -77,19 +75,22 @@ namespace WhatAmIHearing
 
       private void OnTrayIconClicked( object sender, System.Windows.Forms.MouseEventArgs e )
       {
-         if ( e.Button is not System.Windows.Forms.MouseButtons.Left )
+         if ( e.Button is System.Windows.Forms.MouseButtons.Left )
          {
-            return;
+            ShowAndForegroundMainWindow();
          }
-
-         ShowAndForegroundMainWindow();
       }
 
       private void OnRecordHotkey( object sender, KeyPressedEventArgs e )
       {
-         if ( !_model.Recording )
+         if ( _model.RecorderState is State.Stopped )
          {
-            ShowAndForegroundMainWindow( true );
+            if ( _trayIcon.Visible )
+            {
+               _windowShownFromHotkey = true;
+            }
+
+            ShowAndForegroundMainWindow();
             _model.RecordStopCommand.Execute( null );
          }
       }
@@ -100,15 +101,12 @@ namespace WhatAmIHearing
          if ( _window is not null )
          {
             _window.ShowInTaskbar = false;
-            _window.WindowState = WindowState.Minimized;
             _window.Hide();
          }
       }
 
-      private void ShowAndForegroundMainWindow( bool showFromHotkey = false )
+      private void ShowAndForegroundMainWindow()
       {
-         _windowShownFromHotkey = showFromHotkey;
-
          _trayIcon.Visible = false;
 
          if ( _window is null )
@@ -118,9 +116,6 @@ namespace WhatAmIHearing
          }
 
          _window.Show();
-         _window.ShowInTaskbar = true;
-         _window.WindowState = WindowState.Normal;
-         _window.Activate();
       }
    }
 }
