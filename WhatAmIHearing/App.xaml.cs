@@ -9,7 +9,7 @@ namespace WhatAmIHearing
       private readonly System.Windows.Forms.NotifyIcon _trayIcon = new() { Visible = false };
       private readonly GlobalHotkeyHook _globalHotkeyHook = new();
       private readonly MainViewModel _model = new();
-      private readonly MainWindow _window;
+      private MainWindow _window;
 
       private bool _windowShownFromHotkey;
 
@@ -18,9 +18,6 @@ namespace WhatAmIHearing
       public App()
       {
          _model.DetectionFinished += OnDetectionFinished;
-
-         _window = new MainWindow( _model );
-         _window.Closing += OnWindowClosing;
 
          _trayIcon.Icon = new System.Drawing.Icon( "Icon.ico" );
          _trayIcon.MouseClick += OnTrayIconClicked;
@@ -37,7 +34,14 @@ namespace WhatAmIHearing
             ? "Shift + F2"
             : "Failed to register";
 
-         _window.Show();
+         if ( Settings.OpenHidden )
+         {
+            HideWindowAndShowTrayIcon();
+         }
+         else
+         {
+            ShowAndForegroundMainWindow();
+         }
       }
 
       private void OnExit( object sender, ExitEventArgs e )
@@ -51,7 +55,7 @@ namespace WhatAmIHearing
       {
          if ( detectionSuccess && _windowShownFromHotkey )
          {
-            HideWindow();
+            HideWindowAndShowTrayIcon();
          }
 
          _windowShownFromHotkey = false;
@@ -63,7 +67,7 @@ namespace WhatAmIHearing
          {
             e.Cancel = true;
 
-            HideWindow();
+            HideWindowAndShowTrayIcon();
          }
          else
          {
@@ -78,7 +82,7 @@ namespace WhatAmIHearing
             return;
          }
 
-         ShowAndForegroundMainWindow( false );
+         ShowAndForegroundMainWindow();
       }
 
       private void OnRecordHotkey( object sender, KeyPressedEventArgs e )
@@ -90,19 +94,28 @@ namespace WhatAmIHearing
          }
       }
 
-      private void HideWindow()
+      private void HideWindowAndShowTrayIcon()
       {
          _trayIcon.Visible = true;
-         _window.ShowInTaskbar = false;
-         _window.WindowState = WindowState.Minimized;
-         _window.Hide();
+         if ( _window is not null )
+         {
+            _window.ShowInTaskbar = false;
+            _window.WindowState = WindowState.Minimized;
+            _window.Hide();
+         }
       }
 
-      private void ShowAndForegroundMainWindow( bool showFromHotkey )
+      private void ShowAndForegroundMainWindow( bool showFromHotkey = false )
       {
          _windowShownFromHotkey = showFromHotkey;
 
          _trayIcon.Visible = false;
+
+         if ( _window is null )
+         {
+            _window = new MainWindow( _model );
+            _window.Closing += OnWindowClosing;
+         }
 
          _window.Show();
          _window.ShowInTaskbar = true;

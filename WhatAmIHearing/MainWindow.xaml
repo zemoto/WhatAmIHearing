@@ -43,6 +43,7 @@
          <RowDefinition Height="Auto" />
          <RowDefinition Height="Auto" />
          <RowDefinition Height="Auto" />
+         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
       <Rectangle Grid.RowSpan="99"
@@ -112,14 +113,19 @@
       </Grid>
 
       <CheckBox Grid.Row="2"
-                Margin="12,2,12,12"
+                Margin="12,2,12,2"
                 Content="Keep open in system tray"
                 IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
 
       <TextBlock Grid.Row="2"
-                 Margin="12,2,12,12"
+                 Margin="12,2,12,2"
                  HorizontalAlignment="Right">
          <Run Text="Hotkey: " /><Run Text="{Binding HotkeyStatusText, Mode=OneWay}" />
       </TextBlock>
+
+      <CheckBox Grid.Row="3"
+                Margin="12,2,12,12"
+                Content="Open hidden"
+                IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
    </Grid>
 </Window>

@@ -46,5 +46,17 @@ namespace WhatAmIHearing.Properties {
                 this["KeepOpenInTray"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OpenHidden {
+            get {
+                return ((bool)(this["OpenHidden"]));
+            }
+            set {
+                this["OpenHidden"] = value;
+            }
+        }
     }
 }
