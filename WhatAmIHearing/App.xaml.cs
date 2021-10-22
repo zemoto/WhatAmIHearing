@@ -8,7 +8,7 @@ namespace WhatAmIHearing
       private readonly System.Windows.Forms.NotifyIcon _trayIcon = new() { Visible = false };
       private readonly GlobalHotkeyHook _globalHotkeyHook = new();
       private readonly MainViewModel _model = new();
-      private MainWindow _window;
+      private readonly MainWindow _window;
 
       private bool _windowShownFromHotkey;
 
@@ -16,6 +16,9 @@ namespace WhatAmIHearing
 
       public App()
       {
+         _window = new MainWindow( _model );
+         _window.Closing += OnWindowClosing;
+
          _model.DetectionFinished += OnDetectionFinished;
 
          _trayIcon.Icon = new System.Drawing.Icon( "Icon.ico" );
@@ -28,6 +31,12 @@ namespace WhatAmIHearing
 
       private void OnStartup( object sender, StartupEventArgs e )
       {
+         if ( !SingleInstance.Claim() )
+         {
+            Shutdown();
+            return;
+         }
+
          _model.HotkeyStatusText =
             _globalHotkeyHook.RegisterHotKey( ModifierKeys.Shift, System.Windows.Forms.Keys.F2 )
             ? "Shift + F2"
@@ -98,23 +107,14 @@ namespace WhatAmIHearing
       private void HideWindowAndShowTrayIcon()
       {
          _trayIcon.Visible = true;
-         if ( _window is not null )
-         {
-            _window.ShowInTaskbar = false;
-            _window.Hide();
-         }
+         _window.ShowInTaskbar = false;
+         _window.Hide();
       }
 
       private void ShowAndForegroundMainWindow()
       {
          _trayIcon.Visible = false;
-
-         if ( _window is null )
-         {
-            _window = new MainWindow( _model );
-            _window.Closing += OnWindowClosing;
-         }
-
+         _window.ShowInTaskbar = true;
          _window.Show();
       }
    }
