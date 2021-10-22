@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace WhatAmIHearing.Api
+namespace WhatAmIHearing.Api.Shazam
 {
    internal static class ShazamApi
    {
@@ -9,8 +9,8 @@ namespace WhatAmIHearing.Api
 
       public static async Task<string> DetectSongAsync( byte[] audioData )
       {
-         using var httpClient = new ApiClient();
-         var detectResponse = await httpClient.SendPostRequestAsync( DetectApiEndpoint, audioData ).ConfigureAwait( false );
+         using var client = new ShazamApiClient();
+         var detectResponse = await client.SendPostRequestAsync( DetectApiEndpoint, audioData ).ConfigureAwait( false );
 
          if ( !string.IsNullOrEmpty( detectResponse ) )
          {

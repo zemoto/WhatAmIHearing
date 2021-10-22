@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Api
 {
-   internal sealed class ApiClient : IDisposable
+   internal abstract class ApiClient : IDisposable
    {
-      private static readonly Dictionary<string, string> ApiHeaders = new()
-      {
-         ["x-rapidapi-host"] = "shazam.p.rapidapi.com",
-         ["x-rapidapi-key"] = ApiConstants.ApiKey
-      };
+      protected abstract Dictionary<string, string> ApiHeaders { get; }
 
       private static readonly List<ApiClient> _apiClients = new();
 
@@ -21,7 +17,7 @@ namespace WhatAmIHearing.Api
       private readonly HttpClient _client = new();
       private readonly CancellationTokenSource _cancelToken = new();
 
-      public ApiClient() => _apiClients.Add( this );
+      protected ApiClient() => _apiClients.Add( this );
 
       public void Dispose()
       {

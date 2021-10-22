@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WhatAmIHearing.Api
+namespace WhatAmIHearing.Api.Shazam
 {
    // Only keeping track of the parts we care about
    internal sealed class DetectSongResponse

@@ -2,7 +2,7 @@
 using NAudio.Wave.SampleProviders;
 using System.IO;
 
-namespace WhatAmIHearing.Api
+namespace WhatAmIHearing.Api.Shazam
 {
    internal static class ShazamSpecEnforcer
    {
