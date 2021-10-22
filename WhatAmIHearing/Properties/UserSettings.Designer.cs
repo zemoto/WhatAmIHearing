@@ -58,5 +58,17 @@ namespace WhatAmIHearing.Properties {
                 this["OpenHidden"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SpotifyAccessToken {
+            get {
+                return ((string)(this["SpotifyAccessToken"]));
+            }
+            set {
+                this["SpotifyAccessToken"] = value;
+            }
+        }
     }
 }

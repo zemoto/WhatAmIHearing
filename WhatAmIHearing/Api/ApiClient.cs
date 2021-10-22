@@ -29,8 +29,18 @@ namespace WhatAmIHearing.Api
       public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
       {
          var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( Convert.ToBase64String( data ) ) };
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
 
-         foreach( var ( key, value ) in ApiHeaders )
+      public async Task<string> SendPostRequestAsync( string endpoint, Dictionary<string,string> formUrlEncodedData )
+      {
+         var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new FormUrlEncodedContent( formUrlEncodedData ) };
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
+
+      private async Task<string> SendMessageAsync( HttpRequestMessage message )
+      {
+         foreach ( var (key, value) in ApiHeaders )
          {
             message.Headers.Add( key, value );
          }
