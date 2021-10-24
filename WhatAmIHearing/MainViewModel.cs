@@ -46,8 +46,8 @@ namespace WhatAmIHearing
 
       private async void OnRecordingStopped( object sender, RecordingFinishedEventArgs args )
       {
-         string songInfoUrl = string.Empty;
-         using ( new ScopeGuard( () => DetectionFinished?.Invoke( this, !string.IsNullOrEmpty( songInfoUrl ) ) ) )
+         DetectedTrackInfo detectedSong = null;
+         using ( new ScopeGuard( () => DetectionFinished?.Invoke( this, detectedSong?.IsComplete == true ) ) )
          {
             using ( new ScopeGuard( Reset ) )
             {
@@ -62,7 +62,7 @@ namespace WhatAmIHearing
                RecorderState = State.SendingToShazam;
                try
                {
-                  songInfoUrl = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
+                  detectedSong = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
                }
                catch ( TaskCanceledException )
                {
@@ -70,9 +70,9 @@ namespace WhatAmIHearing
                }
             }
 
-            if ( !string.IsNullOrEmpty( songInfoUrl ) )
+            if ( detectedSong?.IsComplete == true )
             {
-               _ = Process.Start( new ProcessStartInfo( songInfoUrl ) { UseShellExecute = true } );
+               _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
             }
             else
             {

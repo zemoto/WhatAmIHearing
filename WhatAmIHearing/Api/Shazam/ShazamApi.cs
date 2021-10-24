@@ -7,7 +7,7 @@ namespace WhatAmIHearing.Api.Shazam
    {
       private const string DetectApiEndpoint = "https://shazam.p.rapidapi.com/songs/detect";
 
-      public static async Task<string> DetectSongAsync( byte[] audioData )
+      public static async Task<DetectedTrackInfo> DetectSongAsync( byte[] audioData )
       {
          using var client = new ShazamApiClient();
          var detectResponse = await client.SendPostRequestAsync( DetectApiEndpoint, audioData ).ConfigureAwait( false );
@@ -15,10 +15,10 @@ namespace WhatAmIHearing.Api.Shazam
          if ( !string.IsNullOrEmpty( detectResponse ) )
          {
             var parsedResponse = JsonSerializer.Deserialize<DetectSongResponse>( detectResponse );
-            return parsedResponse?.Track?.Url;
+            return parsedResponse?.Track;
          }
 
-         return string.Empty;
+         return null;
       }
    }
 }

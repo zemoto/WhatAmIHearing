@@ -11,6 +11,14 @@ namespace WhatAmIHearing.Api.Shazam
 
    internal sealed class DetectedTrackInfo
    {
+      public bool IsComplete => !string.IsNullOrEmpty( Title ) && !string.IsNullOrEmpty( Subtitle ) && !string.IsNullOrEmpty( Url );
+
+      [JsonPropertyName( "title" )]
+      public string Title { get; set; }
+
+      [JsonPropertyName( "subtitle" )]
+      public string Subtitle { get; set; }
+
       [JsonPropertyName( "url" )]
       public string Url { get; set; }
    }
