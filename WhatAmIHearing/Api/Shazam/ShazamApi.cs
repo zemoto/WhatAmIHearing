@@ -15,7 +15,7 @@ namespace WhatAmIHearing.Api.Shazam
          if ( !string.IsNullOrEmpty( detectResponse ) )
          {
             var parsedResponse = JsonSerializer.Deserialize<DetectSongResponse>( detectResponse );
-            return parsedResponse?.Track?.Share?.SongUrl;
+            return parsedResponse?.Track?.Url;
          }
 
          return string.Empty;

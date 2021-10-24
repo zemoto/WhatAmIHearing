@@ -11,13 +11,7 @@ namespace WhatAmIHearing.Api.Shazam
 
    internal sealed class DetectedTrackInfo
    {
-      [JsonPropertyName( "share" )]
-      public DetectedTrackShareInfo Share { get; set; }
-   }
-
-   internal sealed class DetectedTrackShareInfo
-   {
-      [JsonPropertyName( "href" )]
-      public string SongUrl { get; set; }
+      [JsonPropertyName( "url" )]
+      public string Url { get; set; }
    }
 }
