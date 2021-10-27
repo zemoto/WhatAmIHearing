@@ -26,6 +26,18 @@ namespace WhatAmIHearing.Api
          _apiClients.Remove( this );
       }
 
+      public async Task<string> SendPostRequestAsync( string endpoint )
+      {
+         var message = new HttpRequestMessage( HttpMethod.Post, endpoint );
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
+
+      public async Task<string> SendPostRequestAsync( string endpoint, string body )
+      {
+         var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( body ) };
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
+
       public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
       {
          var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( Convert.ToBase64String( data ) ) };
@@ -35,6 +47,12 @@ namespace WhatAmIHearing.Api
       public async Task<string> SendPostRequestAsync( string endpoint, Dictionary<string,string> formUrlEncodedData )
       {
          var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new FormUrlEncodedContent( formUrlEncodedData ) };
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
+
+      public async Task<string> SendGetRequestAsync( string endpoint )
+      {
+         var message = new HttpRequestMessage( HttpMethod.Get, endpoint );
          return await SendMessageAsync( message ).ConfigureAwait( false );
       }
 
