@@ -114,7 +114,21 @@ namespace WhatAmIHearing.Api.Spotify
                {
                   state.ParsedAuthParams = lineItems[1];
                }
+
+               const string DoneMessage = "Authentication done, you can close this page";
+               var bytes = Encoding.UTF8.GetBytes( DoneMessage );
+               state.Receiver.BeginSend( bytes, 0, bytes.Length, SocketFlags.None, SendCallback, state );
             }
+         }
+         catch { }
+      }
+
+      private void SendCallback( IAsyncResult ar )
+      {
+         var state = (StateObject)ar.AsyncState;
+         try
+         {
+            state.Receiver.EndSend( ar );
          }
          catch { }
 
