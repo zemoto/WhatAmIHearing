@@ -20,5 +20,8 @@
     <Setting Name="SpotifyExpirationTimeUtc" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="AddSongsToSpotifyPlaylist" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

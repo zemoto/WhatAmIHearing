@@ -93,5 +93,17 @@ namespace WhatAmIHearing.Properties {
                 this["SpotifyExpirationTimeUtc"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AddSongsToSpotifyPlaylist {
+            get {
+                return ((bool)(this["AddSongsToSpotifyPlaylist"]));
+            }
+            set {
+                this["AddSongsToSpotifyPlaylist"] = value;
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using WhatAmIHearing.Api;
 using WhatAmIHearing.Api.Shazam;
+using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
 using ZemotoUI;
 using ZemotoUtils;
@@ -73,6 +74,11 @@ namespace WhatAmIHearing
             if ( detectedSong?.IsComplete == true )
             {
                _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
+
+               if ( SpotifyVm.SignedIn && Settings.AddSongsToSpotifyPlaylist )
+               {
+                  SpotifyVm.Result = await SpotifyApi.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle ).ConfigureAwait( false );
+               }
             }
             else
             {
@@ -93,8 +99,8 @@ namespace WhatAmIHearing
 
       public List<MMDevice> DeviceList { get; }
       public List<string> DeviceNameList { get; }
-
-      public Properties.UserSettings Settings => Properties.UserSettings.Default;
+      public Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
+      public SpotifyViewModel SpotifyVm { get; } = new();
 
       private State _recorderState;
       public State RecorderState

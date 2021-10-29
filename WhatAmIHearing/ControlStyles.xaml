@@ -1,14 +1,22 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-   <Style x:Key="PlayStopButtonStyle"
+   <Style x:Key="MainButtonStyle"
           TargetType="{x:Type Button}">
       <Setter Property="Width"
-              Value="50" />
+              Value="80" />
       <Setter Property="Height"
-              Value="50" />
-      <Setter Property="Padding"
-              Value="12" />
+              Value="24" />
+      <Setter Property="Foreground"
+              Value="White" />
+      <Setter Property="HorizontalContentAlignment"
+              Value="Center" />
+      <Setter Property="VerticalContentAlignment"
+              Value="Center" />
+      <Setter Property="FontSize"
+              Value="11" />
+      <Setter Property="FontWeight"
+              Value="SemiBold" />
       <Setter Property="Effect">
          <Setter.Value>
             <DropShadowEffect BlurRadius="4"
@@ -25,7 +33,9 @@
                              Fill="#4682B4"
                              RadiusX="8"
                              RadiusY="8" />
-                  <ContentPresenter Margin="{TemplateBinding Padding}" />
+                  <ContentPresenter Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                </Grid>
                <ControlTemplate.Triggers>
                   <Trigger Property="IsMouseOver"
