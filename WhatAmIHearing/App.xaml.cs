@@ -37,6 +37,8 @@ namespace WhatAmIHearing
             return;
          }
 
+         SingleInstance.PingedBySecondProcess += ( s, a ) => Dispatcher.Invoke( ShowAndForegroundMainWindow );
+
          _model.HotkeyStatusText =
             _globalHotkeyHook.RegisterHotKey( ModifierKeys.Shift, System.Windows.Forms.Keys.F2 )
             ? "Shift + F2"
@@ -116,6 +118,7 @@ namespace WhatAmIHearing
          _trayIcon.Visible = false;
          _window.ShowInTaskbar = true;
          _window.Show();
+         _window.Activate();
       }
    }
 }
