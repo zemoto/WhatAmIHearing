@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using WhatAmIHearing.Api.Spotify.Responses;
@@ -57,8 +58,16 @@ namespace WhatAmIHearing.Api.Spotify
          return !string.IsNullOrEmpty( result ) ? AddToPlaylistResult.Success : AddToPlaylistResult.Failed;
       }
 
+      private static readonly Regex SongQualifierRegex = new Regex( @".*(\s\(.*\))" );
       private static async Task<string> GetSongIdAsync( ApiClient client, string title, string artist )
       {
+         var result = SongQualifierRegex.Match( title );
+         if ( result.Groups.Count > 0 )
+         {
+            var qualifier = result.Groups[result.Groups.Count - 1].Value;
+            title = title.Substring( 0, title.LastIndexOf( qualifier ) );
+         }
+
          var endpointBuilder = new UriBuilder( SongSearchEndpoint );
          var query = HttpUtility.ParseQueryString( endpointBuilder.Query );
          query["q"] = title;
