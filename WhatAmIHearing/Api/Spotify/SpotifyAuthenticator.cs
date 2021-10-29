@@ -19,9 +19,8 @@ namespace WhatAmIHearing.Api.Spotify
       private const string TokenExchangeEndpoint = "https://accounts.spotify.com/api/token";
 
       private readonly AutoResetEvent _authDoneEvent = new( false );
-      private Thread _authenticateThread;
 
-      private Properties.UserSettings Settings => Properties.UserSettings.Default;
+      private Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
 
       public async Task<bool> EnsureAuthenticationIsValid()
       {
@@ -37,14 +36,20 @@ namespace WhatAmIHearing.Api.Spotify
                 DateTime.UtcNow < Settings.SpotifyExpirationTimeUtc;
       }
 
-      public async Task<bool> SignInAsync()
+      public async Task SignInAsync()
       {
          if ( string.IsNullOrEmpty( Settings.SpotifyAccessToken ) )
          {
             await AuthenticateWithBrowserAsync().ConfigureAwait( false );
          }
+      }
 
-         return !string.IsNullOrEmpty( Settings.SpotifyAccessToken );
+      public void SignOut()
+      {
+         Settings.SpotifyAccessToken = string.Empty;
+         Settings.SpotifyRefreshToken = string.Empty;
+         Settings.SpotifyExpirationTimeUtc = default;
+         Settings.Save();
       }
 
       private async Task RefreshAuthenticationAsync()
@@ -60,19 +65,12 @@ namespace WhatAmIHearing.Api.Spotify
 
       private async Task AuthenticateWithBrowserAsync()
       {
+         _authDoneEvent.Reset();
          _ = Process.Start( new ProcessStartInfo( AuthUrl ) { UseShellExecute = true } );
-
-         if ( _authenticateThread is null )
-         {
-            _authDoneEvent.Reset();
-            _authenticateThread = new Thread( ListenForAuthentication ) { IsBackground = true };
-            _authenticateThread.Start();
-         }
-
-         await Task.Run( _authenticateThread.Join ).ConfigureAwait( false );
+         await ListenForAuthentication().ConfigureAwait( false );
       }
 
-      private async void ListenForAuthentication()
+      private async Task ListenForAuthentication()
       {
          var listener = new Socket( _loopbackIpAddress.Address.AddressFamily, SocketType.Stream, ProtocolType.IP );
          listener.Bind( _loopbackIpAddress );
@@ -90,8 +88,6 @@ namespace WhatAmIHearing.Api.Spotify
 
             await GetTokensFromAuthCodeAsync( authCode ).ConfigureAwait( false );
          }
-
-         _authenticateThread = null;
       }
 
       private async Task GetTokensFromAuthCodeAsync( string authCode )
@@ -133,11 +129,7 @@ namespace WhatAmIHearing.Api.Spotify
             }
          }
 
-         // In case of any failure clear out what tokens we have
-         Settings.SpotifyAccessToken = string.Empty;
-         Settings.SpotifyRefreshToken = string.Empty;
-         Settings.SpotifyExpirationTimeUtc = default;
-         Settings.Save();
+         SignOut(); // Clear any saved credentials on failure
       }
 
       private void AcceptCallback( IAsyncResult ar )
