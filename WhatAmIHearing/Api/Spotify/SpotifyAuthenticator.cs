@@ -23,31 +23,28 @@ namespace WhatAmIHearing.Api.Spotify
 
       private Properties.UserSettings Settings => Properties.UserSettings.Default;
 
-      private bool IsAuthenticated() => !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) &&
-                                        !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) &&
-                                        DateTime.UtcNow < Settings.SpotifyExpirationTimeUtc;
-
       public async Task<bool> EnsureAuthenticationIsValid()
       {
-         if ( !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) && !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) )
+         if ( !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) &&
+              !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) &&
+              DateTime.UtcNow + TimeSpan.FromMinutes( 1 ) > Settings.SpotifyExpirationTimeUtc )
          {
-            if ( DateTime.UtcNow + TimeSpan.FromMinutes( 1 ) > Settings.SpotifyExpirationTimeUtc )
-            {
-               await RefreshAuthenticationAsync().ConfigureAwait( false );
-            }
+            await RefreshAuthenticationAsync().ConfigureAwait( false );
          }
 
-         return IsAuthenticated();
+         return !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) &&
+                !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) &&
+                DateTime.UtcNow < Settings.SpotifyExpirationTimeUtc;
       }
 
-      public async Task<bool> AuthenticateAsync()
+      public async Task<bool> SignInAsync()
       {
-         if ( !IsAuthenticated() )
+         if ( string.IsNullOrEmpty( Settings.SpotifyAccessToken ) )
          {
             await AuthenticateWithBrowserAsync().ConfigureAwait( false );
          }
 
-         return IsAuthenticated();
+         return !string.IsNullOrEmpty( Settings.SpotifyAccessToken );
       }
 
       private async Task RefreshAuthenticationAsync()
@@ -67,6 +64,7 @@ namespace WhatAmIHearing.Api.Spotify
 
          if ( _authenticateThread is null )
          {
+            _authDoneEvent.Reset();
             _authenticateThread = new Thread( ListenForAuthentication ) { IsBackground = true };
             _authenticateThread.Start();
          }
