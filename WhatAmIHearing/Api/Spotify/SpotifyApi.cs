@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ namespace WhatAmIHearing.Api.Spotify
    {
       private const string SongSearchEndpoint = "https://api.spotify.com/v1/search";
       private const string UserPlaylistsEndpoint = "https://api.spotify.com/v1/me/playlists";
-      private const string AddToPlaylistEndpoint = "https://api.spotify.com/v1/playlists/{0}/tracks?";
+      private const string PlaylistTracksEndpoint = "https://api.spotify.com/v1/playlists/{0}/tracks?";
 
       private const string OurPlaylistName = "What Did I Hear?";
 
@@ -37,9 +37,18 @@ namespace WhatAmIHearing.Api.Spotify
          }
 
          var songId = await GetSongIdAsync( client, title, artist ).ConfigureAwait( false );
+         if ( string.IsNullOrEmpty( songId ) )
+         {
+            return false;
+         }
 
-         var addPlaylistEndpoint = string.Format( AddToPlaylistEndpoint, ourPlaylistId );
-         var endpointBuilder = new UriBuilder( addPlaylistEndpoint );
+         if ( await GetIsSongInPlaylistAsync( client, songId, ourPlaylistId ).ConfigureAwait( false ) )
+         {
+            return true;
+         }
+
+         var playlistTracksEndpoint = string.Format( PlaylistTracksEndpoint, ourPlaylistId );
+         var endpointBuilder = new UriBuilder( playlistTracksEndpoint );
          var query = HttpUtility.ParseQueryString( endpointBuilder.Query );
          query["uris"] = $"spotify:track:{songId}";
          endpointBuilder.Query = query.ToString();
@@ -113,6 +122,28 @@ namespace WhatAmIHearing.Api.Spotify
          const string description = "Playlist where songs identified by the WhatAmIHearingApp are added";
 
          return string.Format( createPlaylistBodyTemplate, OurPlaylistName, description );
+      }
+
+      private static async Task<bool> GetIsSongInPlaylistAsync( ApiClient client, string songId, string ourPlaylistId )
+      {
+         var playlistTracksEndpoint = string.Format( PlaylistTracksEndpoint, ourPlaylistId );
+         var endpointBuilder = new UriBuilder( playlistTracksEndpoint );
+         var query = HttpUtility.ParseQueryString( endpointBuilder.Query );
+         query["market"] = "US";
+         query["fields"] = "items(track(id))";
+         endpointBuilder.Query = query.ToString();
+
+         var response = await client.SendGetRequestAsync( endpointBuilder.ToString() ).ConfigureAwait( false );
+         if ( !string.IsNullOrEmpty( response ) )
+         {
+            var parsedResponse = JsonSerializer.Deserialize<PlaylistTrackListResponse>( response );
+            if ( parsedResponse?.Items?.Any( x => x?.Track?.Id == songId ) == true )
+            {
+               return true;
+            }
+         }
+
+         return false;
       }
    }
 }
