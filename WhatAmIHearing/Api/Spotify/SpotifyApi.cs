@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,13 +15,13 @@ namespace WhatAmIHearing.Api.Spotify
 
       private const string OurPlaylistName = "What Did I Hear?";
 
-      public static async Task<bool> AddSongToOurPlaylistAsync( string title, string artist )
+      public static async Task<AddToPlaylistResult> AddSongToOurPlaylistAsync( string title, string artist )
       {
          using ( var authenticator = new SpotifyAuthenticator() )
          {
             if ( !await authenticator.EnsureAuthenticationIsValid().ConfigureAwait( false ) )
             {
-               return false;
+               return AddToPlaylistResult.FailedToAuthenticate;
             }
          }
 
@@ -32,19 +32,19 @@ namespace WhatAmIHearing.Api.Spotify
             ourPlaylistId = await CreateOurPlaylistAsync( client ).ConfigureAwait( false );
             if ( string.IsNullOrEmpty( ourPlaylistId ) )
             {
-               return false;
+               return AddToPlaylistResult.CouldNotFindOrCreatePlaylist;
             }
          }
 
          var songId = await GetSongIdAsync( client, title, artist ).ConfigureAwait( false );
          if ( string.IsNullOrEmpty( songId ) )
          {
-            return false;
+            return AddToPlaylistResult.CouldNotFindSong;
          }
 
          if ( await GetIsSongInPlaylistAsync( client, songId, ourPlaylistId ).ConfigureAwait( false ) )
          {
-            return true;
+            return AddToPlaylistResult.SongAlreadyInPlaylist;
          }
 
          var playlistTracksEndpoint = string.Format( PlaylistTracksEndpoint, ourPlaylistId );
@@ -54,7 +54,7 @@ namespace WhatAmIHearing.Api.Spotify
          endpointBuilder.Query = query.ToString();
 
          var result = await client.SendPostRequestAsync( endpointBuilder.ToString() ).ConfigureAwait( false );
-         return !string.IsNullOrEmpty( result );
+         return !string.IsNullOrEmpty( result ) ? AddToPlaylistResult.Success : AddToPlaylistResult.Failed;
       }
 
       private static async Task<string> GetSongIdAsync( ApiClient client, string title, string artist )
