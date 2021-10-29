@@ -103,7 +103,11 @@ namespace WhatAmIHearing.Api.Spotify
 
       private static async Task<string> CreateOurPlaylistAsync( ApiClient client )
       {
-         var response = await client.SendPostRequestAsync( UserPlaylistsEndpoint, GetCreateCustomPlaylistBodyTest() ).ConfigureAwait( false );
+         const string createPlaylistBodyTemplate = "{{ \"name\": \"{0}\", \"description\": \"{1}\", \"public\": \"false\" }}";
+         const string description = "Playlist where songs identified by the WhatAmIHearingApp are added";
+         var createPlaylistData = string.Format( createPlaylistBodyTemplate, OurPlaylistName, description );
+
+         var response = await client.SendPostRequestAsync( UserPlaylistsEndpoint, createPlaylistData ).ConfigureAwait( false );
          if ( !string.IsNullOrEmpty( response ) )
          {
             using var json = JsonDocument.Parse( response );
@@ -114,14 +118,6 @@ namespace WhatAmIHearing.Api.Spotify
          }
 
          return string.Empty;
-      }
-
-      private static string GetCreateCustomPlaylistBodyTest()
-      {
-         const string createPlaylistBodyTemplate = "{{ \"name\": \"{0}\", \"description\": \"{1}\", \"public\": \"false\" }}";
-         const string description = "Playlist where songs identified by the WhatAmIHearingApp are added";
-
-         return string.Format( createPlaylistBodyTemplate, OurPlaylistName, description );
       }
 
       private static async Task<bool> GetIsSongInPlaylistAsync( ApiClient client, string songId, string ourPlaylistId )
