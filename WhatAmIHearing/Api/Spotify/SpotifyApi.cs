@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,10 +15,16 @@ namespace WhatAmIHearing.Api.Spotify
 
       private const string OurPlaylistName = "What Did I Hear?";
 
-      public static bool IsAuthenticated => !string.IsNullOrEmpty( Properties.UserSettings.Default.SpotifyAccessToken );
-
       public static async Task<bool> AddSongToOurPlaylistAsync( string title, string artist )
       {
+         using ( var authenticator = new SpotifyAuthenticator() )
+         {
+            if ( !await authenticator.EnsureAuthenticationIsValid().ConfigureAwait( false ) )
+            {
+               return false;
+            }
+         }
+
          using var client = new SpotifyApiClient();
          var ourPlaylistId = await GetOurPlaylistIdAsync( client ).ConfigureAwait( false );
          if ( string.IsNullOrEmpty( ourPlaylistId ) )

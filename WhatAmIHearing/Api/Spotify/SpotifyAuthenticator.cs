@@ -11,17 +11,57 @@ using System.Web;
 
 namespace WhatAmIHearing.Api.Spotify
 {
-   internal sealed class Authenticator : IDisposable
+   internal sealed class SpotifyAuthenticator : IDisposable
    {
       private static readonly IPEndPoint _loopbackIpAddress = new( IPAddress.Loopback, 1378 );
       private const string RedirectUrl = "http://127.0.0.1:1378";
       private static readonly string AuthUrl = $"https://accounts.spotify.com/authorize?client_id={ApiConstants.SpotifyClientId}&response_type=code&redirect_uri={RedirectUrl}&scope=playlist-read-private,playlist-modify-private&show_dialog=true";
-      private const string CodeToTokenEndPoint = "https://accounts.spotify.com/api/token";
+      private const string TokenExchangeEndpoint = "https://accounts.spotify.com/api/token";
 
       private readonly AutoResetEvent _authDoneEvent = new( false );
       private Thread _authenticateThread;
 
-      public async Task LaunchAuthInBrowserAsync()
+      private Properties.UserSettings Settings => Properties.UserSettings.Default;
+
+      private bool IsAuthenticated() => !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) &&
+                                        !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) &&
+                                        DateTime.UtcNow < Settings.SpotifyExpirationTimeUtc;
+
+      public async Task<bool> EnsureAuthenticationIsValid()
+      {
+         if ( !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) && !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) )
+         {
+            if ( DateTime.UtcNow + TimeSpan.FromMinutes( 1 ) > Settings.SpotifyExpirationTimeUtc )
+            {
+               await RefreshAuthenticationAsync().ConfigureAwait( false );
+            }
+         }
+
+         return IsAuthenticated();
+      }
+
+      public async Task<bool> AuthenticateAsync()
+      {
+         if ( !IsAuthenticated() )
+         {
+            await AuthenticateWithBrowserAsync().ConfigureAwait( false );
+         }
+
+         return IsAuthenticated();
+      }
+
+      private async Task RefreshAuthenticationAsync()
+      {
+         var data = new Dictionary<string, string>
+         {
+            ["grant_type"] = "refresh_token",
+            ["refresh_token"] = Settings.SpotifyRefreshToken
+         };
+
+         await ExchangeTokensAsync( data ).ConfigureAwait( false );
+      }
+
+      private async Task AuthenticateWithBrowserAsync()
       {
          _ = Process.Start( new ProcessStartInfo( AuthUrl ) { UseShellExecute = true } );
 
@@ -50,18 +90,13 @@ namespace WhatAmIHearing.Api.Spotify
             var values = HttpUtility.ParseQueryString( state.ParsedAuthParams );
             var authCode = values["/?code"];
 
-            var accessToken = await ConvertAuthCodeToAccessTokenAsync( authCode ).ConfigureAwait( false );
-            if ( !string.IsNullOrEmpty( accessToken ) )
-            {
-               Properties.UserSettings.Default.SpotifyAccessToken = accessToken;
-               Properties.UserSettings.Default.Save();
-            }
+            await GetTokensFromAuthCodeAsync( authCode ).ConfigureAwait( false );
          }
 
          _authenticateThread = null;
       }
 
-      private async Task<string> ConvertAuthCodeToAccessTokenAsync( string authCode )
+      private async Task GetTokensFromAuthCodeAsync( string authCode )
       {
          var data = new Dictionary<string, string>
          {
@@ -70,18 +105,41 @@ namespace WhatAmIHearing.Api.Spotify
             ["redirect_uri"] = RedirectUrl
          };
 
-         using var client = new SpotifyApiClient();
-         var responseJson = await client.SendPostRequestAsync( CodeToTokenEndPoint, data ).ConfigureAwait( false );
+         await ExchangeTokensAsync( data ).ConfigureAwait( false );
+      }
+
+      private async Task ExchangeTokensAsync( Dictionary<string,string> requestData )
+      {
+         using var client = new SpotifyApiClient( false );
+         var responseJson = await client.SendPostRequestAsync( TokenExchangeEndpoint, requestData ).ConfigureAwait( false );
+
          if ( !string.IsNullOrEmpty( responseJson ) )
          {
             using var json = JsonDocument.Parse( responseJson );
             if ( json.RootElement.TryGetProperty( "access_token", out var jsonAccessToken ) )
             {
-               return jsonAccessToken.ToString();
+               Settings.SpotifyAccessToken = jsonAccessToken.ToString();
+
+               if ( json.RootElement.TryGetProperty( "refresh_token", out var jsonRefreshToken ) )
+               {
+                  Settings.SpotifyRefreshToken = jsonRefreshToken.ToString();
+               }
+
+               if ( json.RootElement.TryGetProperty( "expires_in", out var jsonExpiresIn ) )
+               {
+                  Settings.SpotifyExpirationTimeUtc = DateTime.UtcNow + TimeSpan.FromSeconds( jsonExpiresIn.GetInt32() );
+               }
+
+               Settings.Save();
+               return;
             }
          }
 
-         return string.Empty;
+         // In case of any failure clear out what tokens we have
+         Settings.SpotifyAccessToken = string.Empty;
+         Settings.SpotifyRefreshToken = string.Empty;
+         Settings.SpotifyExpirationTimeUtc = default;
+         Settings.Save();
       }
 
       private void AcceptCallback( IAsyncResult ar )
