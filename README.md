@@ -10,7 +10,7 @@ Uses simple POST calls to Shazam's API (see documentation at https://rapidapi.co
 
 ## Spotify Integration
 
-User has the option to authenticate with Spotify, allowing the app to add any detected songs to the private playlist "What did I Hear?".
+User has the option to authenticate with Spotify, allowing the app to add any detected songs to the private playlist "What Did I Hear?".
 
 Authentication is handled by [SpotifyAuthenticator](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/Api/Spotify/SpotifyAuthenticator.cs). Uses the user's default browser, using their existing credentials if they are already signed in with the browser, only requiring them to allow the app to access their playlist info. See 
 
@@ -28,6 +28,6 @@ See the [ShazamSpecEnforcer](https://github.com/zemoto/WhatAmIHearing/blob/main/
 
 Simple class for playing back the audio if the API didn't return any matches. User's are given the chance to hear their recorded audio played back to them to ensure there was no noice or unintended audio.
 
-### [SingleInstance](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/SingleInstance.cs)
+### [SingleInstance](https://github.com/zemoto/WhatAmIHearing/blob/2.1/WhatAmIHearing/Utils/SingleInstance.cs)
 
 Ensures that only a single instance of the app is ever running at any one time. And if another instance tries to run, pings the currently running instance, allowing it to respond as necessary. In this case we show/foreground the main window in response.
