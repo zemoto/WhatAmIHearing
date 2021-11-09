@@ -35,6 +35,19 @@ namespace WhatAmIHearing.UI
          set => SetProperty( ref _hotkeyStatusText, value );
       }
 
+      public bool KeepWindowTopmost
+      {
+         get => Settings.KeepWindowTopmost;
+         set
+         {
+            if ( Settings.KeepWindowTopmost != value )
+            {
+               Settings.KeepWindowTopmost = value;
+               OnPropertyChanged( nameof( KeepWindowTopmost ) );
+            }
+         }
+      }
+
       public ICommand RecordStopCommand { get; set; }
    }
 }

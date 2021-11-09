@@ -105,5 +105,17 @@ namespace WhatAmIHearing.Properties {
                 this["AddSongsToSpotifyPlaylist"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool KeepWindowTopmost {
+            get {
+                return ((bool)(this["KeepWindowTopmost"]));
+            }
+            set {
+                this["KeepWindowTopmost"] = value;
+            }
+        }
     }
 }

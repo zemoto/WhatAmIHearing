@@ -16,7 +16,8 @@
         AllowsTransparency="True"
         Background="Transparent"
         ShowActivated="True"
-        d:DataContext="{d:DesignData Type={x:Type local:MainViewModel}}">
+        d:DataContext="{d:DesignData Type={x:Type local:MainViewModel}}"
+        Topmost="{Binding KeepWindowTopmost, Mode=OneWay}">
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24"
                     ResizeBorderThickness="0"
@@ -50,7 +51,6 @@
                            ShadowDepth="2" />
       </Grid.Effect>
       <Grid.RowDefinitions>
-         <RowDefinition Height="Auto" />
          <RowDefinition Height="Auto" />
          <RowDefinition Height="Auto" />
          <RowDefinition Height="Auto" />
@@ -156,27 +156,39 @@
          </Button>
       </Grid>
 
-      <CheckBox Grid.Row="2"
-                Margin="12,2"
-                Content="Keep open in system tray"
-                IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
-
       <TextBlock Grid.Row="2"
                  Margin="12,2"
-                 HorizontalAlignment="Right">
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Top">
          <Run Text="Hotkey: " /><Run Text="{Binding HotkeyStatusText, Mode=OneWay}" />
       </TextBlock>
 
-      <CheckBox Grid.Row="3"
+      <Expander Grid.Row="2"
                 Margin="12,2"
-                Content="Open hidden"
-                IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
+                Header="Settings">
+         <StackPanel Margin="8,2,0,0">
+            <CheckBox Grid.Row="2"
+                      Margin="6,2"
+                      Content="Keep open in system tray"
+                      IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
 
-      <Expander Grid.Row="4"
+            <CheckBox Grid.Row="3"
+                      Margin="6,2"
+                      Content="Open hidden"
+                      IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
+
+            <CheckBox Grid.Row="4"
+                      Margin="6,2"
+                      Content="Keep window on top"
+                      IsChecked="{Binding KeepWindowTopmost, Mode=TwoWay}" />
+         </StackPanel>
+      </Expander>
+
+      <Expander Grid.Row="3"
                 Margin="12,2,12,12"
                 Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
                 FontWeight="SemiBold">
-         <StackPanel Margin="12,4,0,0">
+         <StackPanel Margin="8,8,0,0">
             <StackPanel Orientation="Horizontal">
                <Button Style="{StaticResource MainButtonStyle}"
                        Command="{Binding SpotifyVm.SignInOutCommand}"
@@ -188,7 +200,7 @@
                          IsChecked="{Binding Settings.AddSongsToSpotifyPlaylist, Mode=TwoWay}"
                          VerticalAlignment="Center"
                          FontWeight="Normal"
-                         Margin="8,0,0,0" />
+                         Margin="12,0,0,0" />
             </StackPanel>
 
             <TextBlock Margin="0,8,0,0"
