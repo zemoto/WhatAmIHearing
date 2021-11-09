@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WhatAmIHearing"
+        xmlns:spotify="clr-namespace:WhatAmIHearing.Api.Spotify"
         xmlns:ui="clr-namespace:ZemotoUI"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -27,6 +28,16 @@
          </ResourceDictionary.MergedDictionaries>
 
          <ui:EqualityToVisibilityConverter x:Key="VisibleIfEqual" />
+         <ui:EqualityToVisibilityConverter x:Key="VisibleIfNotEqual"
+                                           Invert="True" />
+
+         <ui:BoolToObjectConverter x:Key="SignedInStatusConverter"
+                                   TrueValue="Spotify Integration (Signed In)"
+                                   FalseValue="Spotify Integration (Signed Out)" />
+
+         <ui:BoolToObjectConverter x:Key="SignInButtonContentConverter"
+                                   TrueValue="Sign Out"
+                                   FalseValue="Sign In" />
       </ResourceDictionary>
    </Window.Resources>
 
@@ -42,12 +53,24 @@
          <RowDefinition Height="Auto" />
          <RowDefinition Height="Auto" />
          <RowDefinition Height="Auto" />
+         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
       <Rectangle Grid.RowSpan="99"
-                 Fill="#D9E8FF"
                  RadiusX="4"
-                 RadiusY="4" />
+                 RadiusY="4">
+         <Rectangle.Fill>
+            <LinearGradientBrush StartPoint="0,0"
+                                 EndPoint="0,1">
+               <LinearGradientBrush.GradientStops>
+                  <GradientStop Offset="0"
+                                Color="#D9E8FF" />
+                  <GradientStop Offset="1"
+                                Color="#D9FFE8" />
+               </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+         </Rectangle.Fill>
+      </Rectangle>
 
       <TextBlock Grid.Row="0"
                  Text="What Am I Hearing?"
@@ -94,8 +117,13 @@
 
          <Button Grid.Column="2"
                  Margin="0,-4,0,0"
-                 Style="{StaticResource PlayStopButtonStyle}"
-                 Command="{Binding RecordStopCommand}">
+                 Style="{StaticResource MainButtonStyle}"
+                 Command="{Binding RecordStopCommand}"
+                 Width="50"
+                 Height="50"
+                 Padding="12"
+                 HorizontalContentAlignment="Stretch"
+                 VerticalContentAlignment="Stretch">
             <Grid>
                <Path Fill="White"
                      Stretch="UniformToFill"
@@ -128,19 +156,46 @@
       </Grid>
 
       <CheckBox Grid.Row="2"
-                Margin="12,2,12,2"
+                Margin="12,2"
                 Content="Keep open in system tray"
                 IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
 
       <TextBlock Grid.Row="2"
-                 Margin="12,2,12,2"
+                 Margin="12,2"
                  HorizontalAlignment="Right">
          <Run Text="Hotkey: " /><Run Text="{Binding HotkeyStatusText, Mode=OneWay}" />
       </TextBlock>
 
       <CheckBox Grid.Row="3"
-                Margin="12,2,12,12"
+                Margin="12,2"
                 Content="Open hidden"
                 IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
+
+      <Expander Grid.Row="4"
+                Margin="12,2,12,12"
+                Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
+                FontWeight="SemiBold">
+         <StackPanel Margin="12,4,0,0">
+            <StackPanel Orientation="Horizontal">
+               <Button Style="{StaticResource MainButtonStyle}"
+                       Command="{Binding SpotifyVm.SignInOutCommand}"
+                       Content="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignInButtonContentConverter}, Mode=OneWay}"
+                       HorizontalAlignment="Left" />
+
+               <CheckBox Content="Add detected songs to private playlist"
+                         IsEnabled="{Binding SpotifyVm.SignedIn, Mode=OneWay}"
+                         IsChecked="{Binding Settings.AddSongsToSpotifyPlaylist, Mode=TwoWay}"
+                         VerticalAlignment="Center"
+                         FontWeight="Normal"
+                         Margin="8,0,0,0" />
+            </StackPanel>
+
+            <TextBlock Margin="0,8,0,0"
+                       Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}}">
+               <Run Text="Result: " /><Run Text="{Binding SpotifyVm.ResultText, Mode=OneWay}" />
+            </TextBlock>
+         </StackPanel>
+         
+      </Expander>
    </Grid>
 </Window>

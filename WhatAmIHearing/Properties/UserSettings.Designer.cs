@@ -58,5 +58,52 @@ namespace WhatAmIHearing.Properties {
                 this["OpenHidden"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SpotifyAccessToken {
+            get {
+                return ((string)(this["SpotifyAccessToken"]));
+            }
+            set {
+                this["SpotifyAccessToken"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SpotifyRefreshToken {
+            get {
+                return ((string)(this["SpotifyRefreshToken"]));
+            }
+            set {
+                this["SpotifyRefreshToken"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.DateTime SpotifyExpirationTimeUtc {
+            get {
+                return ((global::System.DateTime)(this["SpotifyExpirationTimeUtc"]));
+            }
+            set {
+                this["SpotifyExpirationTimeUtc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AddSongsToSpotifyPlaylist {
+            get {
+                return ((bool)(this["AddSongsToSpotifyPlaylist"]));
+            }
+            set {
+                this["AddSongsToSpotifyPlaylist"] = value;
+            }
+        }
     }
 }

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using WhatAmIHearing.Api;
+using WhatAmIHearing.Api.Shazam;
+using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
 using ZemotoUI;
 using ZemotoUtils;
@@ -45,8 +47,8 @@ namespace WhatAmIHearing
 
       private async void OnRecordingStopped( object sender, RecordingFinishedEventArgs args )
       {
-         string songInfoUrl = string.Empty;
-         using ( new ScopeGuard( () => DetectionFinished?.Invoke( this, !string.IsNullOrEmpty( songInfoUrl ) ) ) )
+         DetectedTrackInfo detectedSong = null;
+         using ( new ScopeGuard( () => DetectionFinished?.Invoke( this, detectedSong?.IsComplete == true ) ) )
          {
             using ( new ScopeGuard( Reset ) )
             {
@@ -61,7 +63,7 @@ namespace WhatAmIHearing
                RecorderState = State.SendingToShazam;
                try
                {
-                  songInfoUrl = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
+                  detectedSong = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
                }
                catch ( TaskCanceledException )
                {
@@ -69,9 +71,14 @@ namespace WhatAmIHearing
                }
             }
 
-            if ( !string.IsNullOrEmpty( songInfoUrl ) )
+            if ( detectedSong?.IsComplete == true )
             {
-               _ = Process.Start( new ProcessStartInfo( songInfoUrl ) { UseShellExecute = true } );
+               _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
+
+               if ( SpotifyVm.SignedIn && Settings.AddSongsToSpotifyPlaylist )
+               {
+                  SpotifyVm.Result = await SpotifyApi.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle ).ConfigureAwait( false );
+               }
             }
             else
             {
@@ -92,8 +99,8 @@ namespace WhatAmIHearing
 
       public List<MMDevice> DeviceList { get; }
       public List<string> DeviceNameList { get; }
-
-      public Properties.UserSettings Settings => Properties.UserSettings.Default;
+      public Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
+      public SpotifyViewModel SpotifyVm { get; } = new();
 
       private State _recorderState;
       public State RecorderState

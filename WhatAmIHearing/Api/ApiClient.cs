@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Api
 {
-   internal sealed class ApiClient : IDisposable
+   internal abstract class ApiClient : IDisposable
    {
-      private static readonly Dictionary<string, string> ApiHeaders = new()
-      {
-         ["x-rapidapi-host"] = "shazam.p.rapidapi.com",
-         ["x-rapidapi-key"] = ApiConstants.ApiKey
-      };
+      protected abstract Dictionary<string, string> ApiHeaders { get; }
 
       private static readonly List<ApiClient> _apiClients = new();
 
@@ -21,7 +17,7 @@ namespace WhatAmIHearing.Api
       private readonly HttpClient _client = new();
       private readonly CancellationTokenSource _cancelToken = new();
 
-      public ApiClient() => _apiClients.Add( this );
+      protected ApiClient() => _apiClients.Add( this );
 
       public void Dispose()
       {
@@ -30,11 +26,39 @@ namespace WhatAmIHearing.Api
          _apiClients.Remove( this );
       }
 
+      public async Task<string> SendPostRequestAsync( string endpoint )
+      {
+         var message = new HttpRequestMessage( HttpMethod.Post, endpoint );
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
+
+      public async Task<string> SendPostRequestAsync( string endpoint, string body )
+      {
+         var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( body ) };
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
+
       public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
       {
          var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( Convert.ToBase64String( data ) ) };
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
 
-         foreach( var ( key, value ) in ApiHeaders )
+      public async Task<string> SendPostRequestAsync( string endpoint, Dictionary<string,string> formUrlEncodedData )
+      {
+         var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new FormUrlEncodedContent( formUrlEncodedData ) };
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
+
+      public async Task<string> SendGetRequestAsync( string endpoint )
+      {
+         var message = new HttpRequestMessage( HttpMethod.Get, endpoint );
+         return await SendMessageAsync( message ).ConfigureAwait( false );
+      }
+
+      private async Task<string> SendMessageAsync( HttpRequestMessage message )
+      {
+         foreach ( var (key, value) in ApiHeaders )
          {
             message.Headers.Add( key, value );
          }
