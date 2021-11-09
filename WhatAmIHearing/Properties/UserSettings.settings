@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="SelectedDevice" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">Default Input Device</Value>
     </Setting>
     <Setting Name="KeepOpenInTray" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

@@ -1,8 +1,5 @@
-﻿using NAudio.CoreAudioApi;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using WhatAmIHearing.Api;
@@ -18,13 +15,11 @@ namespace WhatAmIHearing
 {
    internal sealed class Main
    {
-      private const string DefaultDeviceName = "Default Input Device";
 
       private readonly MainViewModel _model;
       private readonly MainWindow _window;
       private readonly Recorder _recorder = new();
-      private readonly MMDeviceEnumerator _deviceEnumerator = new();
-      private readonly List<MMDevice> _deviceList;
+      private readonly DeviceProvider _deviceProvider = new();
 
       private bool _windowShownFromHotkey;
 
@@ -32,8 +27,7 @@ namespace WhatAmIHearing
 
       public Main()
       {
-         _deviceList = _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active ).ToList();
-         _model = new MainViewModel( _deviceList, DefaultDeviceName ) { RecordStopCommand = new RelayCommand( OnRecord ) };
+         _model = new MainViewModel( _deviceProvider ) { RecordStopCommand = new RelayCommand( OnRecord ) };
          _model.SpotifyVm.SignInOutCommand = new RelayCommand( OnSpotifySignInOut );
 
          _window = new MainWindow( _model );
@@ -126,12 +120,8 @@ namespace WhatAmIHearing
          }
          else
          {
-            var selectedDevice = Settings.SelectedDevice == DefaultDeviceName
-               ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
-               : _deviceList.First( x => x.FriendlyName == Settings.SelectedDevice );
-
             _model.RecorderState = State.Recording;
-            _recorder.StartRecording( selectedDevice );
+            _recorder.StartRecording( _deviceProvider.GetSelectedDevice() );
          }
       }
 

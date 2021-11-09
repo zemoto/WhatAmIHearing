@@ -1,7 +1,7 @@
-﻿using NAudio.CoreAudioApi;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
 using WhatAmIHearing.Api.Spotify;
+using WhatAmIHearing.Audio;
 using ZemotoUI;
 
 namespace WhatAmIHearing.UI
@@ -15,16 +15,7 @@ namespace WhatAmIHearing.UI
 
    internal sealed class MainViewModel : ViewModelBase
    {
-      public MainViewModel( List<MMDevice> deviceList, string defaultDeviceName )
-      {
-         DeviceNameList = deviceList.ConvertAll( x => x.FriendlyName );
-         DeviceNameList.Insert( 0, defaultDeviceName );
-
-         if ( string.IsNullOrEmpty( Settings.SelectedDevice ) )
-         {
-            Settings.SelectedDevice = defaultDeviceName;
-         }
-      }
+      public MainViewModel( DeviceProvider deviceProvider ) => DeviceNameList = deviceProvider.GetDeviceNameList();
 
       public List<string> DeviceNameList { get; }
       public Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
