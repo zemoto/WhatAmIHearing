@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace WhatAmIHearing
+namespace WhatAmIHearing.Utils
 {
    [Flags]
    internal enum ModifierKeys : uint
@@ -48,8 +48,8 @@ namespace WhatAmIHearing
 
             if ( m.Msg == WM_HOTKEY )
             {
-               Keys key = (Keys)( ( (int)m.LParam >> 16 ) & 0xFFFF );
-               ModifierKeys modifier = (ModifierKeys)( (int)m.LParam & 0xFFFF );
+               var key = (Keys)( ( (int)m.LParam >> 16 ) & 0xFFFF );
+               var modifier = (ModifierKeys)( (int)m.LParam & 0xFFFF );
 
                KeyPressed?.Invoke( this, new KeyPressedEventArgs( modifier, key ) );
             }
@@ -58,7 +58,7 @@ namespace WhatAmIHearing
          public event EventHandler<KeyPressedEventArgs> KeyPressed;
       }
 
-      private readonly MessageReceivingWindow _window = new ();
+      private readonly MessageReceivingWindow _window = new();
       private int _currentHotkeyId;
 
       public bool RegisterHotKey( ModifierKeys modifier, Keys key )

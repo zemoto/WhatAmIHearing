@@ -3,6 +3,7 @@ using NAudio.Wave;
 using System;
 using System.IO;
 using WhatAmIHearing.Api.Shazam;
+using WhatAmIHearing.Utils;
 
 namespace WhatAmIHearing.Audio
 {

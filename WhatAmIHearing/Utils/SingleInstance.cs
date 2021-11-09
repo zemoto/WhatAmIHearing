@@ -2,7 +2,7 @@
 using System.IO.Pipes;
 using System.Threading;
 
-namespace WhatAmIHearing
+namespace WhatAmIHearing.Utils
 {
    internal static class SingleInstance
    {
@@ -40,7 +40,7 @@ namespace WhatAmIHearing
       private static void ListenForOtherProcesses()
       {
          var server = new NamedPipeServerStream( SingleInstanceName, PipeDirection.In, 1, PipeTransmissionMode.Message, PipeOptions.Asynchronous );
-         server.BeginWaitForConnection( OnPipeConnection, server );
+         _ = server.BeginWaitForConnection( OnPipeConnection, server );
       }
 
       private static void OnPipeConnection( IAsyncResult ar )

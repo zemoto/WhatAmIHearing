@@ -1,6 +1,6 @@
 ﻿using ZemotoUI;
 
-namespace WhatAmIHearing
+namespace WhatAmIHearing.Utils
 {
    internal sealed class StatusReport : ViewModelBase
    {

@@ -1,11 +1,12 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using ZemotoUI;
 
 namespace WhatAmIHearing.Api.Spotify
 {
    internal sealed class SpotifyViewModel : ViewModelBase
    {
+      public void NotifySignedInChanged() => OnPropertyChanged( nameof( SignedIn ) );
+
       public bool SignedIn => !string.IsNullOrEmpty( Properties.UserSettings.Default.SpotifyAccessToken );
 
       private AddToPlaylistResult _result;
@@ -32,23 +33,6 @@ namespace WhatAmIHearing.Api.Spotify
          _ => string.Empty
       };
 
-      private ICommand _signInOutCommand;
-      public ICommand SignInOutCommand => _signInOutCommand ??= new RelayCommand( async () =>
-      {
-         using ( var authenticator = new SpotifyAuthenticator() )
-         {
-            if ( SignedIn )
-            {
-               authenticator.SignOut();
-            }
-            else
-            {
-               await authenticator.SignInAsync().ConfigureAwait( true );
-            }
-         }
-
-         OnPropertyChanged( nameof( SignedIn ) );
-         Application.Current.MainWindow.Activate();
-      } );
+      public ICommand SignInOutCommand { get; set; }
    }
 }
