@@ -40,7 +40,7 @@ namespace WhatAmIHearing
       {
          _model.HotkeyStatusText = hotkeyRegistered ? "Shift + F2" : "Failed to register";
 
-         if ( Settings.OpenHidden )
+         if ( Settings.KeepOpenInTray && Settings.OpenHidden )
          {
             HideWindow();
          }

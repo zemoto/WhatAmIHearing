@@ -29,6 +29,7 @@
             <ResourceDictionary Source="ControlStyles.xaml" />
          </ResourceDictionary.MergedDictionaries>
 
+         <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
          <ui:EqualityToVisibilityConverter x:Key="VisibleIfEqual" />
          <ui:EqualityToVisibilityConverter x:Key="VisibleIfNotEqual"
                                            Invert="True" />
@@ -167,14 +168,16 @@
                 Margin="12,2"
                 Header="Settings">
          <StackPanel Margin="8,2,0,0">
-            <CheckBox Grid.Row="2"
+            <CheckBox x:Name="KeepOpenInTrayCheckbox" 
+                      Grid.Row="2"
                       Margin="6,2"
                       Content="Keep open in system tray"
                       IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
 
             <CheckBox Grid.Row="3"
-                      Margin="6,2"
-                      Content="Open hidden"
+                      Margin="16,2"
+                      Content="Launch hidden"
+                      Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
                       IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
 
             <CheckBox Grid.Row="4"
