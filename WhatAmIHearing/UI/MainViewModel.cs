@@ -6,13 +6,6 @@ using ZemotoUI;
 
 namespace WhatAmIHearing.UI
 {
-   internal enum State
-   {
-      Stopped = 0,
-      Recording = 1,
-      SendingToShazam = 2
-   }
-
    internal sealed class MainViewModel : ViewModelBase
    {
       public MainViewModel( DeviceProvider deviceProvider ) => DeviceNameList = deviceProvider.GetDeviceNameList();
@@ -20,13 +13,7 @@ namespace WhatAmIHearing.UI
       public List<string> DeviceNameList { get; }
       public Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
       public SpotifyViewModel SpotifyVm { get; } = new();
-
-      private State _recorderState;
-      public State RecorderState
-      {
-         get => _recorderState;
-         set => SetProperty( ref _recorderState, value );
-      }
+      public RecorderViewModel RecorderVm { get; } = new();
 
       private string _hotkeyStatusText;
       public string HotkeyStatusText

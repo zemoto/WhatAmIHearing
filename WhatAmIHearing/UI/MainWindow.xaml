@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WhatAmIHearing.UI"
-        xmlns:utils="clr-namespace:WhatAmIHearing.Utils"
+        xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
         xmlns:spotify="clr-namespace:WhatAmIHearing.Api.Spotify"
         xmlns:ui="clr-namespace:ZemotoUI"
         mc:Ignorable="d"
@@ -108,10 +108,10 @@
             <ProgressBar Grid.Row="1"
                          Background="White"
                          Foreground="#69C3FF"
-                         Value="{Binding Source={x:Static utils:StatusReport.Status}, Path=Progress, Mode=OneWay}"
+                         Value="{Binding RecorderVm.RecordingProgress, Mode=OneWay}"
                          Height="24" />
             <TextBlock Grid.Row="1"
-                       Text="{Binding Source={x:Static utils:StatusReport.Status}, Path=Text, Mode=OneWay}"
+                       Text="{Binding RecorderVm.RecorderStatusText, Mode=OneWay}"
                        Margin="6,6,0,0"
                        Height="24" />
          </Grid>
@@ -128,7 +128,7 @@
             <Grid>
                <Path Fill="White"
                      Stretch="UniformToFill"
-                     Visibility="{Binding RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static local:State.Recording}}">
+                     Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.Recording}}">
                   <Path.Data>
                      <PathGeometry Figures="M 0,0 L 0,1 1,1 1,0 Z" />
                   </Path.Data>
@@ -136,7 +136,7 @@
                <Path Stroke="White"
                      StrokeThickness="4"
                      Stretch="UniformToFill"
-                     Visibility="{Binding RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static local:State.SendingToShazam}}">
+                     Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.SendingToShazam}}">
                   <Path.Data>
                      <PathGeometry>
                         <PathGeometry.Figures>
@@ -151,7 +151,7 @@
                   </Path.Data>
                </Path>
                <Ellipse Fill="White"
-                        Visibility="{Binding RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static local:State.Stopped}}" />
+                        Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.Stopped}}" />
             </Grid>
          </Button>
       </Grid>

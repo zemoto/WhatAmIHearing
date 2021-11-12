@@ -3,7 +3,6 @@ using NAudio.Wave;
 using System;
 using System.IO;
 using WhatAmIHearing.Api.Shazam;
-using WhatAmIHearing.Utils;
 
 namespace WhatAmIHearing.Audio
 {
@@ -22,14 +21,17 @@ namespace WhatAmIHearing.Audio
 
    internal sealed class Recorder
    {
+      private readonly RecorderViewModel _model;
+
       private int _maxRecordingSize;
       private bool _cancelled;
-
       private WasapiLoopbackCapture _audioCapturer;
       private WaveFileWriter _audioWriter;
       private MemoryStream _recordedFileStream;
 
       public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
+
+      public Recorder( RecorderViewModel model ) => _model = model;
 
       public void StartRecording( MMDevice device )
       {
@@ -41,8 +43,8 @@ namespace WhatAmIHearing.Audio
          _audioWriter = new WaveFileWriter( _recordedFileStream, _audioCapturer.WaveFormat );
          _maxRecordingSize = ShazamSpecEnforcer.GetMaxRecordingSize( _audioCapturer.WaveFormat.AverageBytesPerSecond );
 
-         StatusReport.Status.Text = $"Recording: 0/{_maxRecordingSize} bits";
-         StatusReport.Status.Progress = 0;
+         _model.RecordingProgress = 0;
+         _model.RecorderStatusText = $"Recording: 0/{_maxRecordingSize} bits";
 
          _audioCapturer.StartRecording();
       }
@@ -62,8 +64,8 @@ namespace WhatAmIHearing.Audio
          else
          {
             _audioWriter.Write( e.Buffer, 0, e.BytesRecorded );
-            StatusReport.Status.Text = $"Recording: {_audioWriter.Position}/{_maxRecordingSize} bits";
-            StatusReport.Status.Progress = (int)( (double)_audioWriter.Position / _maxRecordingSize * 100 );
+            _model.RecordingProgress = (int)( (double)_audioWriter.Position / _maxRecordingSize * 100 );
+            _model.RecorderStatusText = $"Recording: {_audioWriter.Position}/{_maxRecordingSize} bits";
          }
       }
 

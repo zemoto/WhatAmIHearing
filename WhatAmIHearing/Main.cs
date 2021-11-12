@@ -15,10 +15,9 @@ namespace WhatAmIHearing
 {
    internal sealed class Main
    {
-
       private readonly MainViewModel _model;
       private readonly MainWindow _window;
-      private readonly Recorder _recorder = new();
+      private readonly Recorder _recorder;
       private readonly DeviceProvider _deviceProvider = new();
 
       private bool _windowShownFromHotkey;
@@ -33,6 +32,7 @@ namespace WhatAmIHearing
          _window = new MainWindow( _model );
          _window.Closing += OnWindowClosing;
 
+         _recorder = new Recorder( _model.RecorderVm );
          _recorder.RecordingFinished += OnRecordingStopped;
       }
 
@@ -65,8 +65,9 @@ namespace WhatAmIHearing
          {
             using ( new ScopeGuard( () =>
                {
-                  _model.RecorderState = State.Stopped;
-                  StatusReport.Reset();
+                  _model.RecorderVm.RecorderState = State.Stopped;
+                  _model.RecorderVm.RecorderStatusText = string.Empty;
+                  _model.RecorderVm.RecordingProgress = 0;
                } ) )
             {
                if ( args.Cancelled )
@@ -74,10 +75,9 @@ namespace WhatAmIHearing
                   return;
                }
 
-               StatusReport.Status.Text = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
-               StatusReport.Status.Progress = 100;
-
-               _model.RecorderState = State.SendingToShazam;
+               _model.RecorderVm.RecorderState = State.SendingToShazam;
+               _model.RecorderVm.RecorderStatusText = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
+               _model.RecorderVm.RecordingProgress = 100;
                try
                {
                   detectedSong = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
@@ -110,17 +110,17 @@ namespace WhatAmIHearing
 
       private void OnRecord()
       {
-         if ( _model.RecorderState is State.Recording )
+         if ( _model.RecorderVm.RecorderState is State.Recording )
          {
             _recorder.CancelRecording();
          }
-         else if ( _model.RecorderState is State.SendingToShazam )
+         else if ( _model.RecorderVm.RecorderState is State.SendingToShazam )
          {
             ApiClient.CancelRequests();
          }
          else
          {
-            _model.RecorderState = State.Recording;
+            _model.RecorderVm.RecorderState = State.Recording;
             _recorder.StartRecording( _deviceProvider.GetSelectedDevice() );
          }
       }
@@ -154,7 +154,7 @@ namespace WhatAmIHearing
 
       public void OnRecordHotkey( object sender, KeyPressedEventArgs e )
       {
-         if ( _model.RecorderState is State.Stopped )
+         if ( _model.RecorderVm.RecorderState is State.Stopped )
          {
             if ( !_window.IsVisible )
             {
