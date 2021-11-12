@@ -17,7 +17,7 @@
         Background="Transparent"
         ShowActivated="True"
         d:DataContext="{d:DesignData Type={x:Type local:MainViewModel}}"
-        Topmost="{Binding KeepWindowTopmost, Mode=OneWay}">
+        Topmost="{Binding Settings.KeepWindowTopmost, Mode=OneWay}">
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24"
                     ResizeBorderThickness="0"
@@ -180,7 +180,7 @@
             <CheckBox Grid.Row="4"
                       Margin="6,2"
                       Content="Keep window on top"
-                      IsChecked="{Binding KeepWindowTopmost, Mode=TwoWay}" />
+                      IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
          </StackPanel>
       </Expander>
 
