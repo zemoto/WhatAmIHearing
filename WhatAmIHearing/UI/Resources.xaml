@@ -1,5 +1,19 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ui="clr-namespace:ZemotoUI">
+
+   <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
+   <ui:EqualityToVisibilityConverter x:Key="VisibleIfEqual" />
+   <ui:EqualityToVisibilityConverter x:Key="VisibleIfNotEqual"
+                                     Invert="True" />
+
+   <ui:BoolToObjectConverter x:Key="SignedInStatusConverter"
+                             TrueValue="Spotify Integration (Signed In)"
+                             FalseValue="Spotify Integration (Signed Out)" />
+
+   <ui:BoolToObjectConverter x:Key="SignInButtonContentConverter"
+                             TrueValue="Sign Out"
+                             FalseValue="Sign In" />
 
    <Style x:Key="MainButtonStyle"
           TargetType="{x:Type Button}">
@@ -31,8 +45,8 @@
                <Grid>
                   <Rectangle x:Name="Background"
                              Fill="#4682B4"
-                             RadiusX="8"
-                             RadiusY="8" />
+                             RadiusX="4"
+                             RadiusY="4" />
                   <ContentPresenter Margin="{TemplateBinding Padding}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
@@ -93,13 +107,13 @@
                            Value="True">
                      <Setter TargetName="MouseoverBackground"
                              Property="Opacity"
-                             Value="0.4" />
+                             Value="0.5" />
                   </Trigger>
                   <Trigger Property="IsPressed"
                            Value="True">
                      <Setter TargetName="MouseoverBackground"
                              Property="Opacity"
-                             Value="0.2" />
+                             Value="0.3" />
                   </Trigger>
                </ControlTemplate.Triggers>
             </ControlTemplate>

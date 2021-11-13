@@ -7,7 +7,6 @@
         xmlns:local="clr-namespace:WhatAmIHearing.UI"
         xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
         xmlns:spotify="clr-namespace:WhatAmIHearing.Api.Spotify"
-        xmlns:ui="clr-namespace:ZemotoUI"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
@@ -16,32 +15,15 @@
         AllowsTransparency="True"
         Background="Transparent"
         ShowActivated="True"
-        d:DataContext="{d:DesignData Type={x:Type local:MainViewModel}}"
+        d:DataContext="{d:DesignInstance local:MainViewModel}"
         Topmost="{Binding Settings.KeepWindowTopmost, Mode=OneWay}">
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24"
                     ResizeBorderThickness="0"
-                    CornerRadius="4" />
+                    CornerRadius="2" />
    </WindowChrome.WindowChrome>
    <Window.Resources>
-      <ResourceDictionary>
-         <ResourceDictionary.MergedDictionaries>
-            <ResourceDictionary Source="ControlStyles.xaml" />
-         </ResourceDictionary.MergedDictionaries>
-
-         <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
-         <ui:EqualityToVisibilityConverter x:Key="VisibleIfEqual" />
-         <ui:EqualityToVisibilityConverter x:Key="VisibleIfNotEqual"
-                                           Invert="True" />
-
-         <ui:BoolToObjectConverter x:Key="SignedInStatusConverter"
-                                   TrueValue="Spotify Integration (Signed In)"
-                                   FalseValue="Spotify Integration (Signed Out)" />
-
-         <ui:BoolToObjectConverter x:Key="SignInButtonContentConverter"
-                                   TrueValue="Sign Out"
-                                   FalseValue="Sign In" />
-      </ResourceDictionary>
+      <ResourceDictionary Source="Resources.xaml" />
    </Window.Resources>
 
    <Grid Margin="4">
@@ -59,20 +41,9 @@
       </Grid.RowDefinitions>
 
       <Rectangle Grid.RowSpan="99"
-                 RadiusX="4"
-                 RadiusY="4">
-         <Rectangle.Fill>
-            <LinearGradientBrush StartPoint="0,0"
-                                 EndPoint="0,1">
-               <LinearGradientBrush.GradientStops>
-                  <GradientStop Offset="0"
-                                Color="#D9E8FF" />
-                  <GradientStop Offset="1"
-                                Color="#D9FFE8" />
-               </LinearGradientBrush.GradientStops>
-            </LinearGradientBrush>
-         </Rectangle.Fill>
-      </Rectangle>
+                 Fill="#D9E8FF"
+                 Stroke="#333333"
+                 StrokeThickness="1" />
 
       <TextBlock Grid.Row="0"
                  Text="What Am I Hearing?"
@@ -81,7 +52,7 @@
                  VerticalAlignment="Center" />
 
       <Button Grid.Row="0"
-              Margin="4,0"
+              Margin="1"
               HorizontalAlignment="Right"
               WindowChrome.IsHitTestVisibleInChrome="True"
               Click="OnCloseClicked"
@@ -160,15 +131,14 @@
       <TextBlock Grid.Row="2"
                  Margin="12,2"
                  HorizontalAlignment="Right"
-                 VerticalAlignment="Top">
-         <Run Text="Hotkey: " /><Run Text="{Binding HotkeyStatusText, Mode=OneWay}" />
-      </TextBlock>
+                 VerticalAlignment="Top"
+                 Text="{Binding HotkeyStatusText, StringFormat='Hotkey: {0}', Mode=OneWay}" />
 
       <Expander Grid.Row="2"
                 Margin="12,2"
                 Header="Settings">
          <StackPanel Margin="8,2,0,0">
-            <CheckBox x:Name="KeepOpenInTrayCheckbox" 
+            <CheckBox x:Name="KeepOpenInTrayCheckbox"
                       Grid.Row="2"
                       Margin="6,2"
                       Content="Keep open in system tray"
@@ -189,8 +159,7 @@
 
       <Expander Grid.Row="3"
                 Margin="12,2,12,12"
-                Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
-                FontWeight="SemiBold">
+                Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}">
          <StackPanel Margin="8,8,0,0">
             <StackPanel Orientation="Horizontal">
                <Button Style="{StaticResource MainButtonStyle}"
@@ -202,16 +171,14 @@
                          IsEnabled="{Binding SpotifyVm.SignedIn, Mode=OneWay}"
                          IsChecked="{Binding Settings.AddSongsToSpotifyPlaylist, Mode=TwoWay}"
                          VerticalAlignment="Center"
-                         FontWeight="Normal"
                          Margin="12,0,0,0" />
             </StackPanel>
 
             <TextBlock Margin="0,8,0,0"
-                       Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}}">
-               <Run Text="Result: " /><Run Text="{Binding SpotifyVm.ResultText, Mode=OneWay}" />
-            </TextBlock>
+                       Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}}"
+                       Text="{Binding SpotifyVm.ResultText, StringFormat='Result: {0}', Mode=OneWay}" />
          </StackPanel>
-         
+
       </Expander>
    </Grid>
 </Window>
