@@ -20,13 +20,9 @@ namespace WhatAmIHearing.Api.Shazam
       {
          waveFileStream.Position = 0;
          using var reader = new WaveFileReader( waveFileStream );
-         var sampleProvider = new WaveToSampleProvider( reader );
 
          // Resample to required 1 channel 16 bit PCM 44100 sample rate
-         var resampledWave =
-            new StereoToMonoProvider16(
-            new SampleToWaveProvider16(
-            new WdlResamplingSampleProvider( sampleProvider, RequiredSampleRate ) ) );
+         var resampledWave = new WdlResamplingSampleProvider( reader.ToSampleProvider(), RequiredSampleRate ).ToMono().ToWaveProvider16();
 
          int bytesRead;
          using var resampledStream = new MemoryStream();
