@@ -117,5 +117,17 @@ namespace WhatAmIHearing.Properties {
                 this["KeepWindowTopmost"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HideWindowAfterRecord {
+            get {
+                return ((bool)(this["HideWindowAfterRecord"]));
+            }
+            set {
+                this["HideWindowAfterRecord"] = value;
+            }
+        }
     }
 }

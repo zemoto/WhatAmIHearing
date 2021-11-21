@@ -19,10 +19,7 @@ namespace WhatAmIHearing
       private readonly MainWindow _window;
       private readonly Recorder _recorder;
       private readonly DeviceProvider _deviceProvider = new();
-
-      private bool _windowShownFromHotkey;
-
-      private Properties.UserSettings Settings => Properties.UserSettings.Default;
+      private readonly Properties.UserSettings _settings = Properties.UserSettings.Default;
 
       public Main()
       {
@@ -40,7 +37,7 @@ namespace WhatAmIHearing
       {
          _model.HotkeyStatusText = hotkeyRegistered ? "Shift + F2" : "Failed to register";
 
-         if ( Settings.KeepOpenInTray && Settings.OpenHidden )
+         if ( _settings.KeepOpenInTray && _settings.OpenHidden )
          {
             HideWindow();
          }
@@ -55,12 +52,10 @@ namespace WhatAmIHearing
          DetectedTrackInfo detectedSong = null;
          using ( new ScopeGuard( () =>
             {
-               if ( detectedSong?.IsComplete == true && _windowShownFromHotkey )
+               if ( detectedSong?.IsComplete == true && _settings.KeepOpenInTray && _settings.HideWindowAfterRecord )
                {
                   HideWindow();
                }
-
-               _windowShownFromHotkey = false;
             } ) )
          {
             using ( new ScopeGuard( () =>
@@ -92,7 +87,7 @@ namespace WhatAmIHearing
             {
                _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
 
-               if ( _model.SpotifyVm.SignedIn && Settings.AddSongsToSpotifyPlaylist )
+               if ( _model.SpotifyVm.SignedIn && _settings.AddSongsToSpotifyPlaylist )
                {
                   _model.SpotifyVm.Result = await SpotifyApi.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle ).ConfigureAwait( false );
                }
@@ -145,7 +140,7 @@ namespace WhatAmIHearing
 
       private void OnWindowClosing( object sender, CancelEventArgs e )
       {
-         if ( Settings.KeepOpenInTray )
+         if ( _settings.KeepOpenInTray )
          {
             e.Cancel = true;
             HideWindow();
@@ -156,11 +151,6 @@ namespace WhatAmIHearing
       {
          if ( _model.RecorderVm.RecorderState is State.Stopped )
          {
-            if ( !_window.IsVisible )
-            {
-               _windowShownFromHotkey = true;
-            }
-
             ShowAndForegroundMainWindow();
          }
 
