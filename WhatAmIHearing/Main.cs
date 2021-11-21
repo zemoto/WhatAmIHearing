@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -50,55 +50,54 @@ namespace WhatAmIHearing
       private async void OnRecordingStopped( object sender, RecordingFinishedEventArgs args )
       {
          DetectedTrackInfo detectedSong = null;
+         using var __ = new ScopeGuard( () =>
+         {
+            if ( detectedSong?.IsComplete == true && _settings.KeepOpenInTray && _settings.HideWindowAfterRecord )
+            {
+               HideWindow();
+            }
+         } );
+
          using ( new ScopeGuard( () =>
             {
-               if ( detectedSong?.IsComplete == true && _settings.KeepOpenInTray && _settings.HideWindowAfterRecord )
-               {
-                  HideWindow();
-               }
+               _model.RecorderVm.RecorderState = State.Stopped;
+               _model.RecorderVm.RecorderStatusText = string.Empty;
+               _model.RecorderVm.RecordingProgress = 0;
             } ) )
          {
-            using ( new ScopeGuard( () =>
-               {
-                  _model.RecorderVm.RecorderState = State.Stopped;
-                  _model.RecorderVm.RecorderStatusText = string.Empty;
-                  _model.RecorderVm.RecordingProgress = 0;
-               } ) )
+            if ( args.Cancelled )
             {
-               if ( args.Cancelled )
-               {
-                  return;
-               }
-
-               _model.RecorderVm.RecorderState = State.SendingToShazam;
-               _model.RecorderVm.RecorderStatusText = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
-               _model.RecorderVm.RecordingProgress = 100;
-               try
-               {
-                  detectedSong = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
-               }
-               catch ( TaskCanceledException )
-               {
-                  return;
-               }
+               return;
             }
 
-            if ( detectedSong?.IsComplete == true )
+            _model.RecorderVm.RecorderState = State.SendingToShazam;
+            _model.RecorderVm.RecorderStatusText = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
+            _model.RecorderVm.RecordingProgress = 100;
+            try
             {
-               _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
-
-               if ( _model.SpotifyVm.SignedIn && _settings.AddSongsToSpotifyPlaylist )
-               {
-                  _model.SpotifyVm.Result = await SpotifyApi.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle ).ConfigureAwait( false );
-               }
+               detectedSong = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
             }
-            else
+            catch ( TaskCanceledException )
             {
-               var result = MessageBox.Show( Application.Current.MainWindow, "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
-               if ( result == MessageBoxResult.Yes )
-               {
-                  Player.PlayAudio( args.RecordedData, args.Format );
-               }
+               return;
+            }
+         }
+
+         if ( detectedSong?.IsComplete == true )
+         {
+            _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
+
+            if ( _model.SpotifyVm.SignedIn && _settings.AddSongsToSpotifyPlaylist )
+            {
+               _model.SpotifyVm.Result = await SpotifyApi.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle ).ConfigureAwait( false );
+            }
+         }
+         else
+         {
+            var result = MessageBox.Show( Application.Current.MainWindow, "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
+            if ( result == MessageBoxResult.Yes )
+            {
+               Player.PlayAudio( args.RecordedData, args.Format );
             }
          }
       }
