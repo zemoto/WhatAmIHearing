@@ -22,7 +22,7 @@ HTTP requests to API are made in [SpotifyApi](https://github.com/zemoto/WhatAmIH
 
 Uses NAudio's `WasapiLoopbackCapture` class to record system audio. Shazam allows for up to 500KB of audio to be sent to their API, so we record the maximum amount we can. The audio we record from the system audio device will be at a different bitrate than the required audio. Depending on if the system audio comes in at a higher or lower bitrate, we determine if we can record more or less audio and still meet the API's specification.
 
-See the [ShazamSpecEnforcer](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/Api/ShazamSpecEnforcer.cs) for logic on getting the maximum amount we can record, and how to resample the audio to match Shazam's specification.
+See the [ShazamSpecEnforcer](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/Api/Shazam/ShazamSpecEnforcer.cs) for logic on getting the maximum amount we can record, and how to resample the audio to match Shazam's specification.
 
 ### [Player](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/Audio/Player.cs)
 
