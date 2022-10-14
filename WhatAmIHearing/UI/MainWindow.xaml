@@ -18,28 +18,23 @@
         d:DataContext="{d:DesignInstance local:MainViewModel}"
         Topmost="{Binding Settings.KeepWindowTopmost, Mode=OneWay}">
    <WindowChrome.WindowChrome>
-      <WindowChrome CaptionHeight="24"
-                    ResizeBorderThickness="0"
-                    CornerRadius="2" />
+      <WindowChrome CaptionHeight="24" />
    </WindowChrome.WindowChrome>
+   <Window.Effect>
+      <DropShadowEffect BlurRadius="8"
+                        Opacity="0.25"
+                        Direction="270"
+                        ShadowDepth="2" />
+   </Window.Effect>
    <Window.Resources>
       <ResourceDictionary Source="Resources.xaml" />
    </Window.Resources>
 
    <Grid Margin="4">
-      <Grid.Effect>
-         <DropShadowEffect BlurRadius="8"
-                           Opacity="0.25"
-                           Direction="270"
-                           ShadowDepth="2" />
-      </Grid.Effect>
       <Grid.RowDefinitions>
-         <RowDefinition Height="Auto" />
-         <RowDefinition Height="Auto" />
-         <RowDefinition Height="Auto" />
+         <RowDefinition Height="24" />
          <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
-
       <Rectangle Grid.RowSpan="99"
                  Fill="#D9E8FF"
                  Stroke="#333333"
@@ -48,9 +43,10 @@
       <TextBlock Grid.Row="0"
                  Text="What Am I Hearing?"
                  FontSize="14"
+                 Margin="0,3,0,0"
                  HorizontalAlignment="Center"
-                 VerticalAlignment="Center" />
-
+                 VerticalAlignment="Top" />
+      
       <Button Grid.Row="0"
               Margin="1"
               HorizontalAlignment="Right"
@@ -58,130 +54,127 @@
               Click="OnCloseClicked"
               Style="{StaticResource CloseButtonStyle}" />
 
-      <Grid Grid.Row="1"
-            Width="350"
-            Margin="12,12,12,2">
-         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="8" />
-            <ColumnDefinition Width="Auto" />
-         </Grid.ColumnDefinitions>
-
-         <Grid Grid.Column="0"
-               VerticalAlignment="Center">
-            <Grid.RowDefinitions>
-               <RowDefinition Height="Auto" />
-               <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ComboBox Grid.Row="0"
-                      ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
-                      SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
-                      Height="24" />
-            <ProgressBar Grid.Row="1"
-                         Background="White"
-                         Foreground="#69C3FF"
-                         Value="{Binding RecorderVm.RecordingProgress, Mode=OneWay}"
+      <StackPanel x:Name="WindowContents"
+                  Grid.Row="1"
+                  Margin="12"
+                  Width="350">
+         <Grid x:Name="RecordingControls"
+               Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="*" />
+               <ColumnDefinition Width="8" />
+               <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0"
+                        VerticalAlignment="Center">
+               <ComboBox ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
+                         SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
                          Height="24" />
-            <TextBlock Grid.Row="1"
-                       Text="{Binding RecorderVm.RecorderStatusText, Mode=OneWay}"
-                       Margin="6,6,0,0"
-                       Height="24" />
-         </Grid>
-
-         <Button Grid.Column="2"
-                 Margin="0,-4,0,0"
-                 Style="{StaticResource MainButtonStyle}"
-                 Command="{Binding RecordStopCommand}"
-                 Width="50"
-                 Height="50"
-                 Padding="12"
-                 HorizontalContentAlignment="Stretch"
-                 VerticalContentAlignment="Stretch">
-            <Grid>
-               <Path Fill="White"
-                     Stretch="UniformToFill"
-                     Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.Recording}}">
-                  <Path.Data>
-                     <PathGeometry Figures="M 0,0 L 0,1 1,1 1,0 Z" />
-                  </Path.Data>
-               </Path>
-               <Path Stroke="White"
-                     StrokeThickness="4"
-                     Stretch="UniformToFill"
-                     Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.SendingToShazam}}">
-                  <Path.Data>
-                     <PathGeometry>
-                        <PathGeometry.Figures>
-                           <PathFigure StartPoint="0,0">
-                              <LineSegment Point="5,5" />
-                           </PathFigure>
-                           <PathFigure StartPoint="0,5">
-                              <LineSegment Point="5,0" />
-                           </PathFigure>
-                        </PathGeometry.Figures>
-                     </PathGeometry>
-                  </Path.Data>
-               </Path>
-               <Ellipse Fill="White"
-                        Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.Stopped}}" />
-            </Grid>
-         </Button>
-      </Grid>
-
-      <TextBlock Grid.Row="2"
-                 Margin="12,2"
-                 HorizontalAlignment="Right"
-                 VerticalAlignment="Top"
-                 Text="{Binding HotkeyStatusText, StringFormat='Hotkey: {0}', Mode=OneWay}" />
-
-      <Expander Grid.Row="2"
-                Margin="12,2"
-                Header="Settings">
-         <StackPanel Margin="8,2,0,0">
-            <CheckBox x:Name="KeepOpenInTrayCheckbox"
-                      Margin="6,2"
-                      Content="Keep open in system tray"
-                      IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
-
-            <CheckBox Margin="16,2"
-                      Content="Launch hidden"
-                      Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
-                      IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
-
-            <CheckBox Grid.Row="3"
-                      Margin="16,2"
-                      Content="Minimize to tray after recording is done"
-                      Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
-                      IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
-
-            <CheckBox Margin="6,2"
-                      Content="Keep window on top"
-                      IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
-         </StackPanel>
-      </Expander>
-
-      <Expander Grid.Row="3"
-                Margin="12,2,12,12"
-                Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}">
-         <StackPanel Margin="8,8,0,0">
-            <StackPanel Orientation="Horizontal">
-               <Button Style="{StaticResource MainButtonStyle}"
-                       Command="{Binding SpotifyVm.SignInOutCommand}"
-                       Content="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignInButtonContentConverter}, Mode=OneWay}"
-                       HorizontalAlignment="Left" />
-
-               <CheckBox Content="Add detected songs to private playlist"
-                         IsEnabled="{Binding SpotifyVm.SignedIn, Mode=OneWay}"
-                         IsChecked="{Binding Settings.AddSongsToSpotifyPlaylist, Mode=TwoWay}"
-                         VerticalAlignment="Center"
-                         Margin="12,0,0,0" />
+               
+               <Grid Margin="0,2,0,0"
+                     Height="24">
+                  <ProgressBar Background="White"
+                               Foreground="#69C3FF"
+                               Value="{Binding RecorderVm.RecordingProgress, Mode=OneWay}" />
+                  
+                  <TextBlock Text="{Binding RecorderVm.RecorderStatusText, Mode=OneWay}"
+                             Margin="6,0,0,0"
+                             VerticalAlignment="Center" />
+               </Grid>
             </StackPanel>
 
-            <TextBlock Margin="0,8,0,0"
-                       Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}}"
-                       Text="{Binding SpotifyVm.ResultText, StringFormat='Result: {0}', Mode=OneWay}" />
-         </StackPanel>
+            <Button Grid.Column="2"
+                    Style="{StaticResource MainButtonStyle}"
+                    Command="{Binding RecordStopCommand}"
+                    Width="50"
+                    Height="50"
+                    Padding="12"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch">
+               <Grid>
+                  <Path Fill="White"
+                        Stretch="UniformToFill"
+                        Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.Recording}}">
+                     <Path.Data>
+                        <PathGeometry Figures="M 0,0 L 0,1 1,1 1,0 Z" />
+                     </Path.Data>
+                  </Path>
+                  <Path Stroke="White"
+                        StrokeThickness="4"
+                        Stretch="UniformToFill"
+                        Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.SendingToShazam}}">
+                     <Path.Data>
+                        <PathGeometry>
+                           <PathGeometry.Figures>
+                              <PathFigure StartPoint="0,0">
+                                 <LineSegment Point="5,5" />
+                              </PathFigure>
+                              <PathFigure StartPoint="0,5">
+                                 <LineSegment Point="5,0" />
+                              </PathFigure>
+                           </PathGeometry.Figures>
+                        </PathGeometry>
+                     </Path.Data>
+                  </Path>
+                  <Ellipse Fill="White"
+                           Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.Stopped}}" />
+               </Grid>
+            </Button>
+         </Grid>
 
-      </Expander>
+         <Expander x:Name="GeneralSettings"
+                   Margin="0,0,0,4"
+                   Header="Settings">
+            <StackPanel Margin="8,2,0,0">
+               <TextBlock Grid.Row="2"
+                          Margin="6,0,6,4"
+                          HorizontalAlignment="Left"
+                          Text="{Binding HotkeyStatusText, StringFormat='Recording Hotkey: {0}', Mode=OneWay}" />
+
+               <CheckBox x:Name="KeepOpenInTrayCheckbox"
+                         Margin="6,2"
+                         Content="Keep open in system tray"
+                         IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
+
+               <CheckBox Margin="16,2"
+                         Content="Launch hidden"
+                         Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
+                         IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
+
+               <CheckBox Grid.Row="3"
+                         Margin="16,2"
+                         Content="Minimize to tray after recording is done"
+                         Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
+                         IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
+
+               <CheckBox Margin="6,2"
+                         Content="Keep window on top"
+                         IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
+            </StackPanel>
+         </Expander>
+
+         <Expander x:Name="SpotifySettings"
+                   Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}">
+            <StackPanel Margin="8,8,0,0">
+               <StackPanel Orientation="Horizontal">
+                  <Button Style="{StaticResource MainButtonStyle}"
+                          Command="{Binding SpotifyVm.SignInOutCommand}"
+                          Content="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignInButtonContentConverter}, Mode=OneWay}"
+                          HorizontalAlignment="Left" />
+
+                  <CheckBox Content="Add detected songs to private playlist"
+                            IsEnabled="{Binding SpotifyVm.SignedIn, Mode=OneWay}"
+                            IsChecked="{Binding Settings.AddSongsToSpotifyPlaylist, Mode=TwoWay}"
+                            VerticalAlignment="Center"
+                            Margin="12,0,0,0" />
+               </StackPanel>
+
+               <TextBlock Margin="0,8,0,0"
+                          Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}}"
+                          Text="{Binding SpotifyVm.ResultText, StringFormat='Result: {0}', Mode=OneWay}" />
+            </StackPanel>
+         </Expander>
+         
+      </StackPanel>
    </Grid>
 </Window>

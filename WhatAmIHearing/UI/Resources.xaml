@@ -1,8 +1,9 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ui="clr-namespace:ZemotoCommon.UI">
 
    <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
+   <ui:EqualityConverter x:Key="IsEqual" />
    <ui:EqualityToVisibilityConverter x:Key="VisibleIfEqual" />
    <ui:EqualityToVisibilityConverter x:Key="VisibleIfNotEqual"
                                      Invert="True" />
