@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
-using ZemotoUI;
+using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.UI
 {

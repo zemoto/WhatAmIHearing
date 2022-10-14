@@ -8,8 +8,8 @@ using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.UI;
 using WhatAmIHearing.Utils;
-using ZemotoUI;
-using ZemotoUtils;
+using ZemotoCommon;
+using ZemotoCommon.UI;
 
 namespace WhatAmIHearing
 {

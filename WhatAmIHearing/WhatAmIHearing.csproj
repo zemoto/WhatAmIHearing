@@ -34,8 +34,6 @@
     </None>
   </ItemGroup>
 
-  <Import Project="..\ZemotoCommon\ZemotoUI\ZemotoUI.projitems" Label="Shared" />
-
-  <Import Project="..\ZemotoCommon\ZemotoUtils\ZemotoUtils.projitems" Label="Shared" />
+  <Import Project="..\ZemotoCommon\ZemotoCommon\ZemotoCommon.projitems" Label="Shared" />
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿using System.Windows.Input;
-using ZemotoUI;
+using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Api.Spotify
 {
