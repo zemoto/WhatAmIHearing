@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
-using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
-using ZemotoCommon.UI;
 
-namespace WhatAmIHearing.UI
+namespace WhatAmIHearing.Model
 {
-   internal sealed class MainViewModel : ViewModelBase
+   internal sealed class MainViewModel : ZemotoCommon.UI.ViewModelBase
    {
       public MainViewModel( DeviceProvider deviceProvider ) => DeviceNameList = deviceProvider.GetDeviceNameList();
 

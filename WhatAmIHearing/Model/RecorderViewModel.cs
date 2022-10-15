@@ -1,21 +1,19 @@
-﻿using ZemotoCommon.UI;
-
-namespace WhatAmIHearing.Audio
+﻿namespace WhatAmIHearing.Model
 {
-   internal enum State
+   internal enum RecorderState
    {
       Stopped = 0,
       Recording = 1,
       SendingToShazam = 2
    }
 
-   internal sealed class RecorderViewModel : ViewModelBase
+   internal sealed class RecorderViewModel : ZemotoCommon.UI.ViewModelBase
    {
-      private State _recorderState;
-      public State RecorderState
+      private RecorderState _state;
+      public RecorderState State
       {
-         get => _recorderState;
-         set => SetProperty( ref _recorderState, value );
+         get => _state;
+         set => SetProperty( ref _state, value );
       }
 
       private string _recorderStatusText;

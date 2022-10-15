@@ -4,9 +4,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WhatAmIHearing.UI"
-        xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
         xmlns:spotify="clr-namespace:WhatAmIHearing.Api.Spotify"
+        xmlns:model="clr-namespace:WhatAmIHearing.Model"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
@@ -15,7 +14,7 @@
         AllowsTransparency="True"
         Background="Transparent"
         ShowActivated="True"
-        d:DataContext="{d:DesignInstance local:MainViewModel}"
+        d:DataContext="{d:DesignInstance model:MainViewModel}"
         Topmost="{Binding Settings.KeepWindowTopmost, Mode=OneWay}">
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24" />
@@ -94,7 +93,7 @@
                <Grid>
                   <Path Fill="White"
                         Stretch="UniformToFill"
-                        Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.Recording}}">
+                        Visibility="{Binding RecorderVm.State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Recording}}">
                      <Path.Data>
                         <PathGeometry Figures="M 0,0 L 0,1 1,1 1,0 Z" />
                      </Path.Data>
@@ -102,7 +101,7 @@
                   <Path Stroke="White"
                         StrokeThickness="4"
                         Stretch="UniformToFill"
-                        Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.SendingToShazam}}">
+                        Visibility="{Binding RecorderVm.State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.SendingToShazam}}">
                      <Path.Data>
                         <PathGeometry>
                            <PathGeometry.Figures>
@@ -117,7 +116,7 @@
                      </Path.Data>
                   </Path>
                   <Ellipse Fill="White"
-                           Visibility="{Binding RecorderVm.RecorderState, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:State.Stopped}}" />
+                           Visibility="{Binding RecorderVm.State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}}" />
                </Grid>
             </Button>
          </Grid>

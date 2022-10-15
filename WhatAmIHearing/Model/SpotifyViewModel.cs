@@ -1,9 +1,9 @@
 ﻿using System.Windows.Input;
-using ZemotoCommon.UI;
+using WhatAmIHearing.Api.Spotify;
 
-namespace WhatAmIHearing.Api.Spotify
+namespace WhatAmIHearing.Model
 {
-   internal sealed class SpotifyViewModel : ViewModelBase
+   internal sealed class SpotifyViewModel : ZemotoCommon.UI.ViewModelBase
    {
       public void NotifySignedInChanged() => OnPropertyChanged( nameof( SignedIn ) );
 

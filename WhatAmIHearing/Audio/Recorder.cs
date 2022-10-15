@@ -19,19 +19,28 @@ namespace WhatAmIHearing.Audio
       }
    }
 
+   internal sealed class RecordingProgressEventArgs : EventArgs
+   {
+      public long BytesRecorded { get; }
+      public long MaxBytes { get; }
+
+      public RecordingProgressEventArgs( long bytesRecorded, long maxBytes )
+      {
+         BytesRecorded = bytesRecorded;
+         MaxBytes = maxBytes;
+      }
+   }
+
    internal sealed class Recorder
    {
-      private readonly RecorderViewModel _model;
-
-      private int _maxRecordingSize;
+      private long _maxBytes;
       private bool _cancelled;
       private WasapiLoopbackCapture _audioCapturer;
       private WaveFileWriter _audioWriter;
       private MemoryStream _recordedFileStream;
 
+      public event EventHandler<RecordingProgressEventArgs> RecordingProgress;
       public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
-
-      public Recorder( RecorderViewModel model ) => _model = model;
 
       public void StartRecording( MMDevice device )
       {
@@ -41,10 +50,9 @@ namespace WhatAmIHearing.Audio
 
          _recordedFileStream = new MemoryStream();
          _audioWriter = new WaveFileWriter( _recordedFileStream, _audioCapturer.WaveFormat );
-         _maxRecordingSize = ShazamSpecEnforcer.GetMaxRecordingSize( _audioCapturer.WaveFormat.AverageBytesPerSecond );
+         _maxBytes = ShazamSpecEnforcer.GetMaxRecordingSize( _audioCapturer.WaveFormat.AverageBytesPerSecond );
 
-         _model.RecordingProgress = 0;
-         _model.RecorderStatusText = $"Recording: 0/{_maxRecordingSize} bits";
+         RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, _maxBytes ) );
 
          _audioCapturer.StartRecording();
       }
@@ -57,15 +65,14 @@ namespace WhatAmIHearing.Audio
 
       private void OnDataCaptured( object sender, WaveInEventArgs e )
       {
-         if ( _audioWriter.Position + e.BytesRecorded >= _maxRecordingSize )
+         if ( _audioWriter.Position + e.BytesRecorded >= _maxBytes )
          {
             _audioCapturer.StopRecording();
          }
          else
          {
             _audioWriter.Write( e.Buffer, 0, e.BytesRecorded );
-            _model.RecordingProgress = (int)( (double)_audioWriter.Position / _maxRecordingSize * 100 );
-            _model.RecorderStatusText = $"Recording: {_audioWriter.Position}/{_maxRecordingSize} bits";
+            RecordingProgress.Invoke( this, new RecordingProgressEventArgs( _audioWriter.Position, _maxBytes ) );
          }
       }
 

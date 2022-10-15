@@ -10,10 +10,10 @@ namespace WhatAmIHearing.Api.Shazam
       private const int RequiredBytesPerSample = 2;
       private const int MaxAudioDataSize = 500 * 1000; // 500KB
 
-      public static int GetMaxRecordingSize( int recordingDeviceBytesPerSecond )
+      public static long GetMaxRecordingSize( int recordingDeviceBytesPerSecond )
       {
          const int requiredBytesPerSecond = RequiredBytesPerSample * RequiredSampleRate;
-         return (int)( (double)recordingDeviceBytesPerSecond / requiredBytesPerSecond * MaxAudioDataSize );
+         return (long)( (double)recordingDeviceBytesPerSecond / requiredBytesPerSecond * MaxAudioDataSize );
       }
 
       public static byte[] ResampleAudioToMatchSpec( MemoryStream waveFileStream, out WaveFormat format )

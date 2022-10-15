@@ -6,6 +6,7 @@ using WhatAmIHearing.Api;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
+using WhatAmIHearing.Model;
 using WhatAmIHearing.UI;
 using WhatAmIHearing.Utils;
 using ZemotoCommon;
@@ -17,7 +18,7 @@ namespace WhatAmIHearing
    {
       private readonly MainViewModel _model;
       private readonly MainWindow _window;
-      private readonly Recorder _recorder;
+      private readonly Recorder _recorder = new();
       private readonly DeviceProvider _deviceProvider = new();
       private readonly Properties.UserSettings _settings = Properties.UserSettings.Default;
 
@@ -29,7 +30,7 @@ namespace WhatAmIHearing
          _window = new MainWindow( _model );
          _window.Closing += OnWindowClosing;
 
-         _recorder = new Recorder( _model.RecorderVm );
+         _recorder.RecordingProgress += OnRecordingProgress;
          _recorder.RecordingFinished += OnRecordingStopped;
       }
 
@@ -47,6 +48,12 @@ namespace WhatAmIHearing
          }
       }
 
+      private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
+      {
+         _model.RecorderVm.RecordingProgress = (int)( (double)e.BytesRecorded / e.MaxBytes * 100 );
+         _model.RecorderVm.RecorderStatusText = $"Recording: {e.BytesRecorded}/{e.MaxBytes} bits";
+      }
+
       private async void OnRecordingStopped( object sender, RecordingFinishedEventArgs args )
       {
          DetectedTrackInfo detectedSong = null;
@@ -60,7 +67,7 @@ namespace WhatAmIHearing
 
          using ( new ScopeGuard( () =>
             {
-               _model.RecorderVm.RecorderState = State.Stopped;
+               _model.RecorderVm.State = RecorderState.Stopped;
                _model.RecorderVm.RecorderStatusText = string.Empty;
                _model.RecorderVm.RecordingProgress = 0;
             } ) )
@@ -70,7 +77,7 @@ namespace WhatAmIHearing
                return;
             }
 
-            _model.RecorderVm.RecorderState = State.SendingToShazam;
+            _model.RecorderVm.State = RecorderState.SendingToShazam;
             _model.RecorderVm.RecorderStatusText = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
             _model.RecorderVm.RecordingProgress = 100;
             try
@@ -104,17 +111,17 @@ namespace WhatAmIHearing
 
       private void OnRecord()
       {
-         if ( _model.RecorderVm.RecorderState is State.Recording )
+         if ( _model.RecorderVm.State is RecorderState.Recording )
          {
             _recorder.CancelRecording();
          }
-         else if ( _model.RecorderVm.RecorderState is State.SendingToShazam )
+         else if ( _model.RecorderVm.State is RecorderState.SendingToShazam )
          {
             ApiClient.CancelRequests();
          }
          else
          {
-            _model.RecorderVm.RecorderState = State.Recording;
+            _model.RecorderVm.State = RecorderState.Recording;
             _recorder.StartRecording( _deviceProvider.GetSelectedDevice() );
          }
       }
@@ -148,7 +155,7 @@ namespace WhatAmIHearing
 
       public void OnRecordHotkey( object sender, KeyPressedEventArgs e )
       {
-         if ( _model.RecorderVm.RecorderState is State.Stopped )
+         if ( _model.RecorderVm.State is RecorderState.Stopped )
          {
             ShowAndForegroundMainWindow();
          }
