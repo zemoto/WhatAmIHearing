@@ -84,7 +84,7 @@
 
             <Button Grid.Column="2"
                     Style="{StaticResource MainButtonStyle}"
-                    Command="{Binding RecordStopCommand}"
+                    Command="{Binding RecorderVm.RecordStopCommand}"
                     Width="50"
                     Height="50"
                     Padding="12"

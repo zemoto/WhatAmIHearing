@@ -36,13 +36,7 @@ namespace WhatAmIHearing.Api.Spotify
                 DateTime.UtcNow < Settings.SpotifyExpirationTimeUtc;
       }
 
-      public async Task SignInAsync()
-      {
-         if ( string.IsNullOrEmpty( Settings.SpotifyAccessToken ) )
-         {
-            await AuthenticateWithBrowserAsync().ConfigureAwait( false );
-         }
-      }
+      public async Task<bool> SignInAsync() => !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) || await AuthenticateWithBrowserAsync().ConfigureAwait( false );
 
       public void SignOut()
       {
@@ -60,37 +54,39 @@ namespace WhatAmIHearing.Api.Spotify
             ["refresh_token"] = Settings.SpotifyRefreshToken
          };
 
-         await ExchangeTokensAsync( data ).ConfigureAwait( false );
+         _ = await ExchangeTokensAsync( data ).ConfigureAwait( false );
       }
 
-      private async Task AuthenticateWithBrowserAsync()
+      private async Task<bool> AuthenticateWithBrowserAsync()
       {
-         _authDoneEvent.Reset();
+         _ = _authDoneEvent.Reset();
          _ = Process.Start( new ProcessStartInfo( AuthUrl ) { UseShellExecute = true } );
-         await ListenForAuthentication().ConfigureAwait( false );
+         return await ListenForAuthentication().ConfigureAwait( false );
       }
 
-      private async Task ListenForAuthentication()
+      private async Task<bool> ListenForAuthentication()
       {
          var listener = new Socket( _loopbackIpAddress.Address.AddressFamily, SocketType.Stream, ProtocolType.IP );
          listener.Bind( _loopbackIpAddress );
          listener.Listen( 10 );
 
          var state = new StateObject { Listener = listener };
-         listener.BeginAccept( AcceptCallback, state );
+         _ = listener.BeginAccept( AcceptCallback, state );
 
-         _authDoneEvent.WaitOne( TimeSpan.FromMinutes( 2 ) );
+         _ = await Task.Run( () => _authDoneEvent.WaitOne( TimeSpan.FromMinutes( 2 ) ) );
 
          if ( !string.IsNullOrEmpty( state.ParsedAuthParams ) && state.ParsedAuthParams.Contains( "code" ) )
          {
             var values = HttpUtility.ParseQueryString( state.ParsedAuthParams );
             var authCode = values["/?code"];
 
-            await GetTokensFromAuthCodeAsync( authCode ).ConfigureAwait( false );
+            return await GetTokensFromAuthCodeAsync( authCode ).ConfigureAwait( false );
          }
+
+         return false;
       }
 
-      private async Task GetTokensFromAuthCodeAsync( string authCode )
+      private async Task<bool> GetTokensFromAuthCodeAsync( string authCode )
       {
          var data = new Dictionary<string, string>
          {
@@ -99,10 +95,10 @@ namespace WhatAmIHearing.Api.Spotify
             ["redirect_uri"] = RedirectUrl
          };
 
-         await ExchangeTokensAsync( data ).ConfigureAwait( false );
+         return await ExchangeTokensAsync( data ).ConfigureAwait( false );
       }
 
-      private async Task ExchangeTokensAsync( Dictionary<string,string> requestData )
+      private async Task<bool> ExchangeTokensAsync( Dictionary<string,string> requestData )
       {
          using var client = new SpotifyApiClient( false );
          var responseJson = await client.SendPostRequestAsync( TokenExchangeEndpoint, requestData ).ConfigureAwait( false );
@@ -125,11 +121,12 @@ namespace WhatAmIHearing.Api.Spotify
                }
 
                Settings.Save();
-               return;
+               return true;
             }
          }
 
          SignOut(); // Clear any saved credentials on failure
+         return false;
       }
 
       private void AcceptCallback( IAsyncResult ar )
@@ -138,12 +135,12 @@ namespace WhatAmIHearing.Api.Spotify
          try
          {
             state.Receiver = state.Listener.EndAccept( ar );
-            state.Receiver.BeginReceive( state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state );
+            _ = state.Receiver.BeginReceive( state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state );
             CleanupSocket( state.Listener );
          }
          catch
          {
-            _authDoneEvent.Set();
+            _ = _authDoneEvent.Set();
          }
       }
 
@@ -165,7 +162,7 @@ namespace WhatAmIHearing.Api.Spotify
 
                const string DoneMessage = "Authentication done, you can close this page";
                var bytes = Encoding.UTF8.GetBytes( DoneMessage );
-               state.Receiver.BeginSend( bytes, 0, bytes.Length, SocketFlags.None, SendCallback, state );
+               _ = state.Receiver.BeginSend( bytes, 0, bytes.Length, SocketFlags.None, SendCallback, state );
             }
          }
          catch { }
@@ -176,12 +173,12 @@ namespace WhatAmIHearing.Api.Spotify
          var state = (StateObject)ar.AsyncState;
          try
          {
-            state.Receiver.EndSend( ar );
+            _ = state.Receiver.EndSend( ar );
          }
          catch { }
 
          CleanupSocket( state.Receiver );
-         _authDoneEvent.Set();
+         _ = _authDoneEvent.Set();
       }
 
       private static void CleanupSocket( Socket socket )

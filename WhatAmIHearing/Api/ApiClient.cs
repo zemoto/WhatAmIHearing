@@ -23,7 +23,7 @@ namespace WhatAmIHearing.Api
       {
          _client?.Dispose();
          _cancelToken?.Dispose();
-         _apiClients.Remove( this );
+         _ = _apiClients.Remove( this );
       }
 
       public async Task<string> SendPostRequestAsync( string endpoint )

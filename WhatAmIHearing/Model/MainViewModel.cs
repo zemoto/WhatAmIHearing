@@ -1,17 +1,21 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Input;
 using WhatAmIHearing.Audio;
 
 namespace WhatAmIHearing.Model
 {
    internal sealed class MainViewModel : ZemotoCommon.UI.ViewModelBase
    {
-      public MainViewModel( DeviceProvider deviceProvider ) => DeviceNameList = deviceProvider.GetDeviceNameList();
+      public MainViewModel( RecorderViewModel recorderVm, SpotifyViewModel spotifyVm, DeviceProvider deviceProvider )
+      {
+         RecorderVm = recorderVm;
+         SpotifyVm = spotifyVm;
+         DeviceNameList = deviceProvider.GetDeviceNameList();
+      }
 
-      public List<string> DeviceNameList { get; }
       public Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
-      public SpotifyViewModel SpotifyVm { get; } = new();
-      public RecorderViewModel RecorderVm { get; } = new();
+      public RecorderViewModel RecorderVm { get; }
+      public SpotifyViewModel SpotifyVm { get; }
+      public List<string> DeviceNameList { get; }
 
       private string _hotkeyStatusText;
       public string HotkeyStatusText
@@ -19,7 +23,5 @@ namespace WhatAmIHearing.Model
          get => _hotkeyStatusText;
          set => SetProperty( ref _hotkeyStatusText, value );
       }
-
-      public ICommand RecordStopCommand { get; set; }
    }
 }

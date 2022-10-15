@@ -1,4 +1,6 @@
-﻿namespace WhatAmIHearing.Model
+﻿using System.Windows.Input;
+
+namespace WhatAmIHearing.Model
 {
    internal enum RecorderState
    {
@@ -29,5 +31,7 @@
          get => _recordingProgress;
          set => SetProperty( ref _recordingProgress, value );
       }
+
+      public ICommand RecordStopCommand { get; set; }
    }
 }
