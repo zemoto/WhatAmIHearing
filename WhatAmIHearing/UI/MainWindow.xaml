@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:spotify="clr-namespace:WhatAmIHearing.Api.Spotify"
         xmlns:model="clr-namespace:WhatAmIHearing.Model"
+        xmlns:ui="clr-namespace:WhatAmIHearing.UI"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
@@ -57,69 +58,9 @@
                   Grid.Row="1"
                   Margin="12"
                   Width="350">
-         <Grid x:Name="RecordingControls"
-               Margin="0,0,0,8">
-            <Grid.ColumnDefinitions>
-               <ColumnDefinition Width="*" />
-               <ColumnDefinition Width="8" />
-               <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0"
-                        VerticalAlignment="Center">
-               <ComboBox ItemsSource="{Binding RecorderVm.DeviceNameList, Mode=OneTime}"
-                         SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
-                         Height="24" />
-               
-               <Grid Margin="0,2,0,0"
-                     Height="24">
-                  <ProgressBar Background="White"
-                               Foreground="#69C3FF"
-                               Value="{Binding RecorderVm.RecordingProgress, Mode=OneWay}" />
-                  
-                  <TextBlock Text="{Binding RecorderVm.RecorderStatusText, Mode=OneWay}"
-                             Margin="6,0,0,0"
-                             VerticalAlignment="Center" />
-               </Grid>
-            </StackPanel>
-
-            <Button Grid.Column="2"
-                    Style="{StaticResource MainButtonStyle}"
-                    Command="{Binding RecorderVm.RecordStopCommand}"
-                    Width="50"
-                    Height="50"
-                    Padding="12"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch">
-               <Grid>
-                  <Path Fill="White"
-                        Stretch="UniformToFill"
-                        Visibility="{Binding RecorderVm.State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Recording}}">
-                     <Path.Data>
-                        <PathGeometry Figures="M 0,0 L 0,1 1,1 1,0 Z" />
-                     </Path.Data>
-                  </Path>
-                  <Path Stroke="White"
-                        StrokeThickness="4"
-                        Stretch="UniformToFill"
-                        Visibility="{Binding RecorderVm.State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.SendingToShazam}}">
-                     <Path.Data>
-                        <PathGeometry>
-                           <PathGeometry.Figures>
-                              <PathFigure StartPoint="0,0">
-                                 <LineSegment Point="5,5" />
-                              </PathFigure>
-                              <PathFigure StartPoint="0,5">
-                                 <LineSegment Point="5,0" />
-                              </PathFigure>
-                           </PathGeometry.Figures>
-                        </PathGeometry>
-                     </Path.Data>
-                  </Path>
-                  <Ellipse Fill="White"
-                           Visibility="{Binding RecorderVm.State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}}" />
-               </Grid>
-            </Button>
-         </Grid>
+         
+         <ui:RecorderControls Margin="0,0,0,8"
+                              DataContext="{Binding RecorderVm, Mode=OneTime}" />
 
          <Expander x:Name="GeneralSettings"
                    Margin="0,0,0,4"

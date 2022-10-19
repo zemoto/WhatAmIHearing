@@ -15,6 +15,7 @@ namespace WhatAmIHearing.Model
    {
       public RecorderViewModel( DeviceProvider deviceProvider ) => DeviceNameList = deviceProvider.GetDeviceNameList();
 
+      public Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
       public IReadOnlyCollection<string> DeviceNameList { get; }
 
       private RecorderState _state;
