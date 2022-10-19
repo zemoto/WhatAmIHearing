@@ -62,8 +62,9 @@
          <ui:RecorderControls Margin="0,0,0,8"
                               DataContext="{Binding RecorderVm, Mode=OneTime}" />
 
-         <Expander Header="Window Settings"
-                   Margin="0,0,0,4">
+         <ui:GroupedExpander Header="Window Settings"
+                             Margin="0,0,0,4"
+                             GroupName="Settings">
             <StackPanel Margin="8,2,0,0">
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
                          Margin="6,2"
@@ -79,10 +80,11 @@
                          Content="Keep window on top"
                          IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
             </StackPanel>
-         </Expander>
+         </ui:GroupedExpander>
 
-         <Expander Header="Recorder Settings"
-                   Margin="0,0,0,4">
+         <ui:GroupedExpander Header="Recorder Settings"
+                             Margin="0,0,0,4"
+                             GroupName="Settings">
             <StackPanel Margin="8,2,0,0">
                <TextBlock Margin="6,0,6,4"
                           HorizontalAlignment="Left"
@@ -94,9 +96,10 @@
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
 
             </StackPanel>
-         </Expander>
+         </ui:GroupedExpander>
 
-         <Expander Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}">
+         <ui:GroupedExpander Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
+                             GroupName="Settings">
             <StackPanel Margin="8,8,0,0">
                <StackPanel Orientation="Horizontal">
                   <Button Style="{StaticResource MainButtonStyle}"
@@ -115,7 +118,7 @@
                           Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}}"
                           Text="{Binding SpotifyVm.ResultText, StringFormat='Result: {0}', Mode=OneWay}" />
             </StackPanel>
-         </Expander>
+         </ui:GroupedExpander>
 
       </StackPanel>
    </Grid>
