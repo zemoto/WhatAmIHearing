@@ -67,16 +67,16 @@
                              GroupName="Settings">
             <StackPanel Margin="8,2,0,0">
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
-                         Margin="6,2"
+                         Margin="8,3"
                          Content="Keep open in system tray"
                          IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
 
-               <CheckBox Margin="16,2"
+               <CheckBox Margin="18,3"
                          Content="Launch hidden"
                          Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
                          IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
 
-               <CheckBox Margin="6,2"
+               <CheckBox Margin="8,3"
                          Content="Keep window on top"
                          IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
             </StackPanel>
@@ -86,11 +86,12 @@
                              Margin="0,0,0,4"
                              GroupName="Settings">
             <StackPanel Margin="8,2,0,0">
-               <TextBlock Margin="6,0,6,4"
+               <TextBlock Margin="8,0,8,4"
+                          FontWeight="SemiBold"
                           HorizontalAlignment="Left"
                           Text="{Binding HotkeyStatusText, StringFormat='Recording Hotkey: {0}', Mode=OneWay}" />
 
-               <CheckBox Margin="6,2"
+               <CheckBox Margin="8,2"
                          Content="Minimize to tray after recording is done"
                          IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
