@@ -66,7 +66,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0"
                         VerticalAlignment="Center">
-               <ComboBox ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
+               <ComboBox ItemsSource="{Binding RecorderVm.DeviceNameList, Mode=OneTime}"
                          SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
                          Height="24" />
                

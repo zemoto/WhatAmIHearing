@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System.Collections.Generic;
+using System.Windows.Input;
+using WhatAmIHearing.Audio;
 
 namespace WhatAmIHearing.Model
 {
@@ -11,6 +13,10 @@ namespace WhatAmIHearing.Model
 
    internal sealed class RecorderViewModel : ZemotoCommon.UI.ViewModelBase
    {
+      public RecorderViewModel( DeviceProvider deviceProvider ) => DeviceNameList = deviceProvider.GetDeviceNameList();
+
+      public IReadOnlyCollection<string> DeviceNameList { get; }
+
       private RecorderState _state;
       public RecorderState State
       {

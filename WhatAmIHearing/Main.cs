@@ -12,19 +12,16 @@ namespace WhatAmIHearing
    {
       private readonly MainViewModel _model;
       private readonly MainWindow _window;
-      private readonly DeviceProvider _deviceProvider = new();
-      private readonly RecordingManager _recordingManager;
+      private readonly RecordingManager _recordingManager = new();
       private readonly SpotifyManager _spotifyManager = new();
       private readonly Properties.UserSettings _settings = Properties.UserSettings.Default;
 
       public Main()
       {
-         _recordingManager = new RecordingManager( _deviceProvider );
          _recordingManager.RecordingSuccess += OnRecordingDone;
-
          _spotifyManager.SignInComplete += OnSpotifySignInComplete;
 
-         _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model, _deviceProvider );
+         _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
 
          _window = new MainWindow( _model );
          _window.Closing += OnWindowClosing;

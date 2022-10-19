@@ -13,16 +13,15 @@ namespace WhatAmIHearing.Audio
    internal sealed class RecordingManager
    {
       private readonly Recorder _recorder = new();
-      private readonly DeviceProvider _deviceProvider;
+      private readonly DeviceProvider _deviceProvider = new();
 
       public event EventHandler<DetectedTrackInfo> RecordingSuccess;
 
-      public RecorderViewModel Model { get; } = new();
+      public RecorderViewModel Model { get; }
 
-      public RecordingManager( DeviceProvider deviceProvider )
+      public RecordingManager()
       {
-         _deviceProvider = deviceProvider;
-         Model.RecordStopCommand = new RelayCommand( Record );
+         Model = new RecorderViewModel( _deviceProvider ) { RecordStopCommand = new RelayCommand( Record ) };
 
          _recorder.RecordingProgress += OnRecordingProgress;
          _recorder.RecordingFinished += OnRecordingFinished;

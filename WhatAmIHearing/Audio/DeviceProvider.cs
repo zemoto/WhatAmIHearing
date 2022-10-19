@@ -13,7 +13,7 @@ namespace WhatAmIHearing.Audio
 
       public DeviceProvider() => _deviceList = _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active ).ToList();
 
-      public List<string> GetDeviceNameList()
+      public IReadOnlyCollection<string> GetDeviceNameList()
       {
          var deviceNameList = _deviceList.ConvertAll( x => x.FriendlyName );
          deviceNameList.Insert( 0, DefaultDeviceName );
