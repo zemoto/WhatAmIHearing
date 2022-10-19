@@ -46,7 +46,7 @@
                  Margin="0,3,0,0"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Top" />
-      
+
       <Button Grid.Row="0"
               Margin="1"
               HorizontalAlignment="Right"
@@ -58,19 +58,13 @@
                   Grid.Row="1"
                   Margin="12"
                   Width="350">
-         
+
          <ui:RecorderControls Margin="0,0,0,8"
                               DataContext="{Binding RecorderVm, Mode=OneTime}" />
 
-         <Expander x:Name="GeneralSettings"
-                   Margin="0,0,0,4"
-                   Header="Settings">
+         <Expander Header="Window Settings"
+                   Margin="0,0,0,4">
             <StackPanel Margin="8,2,0,0">
-               <TextBlock Grid.Row="2"
-                          Margin="6,0,6,4"
-                          HorizontalAlignment="Left"
-                          Text="{Binding HotkeyStatusText, StringFormat='Recording Hotkey: {0}', Mode=OneWay}" />
-
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
                          Margin="6,2"
                          Content="Keep open in system tray"
@@ -81,20 +75,28 @@
                          Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
                          IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
 
-               <CheckBox Grid.Row="3"
-                         Margin="16,2"
-                         Content="Minimize to tray after recording is done"
-                         Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
-                         IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
-
                <CheckBox Margin="6,2"
                          Content="Keep window on top"
                          IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
             </StackPanel>
          </Expander>
 
-         <Expander x:Name="SpotifySettings"
-                   Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}">
+         <Expander Header="Recorder Settings"
+                   Margin="0,0,0,4">
+            <StackPanel Margin="8,2,0,0">
+               <TextBlock Margin="6,0,6,4"
+                          HorizontalAlignment="Left"
+                          Text="{Binding HotkeyStatusText, StringFormat='Recording Hotkey: {0}', Mode=OneWay}" />
+
+               <CheckBox Margin="6,2"
+                         Content="Minimize to tray after recording is done"
+                         IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
+                         IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
+
+            </StackPanel>
+         </Expander>
+
+         <Expander Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}">
             <StackPanel Margin="8,8,0,0">
                <StackPanel Orientation="Horizontal">
                   <Button Style="{StaticResource MainButtonStyle}"
@@ -114,7 +116,7 @@
                           Text="{Binding SpotifyVm.ResultText, StringFormat='Result: {0}', Mode=OneWay}" />
             </StackPanel>
          </Expander>
-         
+
       </StackPanel>
    </Grid>
 </Window>
