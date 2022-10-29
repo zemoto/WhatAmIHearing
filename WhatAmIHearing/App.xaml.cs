@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using WhatAmIHearing.Utils;
+using ZemotoCommon;
 using TrayIcon = System.Windows.Forms.NotifyIcon;
 
 namespace WhatAmIHearing
@@ -10,9 +11,12 @@ namespace WhatAmIHearing
       private GlobalHotkeyHook _globalHotkeyHook;
       private TrayIcon _trayIcon;
 
+      private const string InstanceName = "WhatAmIHearingInstance";
+      private readonly SingleInstance _singleInstance = new( InstanceName );
+
       protected override void OnStartup( StartupEventArgs e )
       {
-         if ( !SingleInstance.Claim() )
+         if ( !_singleInstance.Claim() )
          {
             Shutdown();
             return;
@@ -22,7 +26,7 @@ namespace WhatAmIHearing
          _globalHotkeyHook = new GlobalHotkeyHook();
          _trayIcon = new TrayIcon();
 
-         SingleInstance.PingedBySecondProcess += ( s, a ) => Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
+         _singleInstance.PingedByOtherProcess += ( s, a ) => Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
 
          _trayIcon.Icon = new System.Drawing.Icon( "Icon.ico" );
          _trayIcon.MouseClick += OnTrayIconClicked;
