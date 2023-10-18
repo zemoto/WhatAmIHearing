@@ -8,126 +8,125 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WhatAmIHearing.Properties {
-    
-    
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
-    internal sealed partial class UserSettings : global::System.Configuration.ApplicationSettingsBase {
-        
-        private static UserSettings defaultInstance = ((UserSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new UserSettings())));
-        
-        public static UserSettings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Default Input Device")]
-        public string SelectedDevice {
-            get {
-                return ((string)(this["SelectedDevice"]));
-            }
-            set {
-                this["SelectedDevice"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool KeepOpenInTray {
-            get {
-                return ((bool)(this["KeepOpenInTray"]));
-            }
-            set {
-                this["KeepOpenInTray"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OpenHidden {
-            get {
-                return ((bool)(this["OpenHidden"]));
-            }
-            set {
-                this["OpenHidden"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SpotifyAccessToken {
-            get {
-                return ((string)(this["SpotifyAccessToken"]));
-            }
-            set {
-                this["SpotifyAccessToken"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SpotifyRefreshToken {
-            get {
-                return ((string)(this["SpotifyRefreshToken"]));
-            }
-            set {
-                this["SpotifyRefreshToken"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.DateTime SpotifyExpirationTimeUtc {
-            get {
-                return ((global::System.DateTime)(this["SpotifyExpirationTimeUtc"]));
-            }
-            set {
-                this["SpotifyExpirationTimeUtc"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AddSongsToSpotifyPlaylist {
-            get {
-                return ((bool)(this["AddSongsToSpotifyPlaylist"]));
-            }
-            set {
-                this["AddSongsToSpotifyPlaylist"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool KeepWindowTopmost {
-            get {
-                return ((bool)(this["KeepWindowTopmost"]));
-            }
-            set {
-                this["KeepWindowTopmost"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool HideWindowAfterRecord {
-            get {
-                return ((bool)(this["HideWindowAfterRecord"]));
-            }
-            set {
-                this["HideWindowAfterRecord"] = value;
-            }
-        }
-    }
-}
+namespace WhatAmIHearing.Properties; 
+ 
+ 
+ [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+ [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
+ internal sealed partial class UserSettings : global::System.Configuration.ApplicationSettingsBase {
+     
+     private static UserSettings defaultInstance = ((UserSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new UserSettings())));
+     
+     public static UserSettings Default {
+         get {
+             return defaultInstance;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     [global::System.Configuration.DefaultSettingValueAttribute("Default Input Device")]
+     public string SelectedDevice {
+         get {
+             return ((string)(this["SelectedDevice"]));
+         }
+         set {
+             this["SelectedDevice"] = value;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     [global::System.Configuration.DefaultSettingValueAttribute("True")]
+     public bool KeepOpenInTray {
+         get {
+             return ((bool)(this["KeepOpenInTray"]));
+         }
+         set {
+             this["KeepOpenInTray"] = value;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     [global::System.Configuration.DefaultSettingValueAttribute("False")]
+     public bool OpenHidden {
+         get {
+             return ((bool)(this["OpenHidden"]));
+         }
+         set {
+             this["OpenHidden"] = value;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     [global::System.Configuration.DefaultSettingValueAttribute("")]
+     public string SpotifyAccessToken {
+         get {
+             return ((string)(this["SpotifyAccessToken"]));
+         }
+         set {
+             this["SpotifyAccessToken"] = value;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     [global::System.Configuration.DefaultSettingValueAttribute("")]
+     public string SpotifyRefreshToken {
+         get {
+             return ((string)(this["SpotifyRefreshToken"]));
+         }
+         set {
+             this["SpotifyRefreshToken"] = value;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     public global::System.DateTime SpotifyExpirationTimeUtc {
+         get {
+             return ((global::System.DateTime)(this["SpotifyExpirationTimeUtc"]));
+         }
+         set {
+             this["SpotifyExpirationTimeUtc"] = value;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     [global::System.Configuration.DefaultSettingValueAttribute("True")]
+     public bool AddSongsToSpotifyPlaylist {
+         get {
+             return ((bool)(this["AddSongsToSpotifyPlaylist"]));
+         }
+         set {
+             this["AddSongsToSpotifyPlaylist"] = value;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     [global::System.Configuration.DefaultSettingValueAttribute("False")]
+     public bool KeepWindowTopmost {
+         get {
+             return ((bool)(this["KeepWindowTopmost"]));
+         }
+         set {
+             this["KeepWindowTopmost"] = value;
+         }
+     }
+     
+     [global::System.Configuration.UserScopedSettingAttribute()]
+     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+     [global::System.Configuration.DefaultSettingValueAttribute("False")]
+     public bool HideWindowAfterRecord {
+         get {
+             return ((bool)(this["HideWindowAfterRecord"]));
+         }
+         set {
+             this["HideWindowAfterRecord"] = value;
+         }
+     }
+ }

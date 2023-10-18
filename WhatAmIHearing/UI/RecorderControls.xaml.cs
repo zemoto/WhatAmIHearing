@@ -1,7 +1,6 @@
-﻿namespace WhatAmIHearing.UI
+﻿namespace WhatAmIHearing.UI;
+
+internal partial class RecorderControls
 {
-   internal partial class RecorderControls
-   {
-      public RecorderControls() => InitializeComponent();
-   }
+   public RecorderControls() => InitializeComponent();
 }

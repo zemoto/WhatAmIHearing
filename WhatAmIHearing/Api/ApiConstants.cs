@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace WhatAmIHearing.Api;
 
-namespace WhatAmIHearing.Api
+internal static class ApiConstants
 {
-   internal static class ApiConstants
-   {
-      public const string SpotifyClientId = "<Placeholder>";
-      public const string SpotifyClientSecret = "<Placeholder>";
-      public const string ShazamApiKey = "<Placeholder>";
-   }
+   public const string SpotifyClientId = "<Placeholder>";
+   public const string SpotifyClientSecret = "<Placeholder>";
+   public const string ShazamApiKey = "<Placeholder>";
 }

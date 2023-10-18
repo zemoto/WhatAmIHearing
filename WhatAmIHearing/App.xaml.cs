@@ -1,61 +1,71 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using WhatAmIHearing.Utils;
 using ZemotoCommon;
 using TrayIcon = System.Windows.Forms.NotifyIcon;
 
-namespace WhatAmIHearing
+namespace WhatAmIHearing;
+
+public sealed partial class App : IDisposable
 {
-   public partial class App
+   private Main _main;
+   private GlobalHotkeyHook _globalHotkeyHook;
+   private TrayIcon _trayIcon;
+
+   private const string InstanceName = "WhatAmIHearingInstance";
+   private readonly SingleInstance _singleInstance = new( InstanceName, listenForOtherInstances: true );
+
+   public App()
    {
-      private Main _main;
-      private GlobalHotkeyHook _globalHotkeyHook;
-      private TrayIcon _trayIcon;
-
-      private const string InstanceName = "WhatAmIHearingInstance";
-      private readonly SingleInstance _singleInstance = new( InstanceName, listenForOtherInstances: true );
-
-      protected override void OnStartup( StartupEventArgs e )
+      if ( !_singleInstance.Claim() )
       {
-         if ( !_singleInstance.Claim() )
-         {
-            Shutdown();
-            return;
-         }
-
-         _main = new Main();
-         _globalHotkeyHook = new GlobalHotkeyHook();
-         _trayIcon = new TrayIcon();
-
-         _singleInstance.PingedByOtherProcess += ( s, a ) => Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
-
-         _trayIcon.Icon = new System.Drawing.Icon( "Icon.ico" );
-         _trayIcon.MouseClick += OnTrayIconClicked;
-         _trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-         _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, ( s, a ) => Shutdown() );
-         _trayIcon.Visible = true;
-
-         bool hotkeyRegistered = _globalHotkeyHook.RegisterHotKey( ModifierKeys.Shift, System.Windows.Forms.Keys.F2 );
-         if ( hotkeyRegistered )
-         {
-            _globalHotkeyHook.KeyPressed += _main.OnRecordHotkey;
-         }
-
-         _main.Start( hotkeyRegistered );
+         Shutdown();
+         return;
       }
 
-      protected override void OnExit( ExitEventArgs e )
+      _main = new Main();
+      _globalHotkeyHook = new GlobalHotkeyHook();
+      _trayIcon = new TrayIcon();
+
+      _singleInstance.PingedByOtherProcess += ( s, a ) => Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
+
+      _trayIcon.Icon = new System.Drawing.Icon( "Icon.ico" );
+      _trayIcon.MouseClick += OnTrayIconClicked;
+      _trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+      _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, ( s, a ) => Shutdown() );
+      _trayIcon.Visible = true;
+   }
+
+   public void Dispose()
+   {
+      _main.Dispose();
+      _globalHotkeyHook.Dispose();
+      _trayIcon.Dispose();
+      _singleInstance.Dispose();
+   }
+
+   protected override void OnStartup( StartupEventArgs e )
+   {
+      bool hotkeyRegistered = _globalHotkeyHook.RegisterHotKey( ModifierKeys.Shift, System.Windows.Forms.Keys.F2 );
+      if ( hotkeyRegistered )
       {
-         WhatAmIHearing.Properties.UserSettings.Default.Save();
-         _trayIcon.Dispose();
-         _globalHotkeyHook.Dispose();
+         _globalHotkeyHook.KeyPressed += _main.OnRecordHotkey;
       }
 
-      private void OnTrayIconClicked( object sender, System.Windows.Forms.MouseEventArgs e )
+      _main.Start( hotkeyRegistered );
+   }
+
+   protected override void OnExit( ExitEventArgs e )
+   {
+      WhatAmIHearing.Properties.UserSettings.Default.Save();
+      Dispose();
+   }
+
+   private void OnTrayIconClicked( object sender, System.Windows.Forms.MouseEventArgs e )
+   {
+      if ( e.Button is System.Windows.Forms.MouseButtons.Left )
       {
-         if ( e.Button is System.Windows.Forms.MouseButtons.Left )
-         {
-            _main.ShowAndForegroundMainWindow();
-         }
+         _main.ShowAndForegroundMainWindow();
       }
    }
 }

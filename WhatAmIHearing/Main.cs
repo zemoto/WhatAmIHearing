@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
@@ -6,91 +7,92 @@ using WhatAmIHearing.Model;
 using WhatAmIHearing.UI;
 using WhatAmIHearing.Utils;
 
-namespace WhatAmIHearing
+namespace WhatAmIHearing;
+
+internal sealed class Main : IDisposable
 {
-   internal sealed class Main
+   private readonly MainViewModel _model;
+   private readonly MainWindow _window;
+   private readonly RecordingManager _recordingManager = new();
+   private readonly SpotifyManager _spotifyManager = new();
+   private readonly Properties.UserSettings _settings = Properties.UserSettings.Default;
+
+   public Main()
    {
-      private readonly MainViewModel _model;
-      private readonly MainWindow _window;
-      private readonly RecordingManager _recordingManager = new();
-      private readonly SpotifyManager _spotifyManager = new();
-      private readonly Properties.UserSettings _settings = Properties.UserSettings.Default;
+      _recordingManager.RecordingSuccess += OnRecordingDone;
+      _spotifyManager.SignInComplete += OnSpotifySignInComplete;
 
-      public Main()
+      _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
+
+      _window = new MainWindow( _model );
+      _window.Closing += OnWindowClosing;
+   }
+
+   public void Dispose() => _recordingManager.Dispose();
+
+   public void Start( bool hotkeyRegistered )
+   {
+      _model.HotkeyStatusText = hotkeyRegistered ? "Shift + F2" : "Failed to register";
+
+      if ( _settings.KeepOpenInTray && _settings.OpenHidden )
       {
-         _recordingManager.RecordingSuccess += OnRecordingDone;
-         _spotifyManager.SignInComplete += OnSpotifySignInComplete;
+         HideWindow();
+      }
+      else
+      {
+         ShowAndForegroundMainWindow();
+      }
+   }
 
-         _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
-
-         _window = new MainWindow( _model );
-         _window.Closing += OnWindowClosing;
+   private async void OnRecordingDone( object sender, DetectedTrackInfo detectedSong )
+   {
+      if ( detectedSong is null )
+      {
+         return;
       }
 
-      public void Start( bool hotkeyRegistered )
+      if ( _settings.KeepOpenInTray && _settings.HideWindowAfterRecord )
       {
-         _model.HotkeyStatusText = hotkeyRegistered ? "Shift + F2" : "Failed to register";
-
-         if ( _settings.KeepOpenInTray && _settings.OpenHidden )
-         {
-            HideWindow();
-         }
-         else
-         {
-            ShowAndForegroundMainWindow();
-         }
+         HideWindow();
       }
 
-      private async void OnRecordingDone( object sender, DetectedTrackInfo detectedSong )
+      if ( _settings.AddSongsToSpotifyPlaylist )
       {
-         if ( detectedSong is null )
-         {
-            return;
-         }
+         await _spotifyManager.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle ).ConfigureAwait( false );
+      }
+   }
 
-         if ( _settings.KeepOpenInTray && _settings.HideWindowAfterRecord )
-         {
-            HideWindow();
-         }
+   private void OnSpotifySignInComplete( object sender, System.EventArgs e ) => ShowAndForegroundMainWindow();
 
-         if ( _settings.AddSongsToSpotifyPlaylist )
-         {
-            await _spotifyManager.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle ).ConfigureAwait( false );
-         }
+   private void OnWindowClosing( object sender, CancelEventArgs e )
+   {
+      if ( _settings.KeepOpenInTray )
+      {
+         e.Cancel = true;
+         HideWindow();
+      }
+   }
+
+   public void OnRecordHotkey( object sender, KeyPressedEventArgs e )
+   {
+      if ( _recordingManager.Model.State is RecorderState.Stopped )
+      {
+         ShowAndForegroundMainWindow();
       }
 
-      private void OnSpotifySignInComplete( object sender, System.EventArgs e ) => ShowAndForegroundMainWindow();
+      _recordingManager.Record();
+   }
 
-      private void OnWindowClosing( object sender, CancelEventArgs e )
-      {
-         if ( _settings.KeepOpenInTray )
-         {
-            e.Cancel = true;
-            HideWindow();
-         }
-      }
+   private void HideWindow()
+   {
+      _window.ShowInTaskbar = false;
+      _window.Hide();
+   }
 
-      public void OnRecordHotkey( object sender, KeyPressedEventArgs e )
-      {
-         if ( _recordingManager.Model.State is RecorderState.Stopped )
-         {
-            ShowAndForegroundMainWindow();
-         }
-
-         _recordingManager.Record();
-      }
-
-      private void HideWindow()
-      {
-         _window.ShowInTaskbar = false;
-         _window.Hide();
-      }
-
-      public void ShowAndForegroundMainWindow()
-      {
-         _window.ShowInTaskbar = true;
-         _window.Show();
-         _ = _window.Activate();
-      }
+   public void ShowAndForegroundMainWindow()
+   {
+      _window.ShowInTaskbar = true;
+      _window.Show();
+      _ = _window.Activate();
    }
 }

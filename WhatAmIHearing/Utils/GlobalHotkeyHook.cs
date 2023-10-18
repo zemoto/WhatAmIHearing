@@ -3,84 +3,86 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace WhatAmIHearing.Utils
+namespace WhatAmIHearing.Utils;
+
+[Flags]
+internal enum ModifierKeys : uint
 {
-   [Flags]
-   internal enum ModifierKeys : uint
+   None = 0,
+   Alt = 1,
+   Control = 1 << 1,
+   Shift = 1 << 2,
+   Win = 1 << 3
+}
+
+internal sealed class KeyPressedEventArgs : EventArgs
+{
+   public ModifierKeys Modifier { get; }
+   public Keys Key { get; }
+
+   internal KeyPressedEventArgs( ModifierKeys modifier, Keys key )
    {
-      None = 0,
-      Alt = 1,
-      Control = 1 << 1,
-      Shift = 1 << 2,
-      Win = 1 << 3
+      Modifier = modifier;
+      Key = key;
+   }
+}
+
+internal sealed class GlobalHotkeyHook : IDisposable
+{
+   [DllImport( "user32.dll" )]
+   [DefaultDllImportSearchPaths( DllImportSearchPath.System32 )]
+   private static extern bool RegisterHotKey( IntPtr hWnd, int id, uint fsModifiers, uint vk );
+
+   [DllImport( "user32.dll" )]
+   [DefaultDllImportSearchPaths( DllImportSearchPath.System32 )]
+   private static extern bool UnregisterHotKey( IntPtr hWnd, int id );
+
+   private sealed class MessageReceivingWindow : NativeWindow, IDisposable
+   {
+      private const int WM_HOTKEY = 0x0312;
+
+      public MessageReceivingWindow() => CreateHandle( new CreateParams() );
+
+      public void Dispose() => DestroyHandle();
+
+      protected override void WndProc( ref Message m )
+      {
+         base.WndProc( ref m );
+
+         if ( m.Msg == WM_HOTKEY )
+         {
+            var key = (Keys)( ( (int)m.LParam >> 16 ) & 0xFFFF );
+            var modifier = (ModifierKeys)( (int)m.LParam & 0xFFFF );
+
+            KeyPressed?.Invoke( this, new KeyPressedEventArgs( modifier, key ) );
+         }
+      }
+
+      public event EventHandler<KeyPressedEventArgs> KeyPressed;
    }
 
-   internal sealed class KeyPressedEventArgs : EventArgs
-   {
-      public ModifierKeys Modifier { get; }
-      public Keys Key { get; }
+   private readonly MessageReceivingWindow _window = new();
+   private int _currentHotkeyId;
 
-      internal KeyPressedEventArgs( ModifierKeys modifier, Keys key )
-      {
-         Modifier = modifier;
-         Key = key;
-      }
+   public bool RegisterHotKey( ModifierKeys modifier, Keys key )
+   {
+      _currentHotkeyId++;
+      return RegisterHotKey( _window.Handle, _currentHotkeyId, (uint)modifier, (uint)key );
    }
 
-   internal sealed class GlobalHotkeyHook : IDisposable
+   public event EventHandler<KeyPressedEventArgs> KeyPressed
    {
-      [DllImport( "user32.dll" )]
-      private static extern bool RegisterHotKey( IntPtr hWnd, int id, uint fsModifiers, uint vk );
-      [DllImport( "user32.dll" )]
-      private static extern bool UnregisterHotKey( IntPtr hWnd, int id );
+      add => _window.KeyPressed += value;
+      remove => _window.KeyPressed -= value;
+   }
 
-      private sealed class MessageReceivingWindow : NativeWindow, IDisposable
+   public void Dispose()
+   {
+      for ( int i = _currentHotkeyId; i > 0; i-- )
       {
-         private const int WM_HOTKEY = 0x0312;
-
-         public MessageReceivingWindow() => CreateHandle( new CreateParams() );
-
-         public void Dispose() => DestroyHandle();
-
-         protected override void WndProc( ref Message m )
-         {
-            base.WndProc( ref m );
-
-            if ( m.Msg == WM_HOTKEY )
-            {
-               var key = (Keys)( ( (int)m.LParam >> 16 ) & 0xFFFF );
-               var modifier = (ModifierKeys)( (int)m.LParam & 0xFFFF );
-
-               KeyPressed?.Invoke( this, new KeyPressedEventArgs( modifier, key ) );
-            }
-         }
-
-         public event EventHandler<KeyPressedEventArgs> KeyPressed;
+         _ = UnregisterHotKey( _window.Handle, i );
       }
 
-      private readonly MessageReceivingWindow _window = new();
-      private int _currentHotkeyId;
-
-      public bool RegisterHotKey( ModifierKeys modifier, Keys key )
-      {
-         _currentHotkeyId++;
-         return RegisterHotKey( _window.Handle, _currentHotkeyId, (uint)modifier, (uint)key );
-      }
-
-      public event EventHandler<KeyPressedEventArgs> KeyPressed
-      {
-         add => _window.KeyPressed += value;
-         remove => _window.KeyPressed -= value;
-      }
-
-      public void Dispose()
-      {
-         for ( int i = _currentHotkeyId; i > 0; i-- )
-         {
-            _ = UnregisterHotKey( _window.Handle, i );
-         }
-
-         _window.Dispose();
-      }
+      _window.Dispose();
    }
 }
