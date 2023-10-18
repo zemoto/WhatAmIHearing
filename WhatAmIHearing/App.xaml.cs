@@ -12,7 +12,7 @@ namespace WhatAmIHearing
       private TrayIcon _trayIcon;
 
       private const string InstanceName = "WhatAmIHearingInstance";
-      private readonly SingleInstance _singleInstance = new( InstanceName );
+      private readonly SingleInstance _singleInstance = new( InstanceName, listenForOtherInstances: true );
 
       protected override void OnStartup( StartupEventArgs e )
       {
