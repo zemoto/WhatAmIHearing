@@ -1,4 +1,5 @@
-﻿using System;
+using NAudio.Wave;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,15 +13,16 @@ namespace WhatAmIHearing.Audio;
 
 internal sealed class RecordingManager : IDisposable
 {
-   private readonly Recorder _recorder = new();
+   private readonly Recorder _recorder;
    private readonly DeviceProvider _deviceProvider = new();
 
    public event EventHandler<DetectedTrackInfo> RecordingSuccess;
 
    public RecorderViewModel Model { get; }
 
-   public RecordingManager()
+   public RecordingManager( WaveFormat waveFormat, long numBytesToRecord )
    {
+      _recorder = new Recorder( waveFormat, numBytesToRecord );
       Model = new RecorderViewModel( _deviceProvider ) { RecordStopCommand = new RelayCommand( Record ) };
 
       _recorder.RecordingProgress += OnRecordingProgress;
@@ -53,7 +55,7 @@ internal sealed class RecordingManager : IDisposable
    private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
    {
       Model.RecordingProgress = (int)( (double)e.BytesRecorded / e.MaxBytes * 100 );
-      Model.RecorderStatusText = $"Recording: {e.BytesRecorded}/{e.MaxBytes} bits";
+      Model.RecorderStatusText = $"Recording: {e.BytesRecorded}/{e.MaxBytes} bytes";
    }
 
    private async void OnRecordingFinished( object sender, RecordingFinishedEventArgs args )
@@ -74,7 +76,7 @@ internal sealed class RecordingManager : IDisposable
          }
 
          Model.State = RecorderState.SendingToShazam;
-         Model.RecorderStatusText = $"Sending resampled {args.RecordedData.Length} bits to Shazam";
+         Model.RecorderStatusText = $"Sending {args.RecordedData.Length} bytes to Shazam";
          Model.RecordingProgress = 100;
          try
          {

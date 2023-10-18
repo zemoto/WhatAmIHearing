@@ -2,13 +2,14 @@
 using NAudio.Wave;
 using System;
 using System.IO;
-using WhatAmIHearing.Api.Shazam;
 
 namespace WhatAmIHearing.Audio;
 
 internal sealed class Recorder : IDisposable
 {
-   private long _maxBytes;
+   private readonly WaveFormat _waveFormat;
+   private readonly long _numBytesToRecord;
+
    private bool _cancelled;
    private WasapiLoopbackCapture _audioCapturer;
    private WaveFileWriter _audioWriter;
@@ -16,6 +17,12 @@ internal sealed class Recorder : IDisposable
 
    public event EventHandler<RecordingProgressEventArgs> RecordingProgress;
    public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
+
+   public Recorder( WaveFormat waveFormat, long numBytesToRecord )
+   {
+      _waveFormat = waveFormat;
+      _numBytesToRecord = numBytesToRecord;
+   }
 
    public void Dispose()
    {
@@ -38,15 +45,14 @@ internal sealed class Recorder : IDisposable
 
    public void StartRecording( MMDevice device )
    {
-      _audioCapturer = new WasapiLoopbackCapture( device );
+      _audioCapturer = new WasapiLoopbackCapture( device ) {  WaveFormat = _waveFormat };
       _audioCapturer.DataAvailable += OnDataCaptured;
       _audioCapturer.RecordingStopped += OnRecordingStopped;
 
       _recordedFileStream = new MemoryStream();
       _audioWriter = new WaveFileWriter( _recordedFileStream, _audioCapturer.WaveFormat );
-      _maxBytes = ShazamSpecEnforcer.GetMaxRecordingSize( _audioCapturer.WaveFormat.AverageBytesPerSecond );
 
-      RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, _maxBytes ) );
+      RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, _numBytesToRecord ) );
 
       _audioCapturer.StartRecording();
    }
@@ -59,29 +65,28 @@ internal sealed class Recorder : IDisposable
 
    private void OnDataCaptured( object sender, WaveInEventArgs e )
    {
-      if ( _audioWriter.Position + e.BytesRecorded >= _maxBytes )
+      if ( _audioWriter.Position + e.BytesRecorded >= _numBytesToRecord )
       {
          _audioCapturer.StopRecording();
       }
       else
       {
          _audioWriter.Write( e.Buffer, 0, e.BytesRecorded );
-         RecordingProgress.Invoke( this, new RecordingProgressEventArgs( _audioWriter.Position, _maxBytes ) );
+         RecordingProgress.Invoke( this, new RecordingProgressEventArgs( _audioWriter.Position, _numBytesToRecord ) );
       }
    }
 
    private void OnRecordingStopped( object sender, StoppedEventArgs e )
    {
-      WaveFormat format = null;
       byte[] data = null;
 
       if ( !_cancelled )
       {
          _audioWriter.Flush();
-         data = ShazamSpecEnforcer.ResampleAudioToMatchSpec( _recordedFileStream, out format );
+         data = _recordedFileStream.ToArray();
       }
 
-      RecordingFinished.Invoke( this, new RecordingFinishedEventArgs( data, format ) );
+      RecordingFinished.Invoke( this, new RecordingFinishedEventArgs( data, _waveFormat ) );
       Dispose();
    }
 }

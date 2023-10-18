@@ -13,7 +13,7 @@ internal sealed class Main : IDisposable
 {
    private readonly MainViewModel _model;
    private readonly MainWindow _window;
-   private readonly RecordingManager _recordingManager = new();
+   private readonly RecordingManager _recordingManager = new( ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
    private readonly SpotifyManager _spotifyManager = new();
    private readonly Properties.UserSettings _settings = Properties.UserSettings.Default;
 
