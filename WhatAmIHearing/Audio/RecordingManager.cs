@@ -20,9 +20,9 @@ internal sealed class RecordingManager : IDisposable
 
    public RecorderViewModel Model { get; }
 
-   public RecordingManager( WaveFormat waveFormat, long numBytesToRecord )
+   public RecordingManager( WaveFormat waveFormat, long maxBytesToRecord )
    {
-      _recorder = new Recorder( waveFormat, numBytesToRecord );
+      _recorder = new Recorder( waveFormat, maxBytesToRecord );
       Model = new RecorderViewModel( _deviceProvider ) { RecordStopCommand = new RelayCommand( Record ) };
 
       _recorder.RecordingProgress += OnRecordingProgress;
@@ -48,13 +48,13 @@ internal sealed class RecordingManager : IDisposable
       else
       {
          Model.State = RecorderState.Recording;
-         _recorder.StartRecording( _deviceProvider.GetSelectedDevice() );
+         _recorder.StartRecording( _deviceProvider.GetSelectedDevice(), Model.RecordPercent );
       }
    }
 
    private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
    {
-      Model.RecordingProgress = (int)( (double)e.BytesRecorded / e.MaxBytes * 100 );
+      Model.RecordingProgress = (double)e.BytesRecorded / ShazamSpecProvider.MaxBytes;
       Model.RecorderStatusText = $"Recording: {e.BytesRecorded}/{e.MaxBytes} bytes";
    }
 
@@ -77,7 +77,7 @@ internal sealed class RecordingManager : IDisposable
 
          Model.State = RecorderState.SendingToShazam;
          Model.RecorderStatusText = $"Sending {args.RecordedData.Length} bytes to Shazam";
-         Model.RecordingProgress = 100;
+         Model.RecordingProgress = Model.RecordPercent;
          try
          {
             detectedSong = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );

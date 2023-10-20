@@ -6,40 +6,61 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:model="clr-namespace:WhatAmIHearing.Model"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type model:RecorderViewModel}}">
+             d:DataContext="{d:DesignInstance Type={x:Type model:RecorderViewModel}}"
+             Loaded="OnLoaded">
    <UserControl.Resources>
       <ResourceDictionary Source="Resources.xaml" />
    </UserControl.Resources>
    <Grid>
+      <Grid.RowDefinitions>
+         <RowDefinition Height="24" />
+         <RowDefinition Height="2" />
+         <RowDefinition Height="34" />
+      </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
          <ColumnDefinition Width="*" />
          <ColumnDefinition Width="8" />
          <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
-      <StackPanel Grid.Column="0"
-                  VerticalAlignment="Center">
-         <ComboBox ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
-                   SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
-                   Height="24" />
+      <ComboBox Grid.Row="0" 
+                Grid.Column="0" 
+                VerticalAlignment="Top"
+                ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
+                SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}" />
 
-         <Grid Margin="0,2,0,0"
-               Height="24">
-            <ProgressBar Background="White"
-                         Foreground="#69C3FF"
-                         Value="{Binding RecordingProgress, Mode=OneWay}" />
+      <Grid Grid.Row="2" 
+            Grid.Column="0"
+            Height="24"
+            VerticalAlignment="Top">
+         <ProgressBar Background="White"
+                      Foreground="#69C3FF"
+                      Minimum="0"
+                      Maximum="1"
+                      Value="{Binding RecordingProgress, Mode=OneWay}" />
 
-            <TextBlock Text="{Binding RecorderStatusText, Mode=OneWay}"
-                       Margin="6,0,0,0"
-                       VerticalAlignment="Center" />
-         </Grid>
-      </StackPanel>
+         <TextBlock Text="{Binding RecorderStatusText, Mode=OneWay}"
+                    Margin="6,0,0,0"
+                    VerticalAlignment="Center" />
+      </Grid>
 
-      <Button Grid.Column="2"
+      <Slider Grid.Row="2"
+              Grid.Column="0"
+              Style="{StaticResource RecordPercentSliderStyle}"
+              Value="{Binding RecordPercent, Mode=TwoWay}"
+              Thumb.DragStarted="OnRecordPercentSliderDragStarted"
+              Thumb.DragDelta="OnRecordPercentSliderDragDelta"
+              Thumb.DragCompleted="OnRecordPercentSliderDragCompleted" />
+
+      <Button Grid.Row="0" 
+              Grid.RowSpan="3"
+              Grid.Column="2"
+              OverridesDefaultStyle="True"
               Style="{StaticResource MainButtonStyle}"
               Command="{Binding RecordStopCommand}"
-              Width="50"
               Height="50"
+              Width="50"
               Padding="12"
+              VerticalAlignment="Top"
               HorizontalContentAlignment="Stretch"
               VerticalContentAlignment="Stretch">
          <Grid>

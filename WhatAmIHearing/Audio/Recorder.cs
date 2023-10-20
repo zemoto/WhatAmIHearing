@@ -8,7 +8,8 @@ namespace WhatAmIHearing.Audio;
 internal sealed class Recorder : IDisposable
 {
    private readonly WaveFormat _waveFormat;
-   private readonly long _numBytesToRecord;
+   private readonly long _maxBytesToRecord;
+   private long _bytesToRecord;
 
    private bool _cancelled;
    private WasapiLoopbackCapture _audioCapturer;
@@ -18,10 +19,10 @@ internal sealed class Recorder : IDisposable
    public event EventHandler<RecordingProgressEventArgs> RecordingProgress;
    public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
 
-   public Recorder( WaveFormat waveFormat, long numBytesToRecord )
+   public Recorder( WaveFormat waveFormat, long maxBytesToRecord )
    {
       _waveFormat = waveFormat;
-      _numBytesToRecord = numBytesToRecord;
+      _maxBytesToRecord = maxBytesToRecord;
    }
 
    public void Dispose()
@@ -43,7 +44,7 @@ internal sealed class Recorder : IDisposable
       }
    }
 
-   public void StartRecording( MMDevice device )
+   public void StartRecording( MMDevice device, double percentToRecord )
    {
       _audioCapturer = new WasapiLoopbackCapture( device ) {  WaveFormat = _waveFormat };
       _audioCapturer.DataAvailable += OnDataCaptured;
@@ -52,8 +53,9 @@ internal sealed class Recorder : IDisposable
       _recordedFileStream = new MemoryStream();
       _audioWriter = new WaveFileWriter( _recordedFileStream, _audioCapturer.WaveFormat );
 
-      RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, _numBytesToRecord ) );
+      RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, _bytesToRecord ) );
 
+      _bytesToRecord = (int)( percentToRecord * _maxBytesToRecord );
       _audioCapturer.StartRecording();
    }
 
@@ -65,14 +67,14 @@ internal sealed class Recorder : IDisposable
 
    private void OnDataCaptured( object sender, WaveInEventArgs e )
    {
-      if ( _audioWriter.Position + e.BytesRecorded >= _numBytesToRecord )
+      if ( _audioWriter.Position + e.BytesRecorded >= _bytesToRecord )
       {
          _audioCapturer.StopRecording();
       }
       else
       {
          _audioWriter.Write( e.Buffer, 0, e.BytesRecorded );
-         RecordingProgress.Invoke( this, new RecordingProgressEventArgs( _audioWriter.Position, _numBytesToRecord ) );
+         RecordingProgress.Invoke( this, new RecordingProgressEventArgs( _audioWriter.Position, _bytesToRecord ) );
       }
    }
 

@@ -16,6 +16,9 @@
                              TrueValue="Sign Out"
                              FalseValue="Sign In" />
 
+   <SolidColorBrush x:Key="MainColorBrush"
+                    Color="#4682B4" />
+
    <Style x:Key="MainButtonStyle"
           TargetType="{x:Type Button}">
       <Setter Property="Width"
@@ -45,7 +48,7 @@
             <ControlTemplate TargetType="{x:Type Button}">
                <Grid>
                   <Rectangle x:Name="Background"
-                             Fill="#4682B4"
+                             Fill="{StaticResource MainColorBrush}"
                              RadiusX="4"
                              RadiusY="4" />
                   <ContentPresenter Margin="{TemplateBinding Padding}"
@@ -57,7 +60,7 @@
                            Value="True">
                      <Setter TargetName="Background"
                              Property="Fill"
-                             Value="#4A89BD"/>
+                             Value="#4A89BD" />
                   </Trigger>
                   <Trigger Property="IsPressed"
                            Value="True">
@@ -116,6 +119,105 @@
                              Property="Opacity"
                              Value="0.3" />
                   </Trigger>
+               </ControlTemplate.Triggers>
+            </ControlTemplate>
+         </Setter.Value>
+      </Setter>
+   </Style>
+
+   <ControlTemplate x:Key="RecordPercentLeftSideTemplate"
+                    TargetType="{x:Type RepeatButton}">
+      <Rectangle Height="24"
+                 VerticalAlignment="Top"
+                 Fill="{StaticResource MainColorBrush}"
+                 Margin="4,0,-4,0"/>
+   </ControlTemplate>
+
+   <ControlTemplate x:Key="RecordPercentThumbTemplate"
+                    TargetType="{x:Type Thumb}">
+      <Grid Background="Transparent">
+         <Line Stroke="{StaticResource MainColorBrush}"
+               HorizontalAlignment="Center"
+               StrokeThickness="1"
+               X1="0"
+               X2="0"
+               Y1="0"
+               Y2="24" />
+
+         <Path Fill="{StaticResource MainColorBrush}"
+               Height="8"
+               VerticalAlignment="Bottom"
+               Data="M 0,8 H 8 L 4,0 Z">
+            <Path.Effect>
+               <DropShadowEffect BlurRadius="3"
+                                 Opacity="0.6"
+                                 Direction="270"
+                                 ShadowDepth="1" />
+            </Path.Effect>
+         </Path>
+      </Grid>
+   </ControlTemplate>
+
+   <Style x:Key="RecordPercentSliderStyle"
+          TargetType="{x:Type Slider}">
+      <Setter Property="Height"
+              Value="34" />
+      <Setter Property="Minimum"
+              Value="0" />
+      <Setter Property="Maximum"
+              Value="1" />
+      <Setter Property="TickFrequency"
+              Value="0.01" />
+      <Setter Property="IsSnapToTickEnabled"
+              Value="True" />
+      <Setter Property="Focusable"
+              Value="False" />
+      <Setter Property="OverridesDefaultStyle"
+              Value="True" />
+      <Setter Property="Template">
+         <Setter.Value>
+            <ControlTemplate TargetType="{x:Type Slider}">
+               <Track Grid.Row="1"
+                      x:Name="PART_Track"
+                      Margin="-4,0">
+                  <Track.DecreaseRepeatButton>
+                     <RepeatButton x:Name="LeftSideFill"
+                                   Opacity="0"
+                                   IsHitTestVisible="False"
+                                   Template="{StaticResource RecordPercentLeftSideTemplate}"
+                                   Focusable="False"/>
+                  </Track.DecreaseRepeatButton>
+                  <Track.Thumb>
+                     <Thumb Template="{StaticResource RecordPercentThumbTemplate}" />
+                  </Track.Thumb>
+               </Track>
+               <ControlTemplate.Triggers>
+                  <EventTrigger RoutedEvent="Thumb.DragStarted">
+                     <EventTrigger.Actions>
+                        <BeginStoryboard>
+                           <Storyboard>
+                              <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftSideFill"
+                                                             Storyboard.TargetProperty="Opacity">
+                                 <LinearDoubleKeyFrame KeyTime="0:0:0.1"
+                                                       Value="0.4" />
+                              </DoubleAnimationUsingKeyFrames>
+                           </Storyboard>
+                        </BeginStoryboard>
+                     </EventTrigger.Actions>
+                  </EventTrigger>
+                  <EventTrigger RoutedEvent="Thumb.DragCompleted">
+                     <EventTrigger.Actions>
+                        <BeginStoryboard>
+                           <Storyboard>
+                              <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftSideFill"
+                                                             Storyboard.TargetProperty="Opacity">
+                                 <LinearDoubleKeyFrame KeyTime="0:0:0.1"
+                                                       Value="0" />
+                              </DoubleAnimationUsingKeyFrames>
+                           </Storyboard>
+                        </BeginStoryboard>
+                     </EventTrigger.Actions>
+                  </EventTrigger>
                </ControlTemplate.Triggers>
             </ControlTemplate>
          </Setter.Value>

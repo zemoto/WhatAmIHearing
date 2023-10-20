@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using WhatAmIHearing.Audio;
 
@@ -32,11 +33,18 @@ internal sealed class RecorderViewModel : ZemotoCommon.UI.ViewModelBase
       set => SetProperty( ref _recorderStatusText, value );
    }
 
-   private int _recordingProgress;
-   public int RecordingProgress
+   private double _recordingProgress;
+   public double RecordingProgress
    {
       get => _recordingProgress;
       set => SetProperty( ref _recordingProgress, value );
+   }
+
+   private double _recordPercent = 1.0;
+   public double RecordPercent
+   {
+      get => _recordPercent;
+      set => SetProperty( ref _recordPercent, Math.Clamp( value, 0.1, 1 ) );
    }
 
    public ICommand RecordStopCommand { get; set; }
