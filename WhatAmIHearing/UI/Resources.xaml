@@ -144,7 +144,8 @@
                Y1="0"
                Y2="24" />
 
-         <Path Fill="{StaticResource MainColorBrush}"
+         <Path x:Name="ThumbArrow" 
+               Fill="{StaticResource MainColorBrush}"
                Height="8"
                VerticalAlignment="Bottom"
                Data="M 0,8 H 8 L 4,0 Z">
@@ -156,6 +157,14 @@
             </Path.Effect>
          </Path>
       </Grid>
+      <ControlTemplate.Triggers>
+         <Trigger Property="IsEnabled"
+                  Value="False">
+            <Setter TargetName="ThumbArrow"
+                    Property="Opacity"
+                    Value="0.4" />
+         </Trigger>
+      </ControlTemplate.Triggers>
    </ControlTemplate>
 
    <Style x:Key="RecordPercentSliderStyle"

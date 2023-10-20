@@ -26,7 +26,8 @@
                 Grid.Column="0" 
                 VerticalAlignment="Top"
                 ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
-                SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}" />
+                SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
+                IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}}" />
 
       <Grid Grid.Row="2" 
             Grid.Column="0"
@@ -49,7 +50,8 @@
               Value="{Binding RecordPercent, Mode=TwoWay}"
               Thumb.DragStarted="OnRecordPercentSliderDragStarted"
               Thumb.DragDelta="OnRecordPercentSliderDragDelta"
-              Thumb.DragCompleted="OnRecordPercentSliderDragCompleted" />
+              Thumb.DragCompleted="OnRecordPercentSliderDragCompleted"
+              IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}}" />
 
       <Button Grid.Row="0" 
               Grid.RowSpan="3"
