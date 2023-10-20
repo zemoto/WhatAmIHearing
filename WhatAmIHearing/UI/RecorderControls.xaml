@@ -14,8 +14,8 @@
    <Grid>
       <Grid.RowDefinitions>
          <RowDefinition Height="24" />
-         <RowDefinition Height="2" />
-         <RowDefinition Height="34" />
+         <RowDefinition Height="4" />
+         <RowDefinition Height="32" />
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
          <ColumnDefinition Width="*" />
@@ -24,14 +24,14 @@
       </Grid.ColumnDefinitions>
       <ComboBox Grid.Row="0" 
                 Grid.Column="0" 
-                VerticalAlignment="Top"
+                Style="{StaticResource DeviceComboBoxStyle}"
                 ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
                 SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
                 IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}}" />
 
       <Grid Grid.Row="2" 
             Grid.Column="0"
-            Height="24"
+            Height="22"
             VerticalAlignment="Top">
          <ProgressBar Background="White"
                       Foreground="#69C3FF"
