@@ -53,9 +53,9 @@ internal sealed class Recorder : IDisposable
       _recordedFileStream = new MemoryStream();
       _audioWriter = new WaveFileWriter( _recordedFileStream, _audioCapturer.WaveFormat );
 
+      _bytesToRecord = (int)( percentToRecord * _maxBytesToRecord );
       RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, _bytesToRecord ) );
 
-      _bytesToRecord = (int)( percentToRecord * _maxBytesToRecord );
       _audioCapturer.StartRecording();
    }
 
