@@ -7,7 +7,7 @@ internal sealed class SpotifyViewModel : ZemotoCommon.UI.ViewModelBase
 {
    public void NotifySignedInChanged() => OnPropertyChanged( nameof( SignedIn ) );
 
-   public static bool SignedIn => !string.IsNullOrEmpty( Properties.UserSettings.Default.SpotifyAccessToken );
+   public bool SignedIn => !string.IsNullOrEmpty( Properties.UserSettings.Default.SpotifyAccessToken );
 
    private AddToPlaylistResult _result;
    public AddToPlaylistResult Result

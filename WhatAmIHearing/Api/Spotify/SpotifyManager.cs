@@ -17,7 +17,7 @@ internal sealed class SpotifyManager
    {
       using ( var authenticator = new SpotifyAuthenticator() )
       {
-         if ( SpotifyViewModel.SignedIn )
+         if ( Model.SignedIn )
          {
             authenticator.SignOut();
          }
@@ -32,7 +32,7 @@ internal sealed class SpotifyManager
 
    public async Task AddSongToOurPlaylistAsync( string title, string subtitle )
    {
-      if ( SpotifyViewModel.SignedIn )
+      if ( Model.SignedIn )
       {
          Model.Result = await SpotifyApi.AddSongToOurPlaylistAsync( title, subtitle ).ConfigureAwait( false );
       }
