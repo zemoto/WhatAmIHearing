@@ -29,31 +29,31 @@ internal abstract class ApiClient : IDisposable
    public async Task<string> SendPostRequestAsync( string endpoint )
    {
       using var message = new HttpRequestMessage( HttpMethod.Post, endpoint );
-      return await SendMessageAsync( message ).ConfigureAwait( false );
+      return await SendMessageAsync( message );
    }
 
    public async Task<string> SendPostRequestAsync( string endpoint, string body )
    {
       using var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( body ) };
-      return await SendMessageAsync( message ).ConfigureAwait( false );
+      return await SendMessageAsync( message );
    }
 
    public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
    {
       using var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( Convert.ToBase64String( data ) ) };
-      return await SendMessageAsync( message ).ConfigureAwait( false );
+      return await SendMessageAsync( message );
    }
 
    public async Task<string> SendPostRequestAsync( string endpoint, Dictionary<string,string> formUrlEncodedData )
    {
       using var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new FormUrlEncodedContent( formUrlEncodedData ) };
-      return await SendMessageAsync( message ).ConfigureAwait( false );
+      return await SendMessageAsync( message );
    }
 
    public async Task<string> SendGetRequestAsync( string endpoint )
    {
       using var message = new HttpRequestMessage( HttpMethod.Get, endpoint );
-      return await SendMessageAsync( message ).ConfigureAwait( false );
+      return await SendMessageAsync( message );
    }
 
    private async Task<string> SendMessageAsync( HttpRequestMessage message )
@@ -63,8 +63,8 @@ internal abstract class ApiClient : IDisposable
          message.Headers.Add( key, value );
       }
 
-      var response = await _client.SendAsync( message, _cancelToken.Token ).ConfigureAwait( false );
+      var response = await _client.SendAsync( message, _cancelToken.Token );
 
-      return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync().ConfigureAwait( false ) : string.Empty;
+      return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : string.Empty;
    }
 }

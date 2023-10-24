@@ -28,7 +28,7 @@ internal sealed class SpotifyAuthenticator : IDisposable
            !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) &&
            DateTime.UtcNow + TimeSpan.FromMinutes( 1 ) > Settings.SpotifyExpirationTimeUtc )
       {
-         await RefreshAuthenticationAsync().ConfigureAwait( false );
+         await RefreshAuthenticationAsync();
       }
 
       return !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) &&
@@ -36,7 +36,7 @@ internal sealed class SpotifyAuthenticator : IDisposable
              DateTime.UtcNow < Settings.SpotifyExpirationTimeUtc;
    }
 
-   public async Task<bool> SignInAsync() => !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) || await AuthenticateWithBrowserAsync().ConfigureAwait( false );
+   public async Task<bool> SignInAsync() => !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) || await AuthenticateWithBrowserAsync();
 
    public void SignOut()
    {
@@ -54,14 +54,14 @@ internal sealed class SpotifyAuthenticator : IDisposable
          ["refresh_token"] = Settings.SpotifyRefreshToken
       };
 
-      _ = await ExchangeTokensAsync( data ).ConfigureAwait( false );
+      _ = await ExchangeTokensAsync( data );
    }
 
    private async Task<bool> AuthenticateWithBrowserAsync()
    {
       _ = _authDoneEvent.Reset();
       _ = Process.Start( new ProcessStartInfo( AuthUrl ) { UseShellExecute = true } );
-      return await ListenForAuthentication().ConfigureAwait( false );
+      return await ListenForAuthentication();
    }
 
    private async Task<bool> ListenForAuthentication()
@@ -73,14 +73,14 @@ internal sealed class SpotifyAuthenticator : IDisposable
       var state = new StateObject { Listener = listener };
       _ = listener.BeginAccept( AcceptCallback, state );
 
-      _ = await Task.Run( () => _authDoneEvent.WaitOne( TimeSpan.FromMinutes( 2 ) ) ).ConfigureAwait( false );
+      _ = await Task.Run( () => _authDoneEvent.WaitOne( TimeSpan.FromMinutes( 2 ) ) );
 
       if ( !string.IsNullOrEmpty( state.ParsedAuthParams ) && state.ParsedAuthParams.Contains( "code", StringComparison.OrdinalIgnoreCase ) )
       {
          var values = HttpUtility.ParseQueryString( state.ParsedAuthParams );
          var authCode = values["/?code"];
 
-         return await GetTokensFromAuthCodeAsync( authCode ).ConfigureAwait( false );
+         return await GetTokensFromAuthCodeAsync( authCode );
       }
 
       return false;
@@ -95,13 +95,13 @@ internal sealed class SpotifyAuthenticator : IDisposable
          ["redirect_uri"] = RedirectUrl
       };
 
-      return await ExchangeTokensAsync( data ).ConfigureAwait( false );
+      return await ExchangeTokensAsync( data );
    }
 
    private async Task<bool> ExchangeTokensAsync( Dictionary<string,string> requestData )
    {
       using var client = new SpotifyApiClient( false );
-      var responseJson = await client.SendPostRequestAsync( TokenExchangeEndpoint, requestData ).ConfigureAwait( false );
+      var responseJson = await client.SendPostRequestAsync( TokenExchangeEndpoint, requestData );
 
       if ( !string.IsNullOrEmpty( responseJson ) )
       {

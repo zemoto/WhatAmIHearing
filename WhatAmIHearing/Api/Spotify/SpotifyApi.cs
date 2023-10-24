@@ -21,30 +21,30 @@ internal static class SpotifyApi
    {
       using ( var authenticator = new SpotifyAuthenticator() )
       {
-         if ( !await authenticator.EnsureAuthenticationIsValid().ConfigureAwait( false ) )
+         if ( !await authenticator.EnsureAuthenticationIsValid() )
          {
             return AddToPlaylistResult.FailedToAuthenticate;
          }
       }
 
       using var client = new SpotifyApiClient();
-      var ourPlaylistId = await GetOurPlaylistIdAsync( client ).ConfigureAwait( false );
+      var ourPlaylistId = await GetOurPlaylistIdAsync( client );
       if ( string.IsNullOrEmpty( ourPlaylistId ) )
       {
-         ourPlaylistId = await CreateOurPlaylistAsync( client ).ConfigureAwait( false );
+         ourPlaylistId = await CreateOurPlaylistAsync( client );
          if ( string.IsNullOrEmpty( ourPlaylistId ) )
          {
             return AddToPlaylistResult.CouldNotFindOrCreatePlaylist;
          }
       }
 
-      var songId = await GetSongIdAsync( client, title, artist ).ConfigureAwait( false );
+      var songId = await GetSongIdAsync( client, title, artist );
       if ( string.IsNullOrEmpty( songId ) )
       {
          return AddToPlaylistResult.CouldNotFindSong;
       }
 
-      if ( await GetIsSongInPlaylistAsync( client, songId, ourPlaylistId ).ConfigureAwait( false ) )
+      if ( await GetIsSongInPlaylistAsync( client, songId, ourPlaylistId ) )
       {
          return AddToPlaylistResult.SongAlreadyInPlaylist;
       }
@@ -55,7 +55,7 @@ internal static class SpotifyApi
       query["uris"] = $"spotify:track:{songId}";
       endpointBuilder.Query = query.ToString();
 
-      var result = await client.SendPostRequestAsync( endpointBuilder.ToString() ).ConfigureAwait( false );
+      var result = await client.SendPostRequestAsync( endpointBuilder.ToString() );
       return !string.IsNullOrEmpty( result ) ? AddToPlaylistResult.Success : AddToPlaylistResult.Failed;
    }
 
@@ -76,7 +76,7 @@ internal static class SpotifyApi
       query["market"] = "US";
       endpointBuilder.Query = query.ToString();
 
-      var response = await client.SendGetRequestAsync( endpointBuilder.ToString() ).ConfigureAwait( false );
+      var response = await client.SendGetRequestAsync( endpointBuilder.ToString() );
 
       if ( !string.IsNullOrEmpty( response ) )
       {
@@ -93,7 +93,7 @@ internal static class SpotifyApi
 
    private static async Task<string> GetOurPlaylistIdAsync( ApiClient client )
    {
-      var response = await client.SendGetRequestAsync( UserPlaylistsEndpoint ).ConfigureAwait( false );
+      var response = await client.SendGetRequestAsync( UserPlaylistsEndpoint );
 
       if ( !string.IsNullOrEmpty( response ) )
       {
@@ -117,7 +117,7 @@ internal static class SpotifyApi
       const string description = "Playlist where songs identified by the WhatAmIHearingApp are added";
       var createPlaylistData = string.Format( CultureInfo.InvariantCulture, createPlaylistBodyTemplate, OurPlaylistName, description );
 
-      var response = await client.SendPostRequestAsync( UserPlaylistsEndpoint, createPlaylistData ).ConfigureAwait( false );
+      var response = await client.SendPostRequestAsync( UserPlaylistsEndpoint, createPlaylistData );
       if ( !string.IsNullOrEmpty( response ) )
       {
          using var json = JsonDocument.Parse( response );
@@ -139,7 +139,7 @@ internal static class SpotifyApi
       query["fields"] = "items(track(id))";
       endpointBuilder.Query = query.ToString();
 
-      var response = await client.SendGetRequestAsync( endpointBuilder.ToString() ).ConfigureAwait( false );
+      var response = await client.SendGetRequestAsync( endpointBuilder.ToString() );
       if ( !string.IsNullOrEmpty( response ) )
       {
          var parsedResponse = JsonSerializer.Deserialize<PlaylistTrackListResponse>( response );

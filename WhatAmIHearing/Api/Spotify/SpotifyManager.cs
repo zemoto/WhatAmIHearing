@@ -34,7 +34,7 @@ internal sealed class SpotifyManager
    {
       if ( Model.SignedIn )
       {
-         Model.Result = await SpotifyApi.AddSongToOurPlaylistAsync( title, subtitle ).ConfigureAwait( false );
+         Model.Result = await SpotifyApi.AddSongToOurPlaylistAsync( title, subtitle );
       }
    }
 }

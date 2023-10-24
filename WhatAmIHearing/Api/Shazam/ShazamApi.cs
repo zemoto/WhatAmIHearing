@@ -10,7 +10,7 @@ internal static class ShazamApi
    public static async Task<DetectedTrackInfo> DetectSongAsync( byte[] audioData )
    {
       using var client = new ShazamApiClient();
-      var detectResponse = await client.SendPostRequestAsync( DetectApiEndpoint, audioData ).ConfigureAwait( false );
+      var detectResponse = await client.SendPostRequestAsync( DetectApiEndpoint, audioData );
 
       if ( !string.IsNullOrEmpty( detectResponse ) )
       {

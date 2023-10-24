@@ -58,7 +58,7 @@ internal sealed class Main : IDisposable
 
       if ( _settings.AddSongsToSpotifyPlaylist )
       {
-         await _spotifyManager.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle ).ConfigureAwait( false );
+         await _spotifyManager.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle );
       }
    }
 
