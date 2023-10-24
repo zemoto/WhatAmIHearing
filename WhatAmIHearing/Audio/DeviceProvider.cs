@@ -7,7 +7,7 @@ namespace WhatAmIHearing.Audio;
 
 internal sealed class DeviceProvider : IDisposable
 {
-   private const string DefaultDeviceName = "Default Input Device";
+   private const string DefaultDeviceName = "Default Output Device";
 
    private readonly MMDeviceEnumerator _deviceEnumerator = new();
    private readonly List<MMDevice> _deviceList;
