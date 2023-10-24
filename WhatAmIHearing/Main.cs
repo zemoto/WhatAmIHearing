@@ -15,7 +15,6 @@ internal sealed class Main : IDisposable
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager = new( ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
    private readonly SpotifyManager _spotifyManager = new();
-   private readonly Properties.UserSettings _settings = Properties.UserSettings.Default;
 
    public Main()
    {
@@ -34,7 +33,7 @@ internal sealed class Main : IDisposable
    {
       _model.HotkeyStatusText = hotkeyRegistered ? "Shift + F2" : "Failed to register";
 
-      if ( _settings.KeepOpenInTray && _settings.OpenHidden )
+      if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.OpenHidden )
       {
          HideWindow();
       }
@@ -51,12 +50,12 @@ internal sealed class Main : IDisposable
          return;
       }
 
-      if ( _settings.KeepOpenInTray && _settings.HideWindowAfterRecord )
+      if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
       {
          HideWindow();
       }
 
-      if ( _settings.AddSongsToSpotifyPlaylist )
+      if ( AppSettings.Instance.AddSongsToSpotifyPlaylist )
       {
          await _spotifyManager.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle );
       }
@@ -66,7 +65,7 @@ internal sealed class Main : IDisposable
 
    private void OnWindowClosing( object sender, CancelEventArgs e )
    {
-      if ( _settings.KeepOpenInTray )
+      if ( AppSettings.Instance.KeepOpenInTray )
       {
          e.Cancel = true;
          HideWindow();

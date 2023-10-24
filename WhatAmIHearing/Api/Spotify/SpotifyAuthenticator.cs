@@ -15,35 +15,34 @@ internal sealed class SpotifyAuthenticator : IDisposable
 {
    private static readonly IPEndPoint _loopbackIpAddress = new( IPAddress.Loopback, 1378 );
    private const string RedirectUrl = "http://127.0.0.1:1378";
-   private static readonly string AuthUrl = $"https://accounts.spotify.com/authorize?client_id={ApiConstants.SpotifyClientId}&response_type=code&redirect_uri={RedirectUrl}&scope=playlist-read-private,playlist-modify-private&show_dialog=true";
+   private const string AuthUrl = $"https://accounts.spotify.com/authorize?client_id={ApiConstants.SpotifyClientId}&response_type=code&redirect_uri={RedirectUrl}&scope=playlist-read-private,playlist-modify-private&show_dialog=true";
    private const string TokenExchangeEndpoint = "https://accounts.spotify.com/api/token";
 
    private readonly AutoResetEvent _authDoneEvent = new( false );
-
-   private Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
+   private readonly AppSettings _settings = AppSettings.Instance;
 
    public async Task<bool> EnsureAuthenticationIsValid()
    {
-      if ( !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) &&
-           !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) &&
-           DateTime.UtcNow + TimeSpan.FromMinutes( 1 ) > Settings.SpotifyExpirationTimeUtc )
+      if ( !string.IsNullOrEmpty( _settings.SpotifyAccessToken ) &&
+           !string.IsNullOrEmpty( _settings.SpotifyRefreshToken ) &&
+           DateTime.UtcNow + TimeSpan.FromMinutes( 1 ) > _settings.SpotifyExpirationTimeUtc )
       {
          await RefreshAuthenticationAsync();
       }
 
-      return !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) &&
-             !string.IsNullOrEmpty( Settings.SpotifyRefreshToken ) &&
-             DateTime.UtcNow < Settings.SpotifyExpirationTimeUtc;
+      return !string.IsNullOrEmpty( _settings.SpotifyAccessToken ) &&
+             !string.IsNullOrEmpty( _settings.SpotifyRefreshToken ) &&
+             DateTime.UtcNow < _settings.SpotifyExpirationTimeUtc;
    }
 
-   public async Task<bool> SignInAsync() => !string.IsNullOrEmpty( Settings.SpotifyAccessToken ) || await AuthenticateWithBrowserAsync();
+   public async Task<bool> SignInAsync() => !string.IsNullOrEmpty( _settings.SpotifyAccessToken ) || await AuthenticateWithBrowserAsync();
 
    public void SignOut()
    {
-      Settings.SpotifyAccessToken = string.Empty;
-      Settings.SpotifyRefreshToken = string.Empty;
-      Settings.SpotifyExpirationTimeUtc = default;
-      Settings.Save();
+      _settings.SpotifyAccessToken = string.Empty;
+      _settings.SpotifyRefreshToken = string.Empty;
+      _settings.SpotifyExpirationTimeUtc = default;
+      _settings.Save();
    }
 
    private async Task RefreshAuthenticationAsync()
@@ -51,7 +50,7 @@ internal sealed class SpotifyAuthenticator : IDisposable
       var data = new Dictionary<string, string>
       {
          ["grant_type"] = "refresh_token",
-         ["refresh_token"] = Settings.SpotifyRefreshToken
+         ["refresh_token"] = _settings.SpotifyRefreshToken
       };
 
       _ = await ExchangeTokensAsync( data );
@@ -108,19 +107,19 @@ internal sealed class SpotifyAuthenticator : IDisposable
          using var json = JsonDocument.Parse( responseJson );
          if ( json.RootElement.TryGetProperty( "access_token", out var jsonAccessToken ) )
          {
-            Settings.SpotifyAccessToken = jsonAccessToken.ToString();
+            _settings.SpotifyAccessToken = jsonAccessToken.ToString();
 
             if ( json.RootElement.TryGetProperty( "refresh_token", out var jsonRefreshToken ) )
             {
-               Settings.SpotifyRefreshToken = jsonRefreshToken.ToString();
+               _settings.SpotifyRefreshToken = jsonRefreshToken.ToString();
             }
 
             if ( json.RootElement.TryGetProperty( "expires_in", out var jsonExpiresIn ) )
             {
-               Settings.SpotifyExpirationTimeUtc = DateTime.UtcNow + TimeSpan.FromSeconds( jsonExpiresIn.GetInt32() );
+               _settings.SpotifyExpirationTimeUtc = DateTime.UtcNow + TimeSpan.FromSeconds( jsonExpiresIn.GetInt32() );
             }
 
-            Settings.Save();
+            _settings.Save();
             return true;
          }
       }

@@ -7,8 +7,6 @@ namespace WhatAmIHearing.Audio;
 
 internal sealed class DeviceProvider : IDisposable
 {
-   private const string DefaultDeviceName = "Default Output Device";
-
    private readonly MMDeviceEnumerator _deviceEnumerator = new();
    private readonly List<MMDevice> _deviceList;
 
@@ -19,15 +17,15 @@ internal sealed class DeviceProvider : IDisposable
    public IReadOnlyCollection<string> GetDeviceNameList()
    {
       var deviceNameList = _deviceList.ConvertAll( x => x.FriendlyName );
-      deviceNameList.Insert( 0, DefaultDeviceName );
+      deviceNameList.Insert( 0, Constants.DefaultDeviceName );
 
       return deviceNameList;
    }
 
    public MMDevice GetSelectedDevice()
    {
-      var selectedDevice = Properties.UserSettings.Default.SelectedDevice;
-      return selectedDevice == DefaultDeviceName
+      var selectedDevice = AppSettings.Instance.SelectedDevice;
+      return selectedDevice == Constants.DefaultDeviceName
          ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
          : _deviceList.First( x => x.FriendlyName == selectedDevice );
    }

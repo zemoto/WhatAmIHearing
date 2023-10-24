@@ -13,7 +13,7 @@ internal sealed class SpotifyApiClient : ApiClient
       string authHeader;
       if ( isAuthenticated )
       {
-         authHeader = $"Bearer {Properties.UserSettings.Default.SpotifyAccessToken}";
+         authHeader = $"Bearer {AppSettings.Instance.SpotifyAccessToken}";
       }
       else
       {

@@ -8,7 +8,7 @@ internal sealed class MainViewModel : ZemotoCommon.UI.ViewModelBase
       SpotifyVm = spotifyVm;
    }
 
-   public Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
+   public AppSettings Settings { get; } = AppSettings.Instance;
    public RecorderViewModel RecorderVm { get; }
    public SpotifyViewModel SpotifyVm { get; }
 

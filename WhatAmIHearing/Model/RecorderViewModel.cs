@@ -16,7 +16,7 @@ internal sealed class RecorderViewModel : ZemotoCommon.UI.ViewModelBase
 {
    public RecorderViewModel( DeviceProvider deviceProvider ) => DeviceNameList = deviceProvider.GetDeviceNameList();
 
-   public Properties.UserSettings Settings { get; } = Properties.UserSettings.Default;
+   public AppSettings Settings { get; } = AppSettings.Instance;
    public IReadOnlyCollection<string> DeviceNameList { get; }
 
    private RecorderState _state;

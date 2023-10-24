@@ -57,7 +57,7 @@ public sealed partial class App : IDisposable
 
    protected override void OnExit( ExitEventArgs e )
    {
-      WhatAmIHearing.Properties.UserSettings.Default.Save();
+      AppSettings.Instance.Save();
       Dispose();
    }
 
