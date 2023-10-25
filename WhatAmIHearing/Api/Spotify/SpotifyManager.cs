@@ -5,13 +5,17 @@ using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Api.Spotify;
 
-internal sealed class SpotifyManager
+internal sealed class SpotifyManager : IDisposable
 {
+   private readonly SpotifyApi _api = new();
+
    public SpotifyViewModel Model { get; }
 
    public event EventHandler SignInComplete;
 
    public SpotifyManager() => Model = new SpotifyViewModel { SignInOutCommand = new RelayCommand( OnSpotifySignInOut ) };
+
+   public void Dispose() => _api.Dispose();
 
    private async void OnSpotifySignInOut()
    {
@@ -34,7 +38,7 @@ internal sealed class SpotifyManager
    {
       if ( Model.SignedIn )
       {
-         Model.Result = await SpotifyApi.AddSongToOurPlaylistAsync( title, subtitle );
+         Model.Result = await _api.AddSongToOurPlaylistAsync( title, subtitle );
       }
    }
 }

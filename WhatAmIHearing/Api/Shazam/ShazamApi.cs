@@ -1,23 +1,26 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Api.Shazam;
 
-internal static class ShazamApi
+internal sealed class ShazamApi : IDisposable
 {
    private const string DetectApiEndpoint = "https://shazam.p.rapidapi.com/songs/detect";
 
-   public static async Task<DetectedTrackInfo> DetectSongAsync( byte[] audioData )
-   {
-      using var client = new ShazamApiClient();
-      var detectResponse = await client.SendPostRequestAsync( DetectApiEndpoint, audioData );
+   private readonly ShazamApiClient _client = new();
 
-      if ( !string.IsNullOrEmpty( detectResponse ) )
+   public void Dispose() => _client.Dispose();
+
+   public async Task<DetectedTrackInfo> DetectSongAsync( byte[] audioData )
+   {
+      var detectResponse = await _client.SendPostRequestAsync( DetectApiEndpoint, audioData );
+      if ( string.IsNullOrEmpty( detectResponse ) )
       {
-         var parsedResponse = JsonSerializer.Deserialize<DetectSongResponse>( detectResponse );
-         return parsedResponse?.Track;
+         return null;
       }
 
-      return null;
+      var parsedResponse = JsonSerializer.Deserialize<DetectSongResponse>( detectResponse );
+      return parsedResponse?.Track;
    }
 }

@@ -15,6 +15,7 @@ internal sealed class RecordingManager : IDisposable
 {
    private readonly Recorder _recorder;
    private readonly DeviceProvider _deviceProvider = new();
+   private readonly ShazamApi _shazamApi = new();
 
    public event EventHandler<DetectedTrackInfo> RecordingSuccess;
 
@@ -33,6 +34,7 @@ internal sealed class RecordingManager : IDisposable
    {
       _recorder.Dispose();
       _deviceProvider.Dispose();
+      _shazamApi.Dispose();
    }
 
    public void Record()
@@ -80,7 +82,7 @@ internal sealed class RecordingManager : IDisposable
          Model.RecordingProgress = Model.RecordPercent;
          try
          {
-            detectedSong = await ShazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
+            detectedSong = await _shazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
          }
          catch ( TaskCanceledException )
          {

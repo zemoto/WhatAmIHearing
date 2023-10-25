@@ -26,7 +26,11 @@ internal sealed class Main : IDisposable
       _window.Closing += OnWindowClosing;
    }
 
-   public void Dispose() => _recordingManager.Dispose();
+   public void Dispose()
+   {
+      _recordingManager.Dispose();
+      _spotifyManager.Dispose();
+   }
 
    public void Start( bool hotkeyRegistered )
    {

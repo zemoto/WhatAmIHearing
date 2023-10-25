@@ -9,7 +9,7 @@ using WhatAmIHearing.Api.Spotify.Responses;
 
 namespace WhatAmIHearing.Api.Spotify;
 
-internal static class SpotifyApi
+internal sealed class SpotifyApi : IDisposable
 {
    private const string SongSearchEndpoint = "https://api.spotify.com/v1/search";
    private const string UserPlaylistsEndpoint = "https://api.spotify.com/v1/me/playlists";
@@ -17,7 +17,11 @@ internal static class SpotifyApi
 
    private const string OurPlaylistName = "What Did I Hear?";
 
-   public static async Task<AddToPlaylistResult> AddSongToOurPlaylistAsync( string title, string artist )
+   private readonly SpotifyApiClient _client = new();
+
+   public void Dispose() => _client.Dispose();
+
+   public async Task<AddToPlaylistResult> AddSongToOurPlaylistAsync( string title, string artist )
    {
       using ( var authenticator = new SpotifyAuthenticator() )
       {
@@ -27,24 +31,23 @@ internal static class SpotifyApi
          }
       }
 
-      using var client = new SpotifyApiClient();
-      var ourPlaylistId = await GetOurPlaylistIdAsync( client );
+      var ourPlaylistId = await GetOurPlaylistIdAsync();
       if ( string.IsNullOrEmpty( ourPlaylistId ) )
       {
-         ourPlaylistId = await CreateOurPlaylistAsync( client );
+         ourPlaylistId = await CreateOurPlaylistAsync();
          if ( string.IsNullOrEmpty( ourPlaylistId ) )
          {
             return AddToPlaylistResult.CouldNotFindOrCreatePlaylist;
          }
       }
 
-      var songId = await GetSongIdAsync( client, title, artist );
+      var songId = await GetSongIdAsync( title, artist );
       if ( string.IsNullOrEmpty( songId ) )
       {
          return AddToPlaylistResult.CouldNotFindSong;
       }
 
-      if ( await GetIsSongInPlaylistAsync( client, songId, ourPlaylistId ) )
+      if ( await GetIsSongInPlaylistAsync( songId, ourPlaylistId ) )
       {
          return AddToPlaylistResult.SongAlreadyInPlaylist;
       }
@@ -55,18 +58,18 @@ internal static class SpotifyApi
       query["uris"] = $"spotify:track:{songId}";
       endpointBuilder.Query = query.ToString();
 
-      var result = await client.SendPostRequestAsync( endpointBuilder.ToString() );
+      var result = await _client.SendPostRequestAsync( endpointBuilder.ToString() );
       return !string.IsNullOrEmpty( result ) ? AddToPlaylistResult.Success : AddToPlaylistResult.Failed;
    }
 
-   private static readonly Regex SongQualifierRegex = new Regex( @".*(\s\(.*\))" );
-   private static async Task<string> GetSongIdAsync( ApiClient client, string title, string artist )
+   private static readonly Regex SongQualifierRegex = new( @".*(\s\(.*\))" );
+   private async Task<string> GetSongIdAsync( string title, string artist )
    {
       var result = SongQualifierRegex.Match( title );
       if ( result.Groups.Count > 0 )
       {
-         var qualifier = result.Groups[result.Groups.Count - 1].Value;
-         title = title.Substring( 0, title.LastIndexOf( qualifier, StringComparison.OrdinalIgnoreCase ) );
+         var qualifier = result.Groups[^1].Value;
+         title = title[..title.LastIndexOf( qualifier, StringComparison.OrdinalIgnoreCase )];
       }
 
       var endpointBuilder = new UriBuilder( SongSearchEndpoint );
@@ -76,61 +79,54 @@ internal static class SpotifyApi
       query["market"] = "US";
       endpointBuilder.Query = query.ToString();
 
-      var response = await client.SendGetRequestAsync( endpointBuilder.ToString() );
-
-      if ( !string.IsNullOrEmpty( response ) )
+      var response = await _client.SendGetRequestAsync( endpointBuilder.ToString() );
+      if ( string.IsNullOrEmpty( response ) )
       {
-         var songSearchResult = JsonSerializer.Deserialize<SongSearchResponse>( response );
-         var trackResult = songSearchResult?.Tracks?.Items?.FirstOrDefault();
-         if ( trackResult?.Artists is not null && trackResult.Artists.Any( x => x.Name.Equals( artist, StringComparison.OrdinalIgnoreCase ) ) )
-         {
-            return trackResult.Id;
-         }
+         return string.Empty;
       }
 
-      return string.Empty;
+      var songSearchResult = JsonSerializer.Deserialize<SongSearchResponse>( response );
+      var trackResult = songSearchResult?.Tracks?.Items?.FirstOrDefault();
+      return trackResult?.Artists is not null && trackResult.Artists.Any( x => x.Name.Equals( artist, StringComparison.OrdinalIgnoreCase ) )
+         ? trackResult.Id
+         : string.Empty;
    }
 
-   private static async Task<string> GetOurPlaylistIdAsync( ApiClient client )
+   private async Task<string> GetOurPlaylistIdAsync()
    {
-      var response = await client.SendGetRequestAsync( UserPlaylistsEndpoint );
-
-      if ( !string.IsNullOrEmpty( response ) )
+      var response = await _client.SendGetRequestAsync( UserPlaylistsEndpoint );
+      if ( string.IsNullOrEmpty( response ) )
       {
-         var playlistList = JsonSerializer.Deserialize<PlaylistListResponse>( response );
-         if ( playlistList?.Playlists?.Any() == true )
-         {
-            var ourPlaylist = playlistList.Playlists.Find( x => x.Name == OurPlaylistName );
-            if ( ourPlaylist is not null )
-            {
-               return ourPlaylist.Id;
-            }
-         }
+         return string.Empty;
       }
 
-      return string.Empty;
+      var playlistList = JsonSerializer.Deserialize<PlaylistListResponse>( response );
+      if ( ( playlistList?.Playlists?.Any() ) != true )
+      {
+         return string.Empty;
+      }
+
+      var ourPlaylist = playlistList.Playlists.Find( x => x.Name == OurPlaylistName );
+      return ourPlaylist is null ? string.Empty : ourPlaylist.Id;
    }
 
-   private static async Task<string> CreateOurPlaylistAsync( ApiClient client )
+   private async Task<string> CreateOurPlaylistAsync()
    {
       const string createPlaylistBodyTemplate = "{{ \"name\": \"{0}\", \"description\": \"{1}\", \"public\": \"false\" }}";
       const string description = "Playlist where songs identified by the WhatAmIHearingApp are added";
       var createPlaylistData = string.Format( CultureInfo.InvariantCulture, createPlaylistBodyTemplate, OurPlaylistName, description );
 
-      var response = await client.SendPostRequestAsync( UserPlaylistsEndpoint, createPlaylistData );
-      if ( !string.IsNullOrEmpty( response ) )
+      var response = await _client.SendPostRequestAsync( UserPlaylistsEndpoint, createPlaylistData );
+      if ( string.IsNullOrEmpty( response ) )
       {
-         using var json = JsonDocument.Parse( response );
-         if ( json.RootElement.TryGetProperty( "id", out var jsonId ) )
-         {
-            return jsonId.ToString();
-         }
+         return string.Empty;
       }
 
-      return string.Empty;
+      using var json = JsonDocument.Parse( response );
+      return json.RootElement.TryGetProperty( "id", out var jsonId ) ? jsonId.ToString() : string.Empty;
    }
 
-   private static async Task<bool> GetIsSongInPlaylistAsync( ApiClient client, string songId, string ourPlaylistId )
+   private async Task<bool> GetIsSongInPlaylistAsync( string songId, string ourPlaylistId )
    {
       var playlistTracksEndpoint = string.Format( CultureInfo.InvariantCulture, PlaylistTracksEndpoint, ourPlaylistId );
       var endpointBuilder = new UriBuilder( playlistTracksEndpoint );
@@ -139,16 +135,13 @@ internal static class SpotifyApi
       query["fields"] = "items(track(id))";
       endpointBuilder.Query = query.ToString();
 
-      var response = await client.SendGetRequestAsync( endpointBuilder.ToString() );
-      if ( !string.IsNullOrEmpty( response ) )
+      var response = await _client.SendGetRequestAsync( endpointBuilder.ToString() );
+      if ( string.IsNullOrEmpty( response ) )
       {
-         var parsedResponse = JsonSerializer.Deserialize<PlaylistTrackListResponse>( response );
-         if ( parsedResponse?.Items?.Any( x => x?.Track?.Id == songId ) == true )
-         {
-            return true;
-         }
+         return false;
       }
 
-      return false;
+      var parsedResponse = JsonSerializer.Deserialize<PlaylistTrackListResponse>( response );
+      return parsedResponse?.Items?.Any( x => x?.Track?.Id == songId ) == true;
    }
 }
