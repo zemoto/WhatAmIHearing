@@ -32,18 +32,29 @@ internal sealed class RecordingManager : IDisposable
 
    public void Record()
    {
-      if ( Model.State is RecorderState.Recording )
+      switch ( Model.State )
       {
-         _recorder.CancelRecording();
-      }
-      else if ( Model.State is RecorderState.Identifying )
-      {
-         ApiClient.CancelRequests();
-      }
-      else
-      {
-         Model.State = RecorderState.Recording;
-         _recorder.StartRecording( _deviceProvider.GetSelectedDevice(), Model.RecordPercent );
+         case RecorderState.Stopped:
+         {
+            Model.State = RecorderState.Recording;
+            _recorder.StartRecording( _deviceProvider.GetSelectedDevice(), Model.RecordPercent );
+            break;
+         }
+         case RecorderState.Recording:
+         {
+            _recorder.CancelRecording();
+            break;
+         }
+         case RecorderState.Identifying:
+         {
+            ApiClient.CancelRequests();
+            break;
+         }
+         case RecorderState.Error:
+         {
+            Reset();
+            break;
+         }
       }
    }
 

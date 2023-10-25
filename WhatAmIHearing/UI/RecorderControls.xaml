@@ -41,6 +41,7 @@
 
          <TextBlock Text="{Binding RecorderStatusText, Mode=OneWay}"
                     Margin="6,0,0,0"
+                    Foreground="{Binding State, Converter={StaticResource StatusTextColorConverter}, ConverterParameter={x:Static model:RecorderState.Error}, Mode=OneWay}"
                     VerticalAlignment="Center" />
       </Grid>
 
@@ -77,6 +78,14 @@
                   Data="M 0,0 L 5,5 M 0,5 L 5,0" />
             <Ellipse Fill="White"
                      Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}, Mode=OneWay}" />
+            <Path Stroke="White"
+                  StrokeThickness="4"
+                  Stretch="UniformToFill"
+                  StrokeLineJoin="Round"
+                  StrokeEndLineCap="Round"
+                  StrokeStartLineCap="Round"
+                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Error}, Mode=OneWay}"
+                  Data="M 0,2.2 L 1.6,4 L 4,0" />
          </Grid>
       </Button>
    </Grid>

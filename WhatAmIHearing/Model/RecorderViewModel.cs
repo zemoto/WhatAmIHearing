@@ -10,7 +10,8 @@ internal enum RecorderState
 {
    Stopped = 0,
    Recording = 1,
-   Identifying = 2
+   Identifying = 2,
+   Error = 3,
 }
 
 internal sealed class RecorderViewModel : ViewModelBase

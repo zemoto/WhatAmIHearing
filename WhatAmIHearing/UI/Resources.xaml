@@ -4,9 +4,17 @@
 
    <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
    <ui:EqualityConverter x:Key="IsEqual" />
-   <ui:EqualityToVisibilityConverter x:Key="VisibleIfEqual" />
-   <ui:EqualityToVisibilityConverter x:Key="VisibleIfNotEqual"
-                                     Invert="True" />
+   <ui:EqualityToObjectConverter x:Key="VisibleIfEqual"
+                                 EqualValue="{x:Static Visibility.Visible}"
+                                 NotEqualValue="{x:Static Visibility.Collapsed}" />
+   
+   <ui:EqualityToObjectConverter x:Key="VisibleIfNotEqual"
+                                 EqualValue="{x:Static Visibility.Collapsed}"
+                                 NotEqualValue="{x:Static Visibility.Visible}" />
+
+   <ui:EqualityToObjectConverter x:Key="StatusTextColorConverter"
+                                 EqualValue="Red"
+                                 NotEqualValue="Black" />
 
    <ui:BoolToObjectConverter x:Key="SignedInStatusConverter"
                              TrueValue="Spotify Integration (Signed In)"

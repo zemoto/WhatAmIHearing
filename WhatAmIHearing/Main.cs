@@ -1,13 +1,11 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Windows;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Model;
 using WhatAmIHearing.UI;
-using ZemotoCommon;
 
 namespace WhatAmIHearing;
 
@@ -53,20 +51,20 @@ internal sealed class Main : IDisposable
 
    private async void OnRecordingSuccess( object sender, RecordingFinishedEventArgs args )
    {
-      DetectedTrackInfo detectedSong = null;
-      using ( new ScopeGuard( _recordingManager.Reset ) )
-      {
-         _model.RecorderVm.State = RecorderState.Identifying;
-         _model.RecorderVm.RecorderStatusText = $"Sending {args.RecordingData.Length} bytes to Shazam";
-         detectedSong = await _songDetector.DetectSongAsync( args.RecordingData ).ConfigureAwait( true );
-      }
+      _model.RecorderVm.State = RecorderState.Identifying;
+      _model.RecorderVm.RecorderStatusText = $"Sending {args.RecordingData.Length} bytes to Shazam";
 
+      var detectedSong = await _songDetector.DetectSongAsync( args.RecordingData ).ConfigureAwait( true );
       if ( detectedSong?.IsComplete != true )
       {
-         _ = MessageBox.Show( _window, "Shazam could not identify the audio.", "Detection Failed" );
+         _model.RecorderVm.State = RecorderState.Error;
+         _model.RecorderVm.RecordingProgress = 0;
+         _model.RecorderVm.RecorderStatusText = "Shazam could not identify the audio";
+         ShowAndForegroundMainWindow();
          return;
       }
 
+      _recordingManager.Reset();
       _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
 
       if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
