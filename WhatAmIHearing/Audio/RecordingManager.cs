@@ -1,12 +1,7 @@
 using NAudio.Wave;
 using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows;
 using WhatAmIHearing.Api;
-using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Model;
-using ZemotoCommon;
 using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Audio;
@@ -15,9 +10,8 @@ internal sealed class RecordingManager : IDisposable
 {
    private readonly Recorder _recorder;
    private readonly DeviceProvider _deviceProvider = new();
-   private readonly ShazamApi _shazamApi = new();
 
-   public event EventHandler<DetectedTrackInfo> RecordingSuccess;
+   public event EventHandler<RecordingFinishedEventArgs> RecordingSuccess;
 
    public RecorderViewModel Model { get; }
 
@@ -34,7 +28,6 @@ internal sealed class RecordingManager : IDisposable
    {
       _recorder.Dispose();
       _deviceProvider.Dispose();
-      _shazamApi.Dispose();
    }
 
    public void Record()
@@ -43,7 +36,7 @@ internal sealed class RecordingManager : IDisposable
       {
          _recorder.CancelRecording();
       }
-      else if ( Model.State is RecorderState.SendingToShazam )
+      else if ( Model.State is RecorderState.Identifying )
       {
          ApiClient.CancelRequests();
       }
@@ -54,53 +47,28 @@ internal sealed class RecordingManager : IDisposable
       }
    }
 
-   private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
+   public void Reset()
    {
-      Model.RecordingProgress = (double)e.BytesRecorded / ShazamSpecProvider.MaxBytes;
-      Model.RecorderStatusText = $"Recording: {e.BytesRecorded}/{e.MaxBytes} bytes";
+      Model.State = RecorderState.Stopped;
+      Model.RecorderStatusText = string.Empty;
+      Model.RecordingProgress = 0;
    }
 
-   private async void OnRecordingFinished( object sender, RecordingFinishedEventArgs args )
+   private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
    {
-      DetectedTrackInfo detectedSong = null;
-      using var __ = new ScopeGuard( () => RecordingSuccess.Invoke( this, detectedSong ) );
+      Model.RecordingProgress = (double)e.BytesRecorded / _recorder.MaxBytesToRecord;
+      Model.RecorderStatusText = $"Recording: {e.BytesRecorded}/{e.BytesToRecord} bytes";
+   }
 
-      using ( new ScopeGuard( () =>
+   private void OnRecordingFinished( object sender, RecordingFinishedEventArgs args )
+   {
+      if ( args.Cancelled )
       {
-         Model.State = RecorderState.Stopped;
-         Model.RecorderStatusText = string.Empty;
-         Model.RecordingProgress = 0;
-      } ) )
-      {
-         if ( args.Cancelled )
-         {
-            return;
-         }
-
-         Model.State = RecorderState.SendingToShazam;
-         Model.RecorderStatusText = $"Sending {args.RecordedData.Length} bytes to Shazam";
-         Model.RecordingProgress = Model.RecordPercent;
-         try
-         {
-            detectedSong = await _shazamApi.DetectSongAsync( args.RecordedData ).ConfigureAwait( true );
-         }
-         catch ( TaskCanceledException )
-         {
-            return;
-         }
+         Reset();
+         return;
       }
 
-      if ( detectedSong?.IsComplete == true )
-      {
-         _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
-      }
-      else
-      {
-         var result = MessageBox.Show( Application.Current.MainWindow, "No song detected. Playback recorded sound?", "Detection Failed", MessageBoxButton.YesNo );
-         if ( result == MessageBoxResult.Yes )
-         {
-            Player.PlayAudio( args.RecordedData, args.Format );
-         }
-      }
+      Model.RecordingProgress = Model.RecordPercent;
+      RecordingSuccess?.Invoke( this, args );
    }
 }

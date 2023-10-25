@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using WhatAmIHearing.Audio;
+using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Model;
 
@@ -9,10 +10,10 @@ internal enum RecorderState
 {
    Stopped = 0,
    Recording = 1,
-   SendingToShazam = 2
+   Identifying = 2
 }
 
-internal sealed class RecorderViewModel : ZemotoCommon.UI.ViewModelBase
+internal sealed class RecorderViewModel : ViewModelBase
 {
    public RecorderViewModel( DeviceProvider deviceProvider ) => DeviceNameList = deviceProvider.GetDeviceNameList();
 

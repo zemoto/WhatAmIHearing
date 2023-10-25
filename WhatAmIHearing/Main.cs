@@ -1,10 +1,13 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Model;
 using WhatAmIHearing.UI;
+using ZemotoCommon;
 
 namespace WhatAmIHearing;
 
@@ -14,10 +17,11 @@ internal sealed class Main : IDisposable
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager = new( ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
    private readonly SpotifyManager _spotifyManager = new();
+   private readonly SongDetector _songDetector = new();
 
    public Main()
    {
-      _recordingManager.RecordingSuccess += OnRecordingDone;
+      _recordingManager.RecordingSuccess += OnRecordingSuccess;
       _spotifyManager.SignInComplete += OnSpotifySignInComplete;
 
       _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
@@ -30,6 +34,7 @@ internal sealed class Main : IDisposable
    {
       _recordingManager.Dispose();
       _spotifyManager.Dispose();
+      _songDetector.Dispose();
    }
 
    public void Start( bool hotkeyRegistered )
@@ -46,12 +51,23 @@ internal sealed class Main : IDisposable
       }
    }
 
-   private async void OnRecordingDone( object sender, DetectedTrackInfo detectedSong )
+   private async void OnRecordingSuccess( object sender, RecordingFinishedEventArgs args )
    {
-      if ( detectedSong is null )
+      DetectedTrackInfo detectedSong = null;
+      using ( new ScopeGuard( _recordingManager.Reset ) )
       {
+         _model.RecorderVm.State = RecorderState.Identifying;
+         _model.RecorderVm.RecorderStatusText = $"Sending {args.RecordingData.Length} bytes to Shazam";
+         detectedSong = await _songDetector.DetectSongAsync( args.RecordingData ).ConfigureAwait( true );
+      }
+
+      if ( detectedSong?.IsComplete != true )
+      {
+         _ = MessageBox.Show( _window, "Shazam could not identify the audio.", "Detection Failed" );
          return;
       }
+
+      _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
 
       if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
       {
@@ -64,7 +80,7 @@ internal sealed class Main : IDisposable
       }
    }
 
-   private void OnSpotifySignInComplete( object sender, System.EventArgs e ) => ShowAndForegroundMainWindow();
+   private void OnSpotifySignInComplete( object sender, EventArgs e ) => ShowAndForegroundMainWindow();
 
    private void OnWindowClosing( object sender, CancelEventArgs e )
    {

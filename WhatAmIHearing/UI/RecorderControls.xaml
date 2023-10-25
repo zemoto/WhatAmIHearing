@@ -73,7 +73,7 @@
             <Path Stroke="White"
                   StrokeThickness="4"
                   Stretch="UniformToFill"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.SendingToShazam}, Mode=OneWay}"
+                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Identifying}, Mode=OneWay}"
                   Data="M 0,0 L 5,5 M 0,5 L 5,0" />
             <Ellipse Fill="White"
                      Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}, Mode=OneWay}" />

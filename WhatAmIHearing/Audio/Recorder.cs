@@ -8,7 +8,6 @@ namespace WhatAmIHearing.Audio;
 internal sealed class Recorder : IDisposable
 {
    private readonly WaveFormat _waveFormat;
-   private readonly long _maxBytesToRecord;
    private long _bytesToRecord;
 
    private bool _cancelled;
@@ -19,30 +18,15 @@ internal sealed class Recorder : IDisposable
    public event EventHandler<RecordingProgressEventArgs> RecordingProgress;
    public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
 
+   public long MaxBytesToRecord { get; }
+
    public Recorder( WaveFormat waveFormat, long maxBytesToRecord )
    {
       _waveFormat = waveFormat;
-      _maxBytesToRecord = maxBytesToRecord;
+      MaxBytesToRecord = maxBytesToRecord;
    }
 
-   public void Dispose()
-   {
-      _cancelled = false;
-
-      _audioWriter?.Dispose();
-      _audioWriter = null;
-
-      _recordedFileStream?.Dispose();
-      _recordedFileStream = null;
-
-      if ( _audioCapturer is not null )
-      {
-         _audioCapturer.Dispose();
-         _audioCapturer.DataAvailable -= OnDataCaptured;
-         _audioCapturer.RecordingStopped -= OnRecordingStopped;
-         _audioCapturer = null;
-      }
-   }
+   public void Dispose() => Cleanup();
 
    public void StartRecording( MMDevice device, double percentToRecord )
    {
@@ -53,7 +37,7 @@ internal sealed class Recorder : IDisposable
       _recordedFileStream = new MemoryStream();
       _audioWriter = new WaveFileWriter( _recordedFileStream, _audioCapturer.WaveFormat );
 
-      _bytesToRecord = (int)( percentToRecord * _maxBytesToRecord );
+      _bytesToRecord = (int)( percentToRecord * MaxBytesToRecord );
       RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, _bytesToRecord ) );
 
       _audioCapturer.StartRecording();
@@ -88,7 +72,26 @@ internal sealed class Recorder : IDisposable
          data = _recordedFileStream.ToArray();
       }
 
-      RecordingFinished.Invoke( this, new RecordingFinishedEventArgs( data, _waveFormat ) );
-      Dispose();
+      RecordingFinished.Invoke( this, new RecordingFinishedEventArgs( data ) );
+      Cleanup();
+   }
+
+   private void Cleanup()
+   {
+      _cancelled = false;
+
+      _audioWriter?.Dispose();
+      _audioWriter = null;
+
+      _recordedFileStream?.Dispose();
+      _recordedFileStream = null;
+
+      if ( _audioCapturer is not null )
+      {
+         _audioCapturer.Dispose();
+         _audioCapturer.DataAvailable -= OnDataCaptured;
+         _audioCapturer.RecordingStopped -= OnRecordingStopped;
+         _audioCapturer = null;
+      }
    }
 }
