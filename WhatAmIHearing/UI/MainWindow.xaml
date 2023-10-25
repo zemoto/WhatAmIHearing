@@ -78,7 +78,7 @@
 
                <CheckBox Margin="18,3"
                          Content="Launch hidden"
-                         Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}}"
+                         Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
 
                <CheckBox Margin="8,3"
@@ -109,7 +109,7 @@
             <StackPanel Margin="8,8,0,0">
                <StackPanel Orientation="Horizontal">
                   <Button Style="{StaticResource MainButtonStyle}"
-                          Command="{Binding SpotifyVm.SignInOutCommand}"
+                          Command="{Binding SpotifyVm.SignInOutCommand, Mode=OneTime}"
                           Content="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignInButtonContentConverter}, Mode=OneWay}"
                           HorizontalAlignment="Left" />
 
@@ -121,7 +121,7 @@
                </StackPanel>
 
                <TextBlock Margin="0,8,0,0"
-                          Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}}"
+                          Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}, Mode=OneWay}"
                           Text="{Binding SpotifyVm.ResultText, StringFormat='Result: {0}', Mode=OneWay}" />
             </StackPanel>
          </ui:GroupedExpander>

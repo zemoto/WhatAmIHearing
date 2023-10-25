@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace WhatAmIHearing.Utils;
+namespace WhatAmIHearing;
 
 [Flags]
 internal enum ModifierKeys : uint
@@ -51,7 +51,7 @@ internal sealed class GlobalHotkeyHook : IDisposable
 
          if ( m.Msg == WM_HOTKEY )
          {
-            var key = (Keys)( ( (int)m.LParam >> 16 ) & 0xFFFF );
+            var key = (Keys)( (int)m.LParam >> 16 & 0xFFFF );
             var modifier = (ModifierKeys)( (int)m.LParam & 0xFFFF );
 
             KeyPressed?.Invoke( this, new KeyPressedEventArgs( modifier, key ) );

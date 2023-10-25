@@ -22,14 +22,14 @@
          <ColumnDefinition Width="8" />
          <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
-      <ComboBox Grid.Row="0" 
-                Grid.Column="0" 
+      <ComboBox Grid.Row="0"
+                Grid.Column="0"
                 Style="{StaticResource DeviceComboBoxStyle}"
                 ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
                 SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
-                IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}}" />
+                IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}, Mode=OneWay}" />
 
-      <Grid Grid.Row="2" 
+      <Grid Grid.Row="2"
             Grid.Column="0"
             Height="22"
             VerticalAlignment="Top">
@@ -51,14 +51,14 @@
               Thumb.DragStarted="OnRecordPercentSliderDragStarted"
               Thumb.DragDelta="OnRecordPercentSliderDragDelta"
               Thumb.DragCompleted="OnRecordPercentSliderDragCompleted"
-              IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}}" />
+              IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}, Mode=OneWay}" />
 
-      <Button Grid.Row="0" 
+      <Button Grid.Row="0"
               Grid.RowSpan="3"
               Grid.Column="2"
               OverridesDefaultStyle="True"
               Style="{StaticResource MainButtonStyle}"
-              Command="{Binding RecordStopCommand}"
+              Command="{Binding RecordStopCommand, Mode=OneTime}"
               Height="50"
               Width="50"
               Padding="12"
@@ -68,30 +68,15 @@
          <Grid>
             <Path Fill="White"
                   Stretch="UniformToFill"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Recording}}">
-               <Path.Data>
-                  <PathGeometry Figures="M 0,0 L 0,1 1,1 1,0 Z" />
-               </Path.Data>
-            </Path>
+                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Recording}, Mode=OneWay}"
+                  Data="M 0,0 L 0,1 1,1 1,0 Z" />
             <Path Stroke="White"
                   StrokeThickness="4"
                   Stretch="UniformToFill"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.SendingToShazam}}">
-               <Path.Data>
-                  <PathGeometry>
-                     <PathGeometry.Figures>
-                        <PathFigure StartPoint="0,0">
-                           <LineSegment Point="5,5" />
-                        </PathFigure>
-                        <PathFigure StartPoint="0,5">
-                           <LineSegment Point="5,0" />
-                        </PathFigure>
-                     </PathGeometry.Figures>
-                  </PathGeometry>
-               </Path.Data>
-            </Path>
+                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.SendingToShazam}, Mode=OneWay}"
+                  Data="M 0,0 L 5,5 M 0,5 L 5,0" />
             <Ellipse Fill="White"
-                     Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}}" />
+                     Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}, Mode=OneWay}" />
          </Grid>
       </Button>
    </Grid>

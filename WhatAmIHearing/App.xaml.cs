@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Windows;
-using WhatAmIHearing.Utils;
 using ZemotoCommon;
 using TrayIcon = System.Windows.Forms.NotifyIcon;
 

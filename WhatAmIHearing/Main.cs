@@ -5,7 +5,6 @@ using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Model;
 using WhatAmIHearing.UI;
-using WhatAmIHearing.Utils;
 
 namespace WhatAmIHearing;
 
