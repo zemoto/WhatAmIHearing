@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using ZemotoCommon;
 using TrayIcon = System.Windows.Forms.NotifyIcon;
@@ -28,7 +28,7 @@ public sealed partial class App : IDisposable
 
       _singleInstance.PingedByOtherProcess += ( s, a ) => Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
 
-      _trayIcon.Icon = new System.Drawing.Icon( "Icon.ico" );
+      _trayIcon.Icon = new System.Drawing.Icon( GetType(), "Icon.ico" );
       _trayIcon.MouseClick += OnTrayIconClicked;
       _trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
       _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, ( s, a ) => Shutdown() );
