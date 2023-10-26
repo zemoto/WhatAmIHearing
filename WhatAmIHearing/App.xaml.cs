@@ -7,12 +7,10 @@ namespace WhatAmIHearing;
 
 public sealed partial class App : IDisposable
 {
-   private Main _main;
-   private GlobalHotkeyHook _globalHotkeyHook;
-   private TrayIcon _trayIcon;
-
-   private const string InstanceName = "WhatAmIHearingInstance";
-   private readonly SingleInstance _singleInstance = new( InstanceName, listenForOtherInstances: true );
+   private readonly Main _main;
+   private readonly GlobalHotkeyHook _globalHotkeyHook;
+   private readonly TrayIcon _trayIcon;
+   private readonly SingleInstance _singleInstance = new( Constants.InstanceName, listenForOtherInstances: true );
 
    public App()
    {

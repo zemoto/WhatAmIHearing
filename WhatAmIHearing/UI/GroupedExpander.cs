@@ -10,35 +10,33 @@ internal sealed class GroupedExpander : Expander
    private static readonly Dictionary<string, List<GroupedExpander>> ExpanderGroups = new();
 
    public static readonly DependencyProperty GroupNameProperty = DependencyProperty.Register(
-      nameof( GroupName ),
-      typeof( string ),
-      typeof( GroupedExpander ),
-      new PropertyMetadata( string.Empty, OnGroupNameChanged ) );
-
+      nameof( GroupName ), typeof( string ), typeof( GroupedExpander ), new PropertyMetadata( string.Empty, OnGroupNameChanged ) );
    private static void OnGroupNameChanged( DependencyObject sender, DependencyPropertyChangedEventArgs e )
    {
-      if ( sender is GroupedExpander expander )
+      if ( sender is not GroupedExpander expander )
       {
-         if ( e.OldValue is string oldGroupName && !string.IsNullOrEmpty( oldGroupName ) )
-         {
-            var group = ExpanderGroups[oldGroupName];
-            group.Remove( expander );
+         return;
+      }
 
-            if ( group.Count == 0 )
-            {
-               ExpanderGroups.Remove( oldGroupName );
-            }
+      if ( e.OldValue is string oldGroupName && !string.IsNullOrEmpty( oldGroupName ) )
+      {
+         var group = ExpanderGroups[oldGroupName];
+         group.Remove( expander );
+
+         if ( group.Count == 0 )
+         {
+            ExpanderGroups.Remove( oldGroupName );
+         }
+      }
+
+      if ( e.NewValue is string newGroupName && !string.IsNullOrEmpty( newGroupName ) )
+      {
+         if ( !ExpanderGroups.ContainsKey( newGroupName ) )
+         {
+            ExpanderGroups[newGroupName] = new List<GroupedExpander>();
          }
 
-         if ( e.NewValue is string newGroupName && !string.IsNullOrEmpty( newGroupName ) )
-         {
-            if ( !ExpanderGroups.ContainsKey( newGroupName ) )
-            {
-               ExpanderGroups[newGroupName] = new List<GroupedExpander>();
-            }
-
-            ExpanderGroups[newGroupName].Add( expander );
-         }
+         ExpanderGroups[newGroupName].Add( expander );
       }
    }
 
@@ -48,10 +46,7 @@ internal sealed class GroupedExpander : Expander
       set => SetValue( GroupNameProperty, value );
    }
 
-   public GroupedExpander()
-   {
-      Expanded += OnExpanded;
-   }
+   public GroupedExpander() => Expanded += OnExpanded;
 
    private void OnExpanded( object sender, RoutedEventArgs e )
    {
