@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WhatAmIHearing.UI;
+namespace WhatAmIHearing;
 
 internal partial class MainWindow
 {

@@ -1,11 +1,11 @@
-﻿<Window x:Class="WhatAmIHearing.UI.MainWindow"
+﻿<Window x:Class="WhatAmIHearing.MainWindow"
         x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:spotify="clr-namespace:WhatAmIHearing.Api.Spotify"
-        xmlns:ui="clr-namespace:WhatAmIHearing.UI"
+        xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
         xmlns:commonui="clr-namespace:ZemotoCommon.UI.Controls"
         xmlns:local="clr-namespace:WhatAmIHearing"
         mc:Ignorable="d"
@@ -62,8 +62,8 @@
                   Margin="12,10,12,12"
                   Width="350">
 
-         <ui:RecorderControls Margin="0,0,0,2"
-                              DataContext="{Binding RecorderVm, Mode=OneTime}" />
+         <audio:RecorderControls Margin="0,0,0,2"
+                                 DataContext="{Binding RecorderVm, Mode=OneTime}" />
 
          <commonui:GroupedExpander Header="Window Settings"
                                    Margin="0,0,0,4"

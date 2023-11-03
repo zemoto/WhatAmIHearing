@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
-using WhatAmIHearing.Audio;
 
-namespace WhatAmIHearing.UI;
+namespace WhatAmIHearing.Audio;
 
 internal partial class RecorderControls
 {
