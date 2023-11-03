@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using WhatAmIHearing.Model;
 
 namespace WhatAmIHearing.UI;
 

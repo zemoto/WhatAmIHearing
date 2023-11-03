@@ -4,9 +4,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:model="clr-namespace:WhatAmIHearing.Model"
+             xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type model:RecorderViewModel}}"
+             d:DataContext="{d:DesignInstance Type={x:Type audio:RecorderViewModel}}"
              Loaded="OnLoaded">
    <Grid>
       <Grid.RowDefinitions>
@@ -24,7 +24,7 @@
                 Style="{StaticResource DeviceComboBoxStyle}"
                 ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
                 SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
-                IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}, Mode=OneWay}" />
+                IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}" />
 
       <Grid Grid.Row="2"
             Grid.Column="0"
@@ -38,7 +38,7 @@
 
          <TextBlock Text="{Binding RecorderStatusText, Mode=OneWay}"
                     Margin="6,0,0,0"
-                    Foreground="{Binding State, Converter={StaticResource StatusTextColorConverter}, ConverterParameter={x:Static model:RecorderState.Error}, Mode=OneWay}"
+                    Foreground="{Binding State, Converter={StaticResource StatusTextColorConverter}, ConverterParameter={x:Static audio:RecorderState.Error}, Mode=OneWay}"
                     VerticalAlignment="Center" />
       </Grid>
 
@@ -49,7 +49,7 @@
               Thumb.DragStarted="OnRecordPercentSliderDragStarted"
               Thumb.DragDelta="OnRecordPercentSliderDragDelta"
               Thumb.DragCompleted="OnRecordPercentSliderDragCompleted"
-              IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}, Mode=OneWay}" />
+              IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}" />
 
       <Button Grid.Row="0"
               Grid.RowSpan="3"
@@ -66,22 +66,22 @@
          <Grid>
             <Path Fill="White"
                   Stretch="UniformToFill"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Recording}, Mode=OneWay}"
+                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:RecorderState.Recording}, Mode=OneWay}"
                   Data="M 0,0 L 0,1 1,1 1,0 Z" />
             <Path Stroke="White"
                   StrokeThickness="4"
                   Stretch="UniformToFill"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Identifying}, Mode=OneWay}"
+                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:RecorderState.Identifying}, Mode=OneWay}"
                   Data="M 0,0 L 5,5 M 0,5 L 5,0" />
             <Ellipse Fill="White"
-                     Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Stopped}, Mode=OneWay}" />
+                     Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}" />
             <Path Stroke="White"
                   StrokeThickness="4"
                   Stretch="UniformToFill"
                   StrokeLineJoin="Round"
                   StrokeEndLineCap="Round"
                   StrokeStartLineCap="Round"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static model:RecorderState.Error}, Mode=OneWay}"
+                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:RecorderState.Error}, Mode=OneWay}"
                   Data="M 0,2.2 L 1.6,4 L 4,0" />
          </Grid>
       </Button>

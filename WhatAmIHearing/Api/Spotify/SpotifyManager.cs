@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using WhatAmIHearing.Model;
 using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Api.Spotify;

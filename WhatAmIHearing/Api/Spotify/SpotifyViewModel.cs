@@ -1,7 +1,6 @@
 ﻿using System.Windows.Input;
-using WhatAmIHearing.Api.Spotify;
 
-namespace WhatAmIHearing.Model;
+namespace WhatAmIHearing.Api.Spotify;
 
 internal sealed class SpotifyViewModel : ZemotoCommon.UI.ViewModelBase
 {

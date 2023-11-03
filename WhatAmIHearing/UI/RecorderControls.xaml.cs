@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
-using WhatAmIHearing.Model;
+using WhatAmIHearing.Audio;
 
 namespace WhatAmIHearing.UI;
 

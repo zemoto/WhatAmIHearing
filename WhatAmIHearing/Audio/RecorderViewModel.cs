@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using WhatAmIHearing.Audio;
 using ZemotoCommon.UI;
 
-namespace WhatAmIHearing.Model;
+namespace WhatAmIHearing.Audio;
 
 internal enum RecorderState
 {

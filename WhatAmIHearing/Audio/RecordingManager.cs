@@ -1,7 +1,6 @@
 using NAudio.Wave;
 using System;
 using WhatAmIHearing.Api;
-using WhatAmIHearing.Model;
 using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Audio;

@@ -1,4 +1,7 @@
-﻿namespace WhatAmIHearing.Model;
+﻿using WhatAmIHearing.Api.Spotify;
+using WhatAmIHearing.Audio;
+
+namespace WhatAmIHearing;
 
 internal sealed class MainViewModel : ZemotoCommon.UI.ViewModelBase
 {

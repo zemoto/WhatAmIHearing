@@ -4,7 +4,6 @@ using System.Diagnostics;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
-using WhatAmIHearing.Model;
 using WhatAmIHearing.UI;
 
 namespace WhatAmIHearing;
