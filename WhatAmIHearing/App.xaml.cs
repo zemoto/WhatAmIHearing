@@ -20,6 +20,8 @@ public sealed partial class App : IDisposable
          return;
       }
 
+      InitializeComponent();
+
       _main = new Main();
       _globalHotkeyHook = new GlobalHotkeyHook();
       _trayIcon = new TrayIcon();

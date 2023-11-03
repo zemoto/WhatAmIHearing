@@ -8,9 +8,6 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type={x:Type model:RecorderViewModel}}"
              Loaded="OnLoaded">
-   <UserControl.Resources>
-      <ResourceDictionary Source="Resources.xaml" />
-   </UserControl.Resources>
    <Grid>
       <Grid.RowDefinitions>
          <RowDefinition Height="24" />

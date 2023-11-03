@@ -30,9 +30,6 @@
                         Direction="270"
                         ShadowDepth="2" />
    </Window.Effect>
-   <Window.Resources>
-      <ResourceDictionary Source="Resources.xaml" />
-   </Window.Resources>
 
    <Grid Margin="4">
       <Grid.RowDefinitions>
