@@ -8,7 +8,6 @@ namespace WhatAmIHearing;
 public sealed partial class App : IDisposable
 {
    private readonly Main _main;
-   private readonly GlobalHotkeyHook _globalHotkeyHook;
    private readonly TrayIcon _trayIcon;
    private readonly SingleInstance _singleInstance = new( Constants.InstanceName, listenForOtherInstances: true );
 
@@ -23,7 +22,6 @@ public sealed partial class App : IDisposable
       InitializeComponent();
 
       _main = new Main();
-      _globalHotkeyHook = new GlobalHotkeyHook();
       _trayIcon = new TrayIcon();
 
       _singleInstance.PingedByOtherProcess += ( s, a ) => Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
@@ -38,21 +36,11 @@ public sealed partial class App : IDisposable
    public void Dispose()
    {
       _main.Dispose();
-      _globalHotkeyHook.Dispose();
       _trayIcon.Dispose();
       _singleInstance.Dispose();
    }
 
-   protected override void OnStartup( StartupEventArgs e )
-   {
-      bool hotkeyRegistered = _globalHotkeyHook.RegisterHotKey( ModifierKeys.Shift, System.Windows.Forms.Keys.F2 );
-      if ( hotkeyRegistered )
-      {
-         _globalHotkeyHook.KeyPressed += _main.OnRecordHotkey;
-      }
-
-      _main.Start( hotkeyRegistered );
-   }
+   protected override void OnStartup( StartupEventArgs e ) => _main.Start();
 
    protected override void OnExit( ExitEventArgs e )
    {

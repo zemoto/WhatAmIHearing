@@ -33,9 +33,17 @@ internal sealed class Main : IDisposable
       _songDetector.Dispose();
    }
 
-   public void Start( bool hotkeyRegistered )
+   public void Start()
    {
-      _model.HotkeyStatusText = hotkeyRegistered ? "Shift + F2" : "Failed to register";
+      if ( _window.RegisterRecordHotkey() )
+      {
+         _window.RecordHotkeyPressed += OnRecordHotkey;
+         _model.HotkeyStatusText = "Shift + F2";
+      }
+      else
+      {
+         _model.HotkeyStatusText = "Failed to register";
+      }
 
       if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.OpenHidden )
       {
@@ -87,7 +95,7 @@ internal sealed class Main : IDisposable
       }
    }
 
-   public void OnRecordHotkey( object sender, KeyPressedEventArgs e )
+   public void OnRecordHotkey( object sender, EventArgs e )
    {
       if ( _recordingManager.Model.State is RecorderState.Stopped )
       {
