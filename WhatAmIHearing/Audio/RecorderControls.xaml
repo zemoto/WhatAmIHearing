@@ -54,8 +54,6 @@
       <Button Grid.Row="0"
               Grid.RowSpan="3"
               Grid.Column="2"
-              OverridesDefaultStyle="True"
-              Style="{StaticResource MainButtonStyle}"
               Command="{Binding RecordStopCommand, Mode=OneTime}"
               Height="50"
               Width="50"
@@ -63,27 +61,56 @@
               VerticalAlignment="Top"
               HorizontalContentAlignment="Stretch"
               VerticalContentAlignment="Stretch">
-         <Grid>
-            <Path Fill="White"
-                  Stretch="UniformToFill"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:RecorderState.Recording}, Mode=OneWay}"
-                  Data="M 0,0 L 0,1 1,1 1,0 Z" />
-            <Path Stroke="White"
-                  StrokeThickness="4"
-                  Stretch="UniformToFill"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:RecorderState.Identifying}, Mode=OneWay}"
-                  Data="M 0,0 L 5,5 M 0,5 L 5,0" />
-            <Ellipse Fill="White"
-                     Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}" />
-            <Path Stroke="White"
-                  StrokeThickness="4"
-                  Stretch="UniformToFill"
-                  StrokeLineJoin="Round"
-                  StrokeEndLineCap="Round"
-                  StrokeStartLineCap="Round"
-                  Visibility="{Binding State, Converter={StaticResource VisibleIfEqual}, ConverterParameter={x:Static audio:RecorderState.Error}, Mode=OneWay}"
-                  Data="M 0,2.2 L 1.6,4 L 4,0" />
-         </Grid>
+         <Button.Style>
+            <Style TargetType="{x:Type Button}"
+                   BasedOn="{StaticResource MainButtonStyle}">
+               <Style.Triggers>
+                  <DataTrigger Binding="{Binding State, Mode=OneWay}"
+                               Value="{x:Static audio:RecorderState.Recording}">
+                     <Setter Property="Content">
+                        <Setter.Value>
+                           <Path Fill="White"
+                                 Stretch="UniformToFill"
+                                 Data="M 0,0 L 0,1 1,1 1,0 Z" />
+                        </Setter.Value>
+                     </Setter>
+                  </DataTrigger>
+                  <DataTrigger Binding="{Binding State, Mode=OneWay}"
+                               Value="{x:Static audio:RecorderState.Identifying}">
+                     <Setter Property="Content">
+                        <Setter.Value>
+                           <Path Stroke="White"
+                                 StrokeThickness="4"
+                                 Stretch="UniformToFill"
+                                 Data="M 0,0 L 5,5 M 0,5 L 5,0" />
+                        </Setter.Value>
+                     </Setter>
+                  </DataTrigger>
+                  <DataTrigger Binding="{Binding State, Mode=OneWay}"
+                               Value="{x:Static audio:RecorderState.Stopped}">
+                     <Setter Property="Content">
+                        <Setter.Value>
+                           <Ellipse Fill="White" />
+                        </Setter.Value>
+                     </Setter>
+                  </DataTrigger>
+                  <DataTrigger Binding="{Binding State, Mode=OneWay}"
+                               Value="{x:Static audio:RecorderState.Error}">
+                     <Setter Property="Content">
+                        <Setter.Value>
+                           <Path Stroke="White"
+                                 StrokeThickness="4"
+                                 Stretch="UniformToFill"
+                                 StrokeLineJoin="Round"
+                                 StrokeEndLineCap="Round"
+                                 StrokeStartLineCap="Round"
+                                 Data="M 0,2.2 L 1.6,4 L 4,0" />
+                        </Setter.Value>
+                     </Setter>
+                  </DataTrigger>
+               </Style.Triggers>
+            </Style>
+         </Button.Style>
       </Button>
    </Grid>
 </UserControl>

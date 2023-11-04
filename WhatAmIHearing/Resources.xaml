@@ -59,6 +59,8 @@
               Value="11" />
       <Setter Property="FontWeight"
               Value="SemiBold" />
+      <Setter Property="OverridesDefaultStyle"
+              Value="True" />
       <Setter Property="Effect">
          <Setter.Value>
             <DropShadowEffect BlurRadius="3"
