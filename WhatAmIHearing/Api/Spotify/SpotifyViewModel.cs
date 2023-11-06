@@ -1,8 +1,8 @@
-﻿using System.Windows.Input;
+﻿using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Api.Spotify;
 
-internal sealed class SpotifyViewModel : ZemotoCommon.UI.ViewModelBase
+internal sealed class SpotifyViewModel : ViewModelBase
 {
    public void NotifySignedInChanged() => OnPropertyChanged( nameof( SignedIn ) );
 
@@ -32,5 +32,5 @@ internal sealed class SpotifyViewModel : ZemotoCommon.UI.ViewModelBase
       _ => string.Empty
    };
 
-   public ICommand SignInOutCommand { get; set; }
+   public RelayCommand SignInOutCommand { get; set; }
 }
