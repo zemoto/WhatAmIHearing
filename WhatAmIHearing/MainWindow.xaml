@@ -52,7 +52,7 @@
                  VerticalAlignment="Top" />
 
       <Button Grid.Row="0"
-              Margin="1"
+              Margin="0,1,1,0"
               HorizontalAlignment="Right"
               WindowChrome.IsHitTestVisibleInChrome="True"
               Click="OnCloseClicked"

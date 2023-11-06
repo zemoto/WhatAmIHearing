@@ -121,36 +121,29 @@
       <Setter Property="Template">
          <Setter.Value>
             <ControlTemplate TargetType="{x:Type Button}">
-               <Grid>
-                  <Rectangle x:Name="Background"
-                             Fill="Transparent" />
-                  <Rectangle x:Name="MouseoverBackground"
-                             Fill="White"
-                             Opacity="0" />
-
+               <Border x:Name="Border"
+                       Background="Transparent"
+                       CornerRadius="0,3,0,0">
                   <Path HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Width="10"
                         Height="10"
                         Stroke="Black"
-                        StrokeThickness="1">
-                     <Path.Data>
-                        <PathGeometry Figures="M 0,0 L 10,10 M 0,10 L 10,0" />
-                     </Path.Data>
-                  </Path>
-               </Grid>
+                        StrokeThickness="1"
+                        Data="M 0,0 L 10,10 M 0,10 L 10,0" />
+               </Border>
                <ControlTemplate.Triggers>
                   <Trigger Property="IsMouseOver"
                            Value="True">
-                     <Setter TargetName="MouseoverBackground"
-                             Property="Opacity"
-                             Value="0.5" />
+                     <Setter TargetName="Border"
+                             Property="Background"
+                             Value="#70FFFFFF" />
                   </Trigger>
                   <Trigger Property="IsPressed"
                            Value="True">
-                     <Setter TargetName="MouseoverBackground"
-                             Property="Opacity"
-                             Value="0.3" />
+                     <Setter TargetName="Border"
+                             Property="Background"
+                             Value="#4DFFFFFF" />
                   </Trigger>
                </ControlTemplate.Triggers>
             </ControlTemplate>
