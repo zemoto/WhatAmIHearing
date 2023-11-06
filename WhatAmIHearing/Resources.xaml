@@ -4,7 +4,7 @@
 
    <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
    <ui:EqualityConverter x:Key="IsEqual" />
-   
+
    <ui:EqualityToObjectConverter x:Key="VisibleIfNotEqual"
                                  EqualValue="{x:Static Visibility.Collapsed}"
                                  NotEqualValue="{x:Static Visibility.Visible}" />
@@ -424,5 +424,89 @@
          </Setter.Value>
       </Setter>
    </Style>
+
+   <ControlTemplate x:Key="AnimatingExpanderTemplate"
+                    TargetType="{x:Type Expander}">
+      <StackPanel>
+         <ToggleButton Content="{TemplateBinding Header}"
+                       IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                       Margin="1"
+                       Focusable="False">
+            <ToggleButton.Template>
+               <ControlTemplate TargetType="{x:Type ToggleButton}">
+                  <Grid Background="Transparent"
+                        HorizontalAlignment="Left">
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                     </Grid.ColumnDefinitions>
+                     <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="CheckStates">
+                           <VisualState x:Name="Checked">
+                              <Storyboard>
+                                 <DoubleAnimation Storyboard.TargetName="ArrowRotateTransform"
+                                                  Storyboard.TargetProperty="Angle"
+                                                  To="180"
+                                                  Duration="0:0:0.2" />
+                              </Storyboard>
+                           </VisualState>
+                           <VisualState x:Name="Unchecked">
+                              <Storyboard>
+                                 <DoubleAnimation Storyboard.TargetName="ArrowRotateTransform"
+                                                  Storyboard.TargetProperty="Angle"
+                                                  To="360"
+                                                  Duration="0:0:0.2" />
+                              </Storyboard>
+                           </VisualState>
+                           <VisualState x:Name="Indeterminate" />
+                        </VisualStateGroup>
+                     </VisualStateManager.VisualStateGroups>
+                     <Ellipse x:Name="Circle"
+                              Grid.Column="0"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Height="18"
+                              Width="18"
+                              Stroke="Black"
+                              Fill="White" />
+                     <Path Grid.Column="0"
+                           Data="M 0,0 L 3,3 L 6,0"
+                           Stretch="Uniform"
+                           Width="14"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Stroke="Black"
+                           StrokeThickness="2"
+                           RenderTransformOrigin="0.5,0.5">
+                        <Path.RenderTransform>
+                           <RotateTransform x:Name="ArrowRotateTransform"
+                                            Angle="360"/>
+                        </Path.RenderTransform>
+                     </Path>
+                     <ContentPresenter Grid.Column="1"
+                                       Margin="4,0,0,0" />
+                  </Grid>
+                  <ControlTemplate.Triggers>
+                     <Trigger Property="IsMouseOver"
+                              Value="True">
+                        <Setter Property="Stroke"
+                                TargetName="Circle"
+                                Value="{StaticResource MainColorBrush}" />
+                     </Trigger>
+                     <Trigger Property="IsPressed"
+                              Value="True">
+                        <Setter Property="StrokeThickness"
+                                TargetName="Circle"
+                                Value="1.5" />
+                     </Trigger>
+                  </ControlTemplate.Triggers>
+               </ControlTemplate>
+            </ToggleButton.Template>
+         </ToggleButton>
+         <StackPanel x:Name="PART_ContentContainer">
+            <ContentPresenter x:Name="PART_Content" />
+         </StackPanel>
+      </StackPanel>
+   </ControlTemplate>
 
 </ResourceDictionary>
