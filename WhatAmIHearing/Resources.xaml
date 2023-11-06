@@ -4,9 +4,6 @@
 
    <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
    <ui:EqualityConverter x:Key="IsEqual" />
-   <ui:EqualityToObjectConverter x:Key="VisibleIfEqual"
-                                 EqualValue="{x:Static Visibility.Visible}"
-                                 NotEqualValue="{x:Static Visibility.Collapsed}" />
    
    <ui:EqualityToObjectConverter x:Key="VisibleIfNotEqual"
                                  EqualValue="{x:Static Visibility.Collapsed}"
@@ -427,6 +424,5 @@
          </Setter.Value>
       </Setter>
    </Style>
-
 
 </ResourceDictionary>
