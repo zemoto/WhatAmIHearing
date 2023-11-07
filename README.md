@@ -1,6 +1,8 @@
 # WhatAmIHearing
 
-Program that will record system audio, resample it into a form that is required by the Shazam API, and send it off to said API to identify the song. For when your phone's microphone just can't quite capture the song well enough for Shazam to figure it out.
+<img src="https://github.com/zemoto/WhatAmIHearing/assets/27508773/78aa41bb-5af5-4a97-bb39-8cfd51f3d4ca" Width="358" />
+
+App that will record system audio and send it off to the Shazam API to be identified. For when your phone's microphone just can't quite capture the song well enough for Shazam to figure it out.
 
 Written in C# with WPF for the UI.
 
