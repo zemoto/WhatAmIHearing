@@ -67,8 +67,7 @@
 
          <commonui:AnimatedGroupedExpander Header="Window Settings"
                                            Margin="0,0,0,4"
-                                           GroupName="Settings"
-                                           Template="{StaticResource AnimatingExpanderTemplate}">
+                                           GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
                          Margin="0,0,0,2"
@@ -88,8 +87,7 @@
 
          <commonui:AnimatedGroupedExpander Header="Recorder Settings"
                                            Margin="0,0,0,4"
-                                           GroupName="Settings"
-                                           Template="{StaticResource AnimatingExpanderTemplate}">
+                                           GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
                <TextBlock Margin="0,0,8,4"
                           FontWeight="SemiBold"
@@ -104,8 +102,7 @@
          </commonui:AnimatedGroupedExpander>
 
          <commonui:AnimatedGroupedExpander Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
-                                           GroupName="Settings"
-                                           Template="{StaticResource AnimatingExpanderTemplate}">
+                                           GroupName="Settings">
             <StackPanel Margin="8,8,0,0">
                <StackPanel Orientation="Horizontal">
                   <Button Style="{StaticResource MainButtonStyle}"
