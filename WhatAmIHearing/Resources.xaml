@@ -479,6 +479,7 @@
                                     Data="M 0,0 L 3,3 L 6,0"
                                     Stretch="Uniform"
                                     Width="14"
+                                    Margin="0,1,0,0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Stroke="Black"

@@ -18,7 +18,6 @@
         ShowActivated="True"
         SnapsToDevicePixels="True"
         UseLayoutRounding="True"
-        TextOptions.TextFormattingMode="Display"
         d:DataContext="{d:DesignInstance local:MainViewModel}"
         Topmost="{Binding Settings.KeepWindowTopmost, Mode=OneWay}">
    <WindowChrome.WindowChrome>
