@@ -63,11 +63,13 @@ internal partial class MainWindow
       return IntPtr.Zero;
    }
 
-   private void OnClosed( object sender, EventArgs e )
+   protected override void OnClosed( EventArgs e )
    {
       if ( _recordHotkeyRegistered )
       {
          _ = UnregisterHotKey( _handle, _recordingHotkeyId );
       }
+
+      base.OnClosed( e );
    }
 }
