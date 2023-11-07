@@ -69,18 +69,18 @@
                                            Margin="0,0,0,4"
                                            GroupName="Settings"
                                            Template="{StaticResource AnimatingExpanderTemplate}">
-            <StackPanel Margin="8,2,0,0">
+            <StackPanel Margin="16,2,0,0">
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
-                         Margin="8,3"
+                         Margin="0,0,0,2"
                          Content="Keep open in system tray"
                          IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
 
-               <CheckBox Margin="18,3"
+               <CheckBox Margin="8,2"
                          Content="Launch hidden"
                          Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
 
-               <CheckBox Margin="8,3"
+               <CheckBox Margin="0,2,0,0"
                          Content="Keep window on top"
                          IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
             </StackPanel>
@@ -90,14 +90,13 @@
                                            Margin="0,0,0,4"
                                            GroupName="Settings"
                                            Template="{StaticResource AnimatingExpanderTemplate}">
-            <StackPanel Margin="8,2,0,0">
-               <TextBlock Margin="8,0,8,4"
+            <StackPanel Margin="16,2,0,0">
+               <TextBlock Margin="0,0,8,4"
                           FontWeight="SemiBold"
                           HorizontalAlignment="Left"
                           Text="{Binding HotkeyStatusText, StringFormat='Recording Hotkey: {0}', Mode=OneWay}" />
 
-               <CheckBox Margin="8,2"
-                         Content="Minimize to tray after recording is done"
+               <CheckBox Content="Minimize to tray after recording is done"
                          IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
 
