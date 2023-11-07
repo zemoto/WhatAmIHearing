@@ -23,7 +23,7 @@
                              FalseValue="Sign In" />
 
    <SolidColorBrush x:Key="MainColorBrush"
-                    Color="#4682B4" />
+                    Color="#3975A7" />
 
    <Style x:Key="FocusVisualStyle"
           TargetType="{x:Type Control}">
@@ -80,14 +80,14 @@
                         <VisualState x:Name="MouseOver">
                            <Storyboard>
                               <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                              To="#4A89BD"
+                                              To="#3D7CB0"
                                               Duration="0:0:0.1" />
                            </Storyboard>
                         </VisualState>
                         <VisualState x:Name="Pressed">
                            <Storyboard>
                               <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                              To="#427CAB"
+                                              To="#356F9E"
                                               Duration="0:0:0.1" />
                            </Storyboard>
                         </VisualState>
@@ -292,20 +292,20 @@
                               <MultiTrigger.Setters>
                                  <Setter TargetName="Border"
                                          Property="Background"
-                                         Value="#22FFFFFF" />
+                                         Value="#14FFFFFF" />
                               </MultiTrigger.Setters>
                            </MultiTrigger>
                            <Trigger Property="IsMouseOver"
                                     Value="True">
                               <Setter TargetName="Border"
                                       Property="Background"
-                                      Value="#33FFFFFF" />
+                                      Value="#24FFFFFF" />
                            </Trigger>
                            <Trigger Property="IsKeyboardFocused"
                                     Value="True">
                               <Setter TargetName="Border"
                                       Property="Background"
-                                      Value="#33FFFFFF" />
+                                      Value="#24FFFFFF" />
                            </Trigger>
                         </ControlTemplate.Triggers>
                      </ControlTemplate>
@@ -331,7 +331,7 @@
                                     <VisualState x:Name="MouseOver">
                                        <Storyboard>
                                           <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                          To="#4A89BD"
+                                                          To="#3D7CB0"
                                                           Duration="0:0:0.1" />
                                        </Storyboard>
                                     </VisualState>
@@ -348,7 +348,7 @@
                                     <VisualState x:Name="Checked">
                                        <Storyboard>
                                           <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                          To="#4A89BD"
+                                                          To="#3D7CB0"
                                                           Duration="0:0:0.1" />
                                           <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.CornerRadius)">
                                              <DiscreteObjectKeyFrame KeyTime="0:0:0">
@@ -405,7 +405,7 @@
                          VerticalOffset="-1">
                      <Border x:Name="DropDown"
                              SnapsToDevicePixels="True"
-                             Background="#4A89BD"
+                             Background="#3D7CB0"
                              MinWidth="{TemplateBinding ActualWidth}"
                              MaxHeight="{TemplateBinding MaxDropDownHeight}"
                              CornerRadius="0,2,2,2"
