@@ -10,7 +10,7 @@ internal sealed class DeviceProvider : IDisposable
    private readonly MMDeviceEnumerator _deviceEnumerator = new();
    private readonly List<MMDevice> _deviceList;
 
-   public DeviceProvider() => _deviceList = _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active ).ToList();
+   public DeviceProvider() => _deviceList = _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.Render, DeviceState.Active ).ToList();
 
    public void Dispose() => _deviceEnumerator.Dispose();
 
