@@ -21,7 +21,6 @@
       </Grid.ColumnDefinitions>
       <ComboBox Grid.Row="0"
                 Grid.Column="0"
-                Style="{StaticResource DeviceComboBoxStyle}"
                 ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
                 SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
                 IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}" />
