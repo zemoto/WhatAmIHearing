@@ -8,23 +8,23 @@ namespace WhatAmIHearing.Api;
 
 internal abstract class ApiClient : IDisposable
 {
+   private static readonly HttpClient _client = new();
+   public static void StaticDispose() => _client.Dispose();
+
    protected abstract Dictionary<string, string> ApiHeaders { get; }
 
-   private static readonly List<ApiClient> _apiClients = new();
+   private readonly List<CancellationTokenSource> _cancelTokenSources = new();
+   private readonly object _cancelTokenLock = new();
 
-   public static void CancelRequests() => _apiClients.ForEach( x => x._cancelToken.Cancel() );
-
-   private readonly HttpClient _client = new();
-   private readonly CancellationTokenSource _cancelToken = new();
-
-   protected ApiClient() => _apiClients.Add( this );
-
-   public void Dispose()
+   public void CancelRequests()
    {
-      _client?.Dispose();
-      _cancelToken?.Dispose();
-      _ = _apiClients.Remove( this );
+      lock ( _cancelTokenLock )
+      {
+         _cancelTokenSources.ForEach( x => x.Cancel() );
+      }
    }
+
+   public void Dispose() => CancelRequests();
 
    public async Task<string> SendPostRequestAsync( string endpoint )
    {
@@ -63,8 +63,25 @@ internal abstract class ApiClient : IDisposable
          message.Headers.Add( key, value );
       }
 
-      var response = await _client.SendAsync( message, _cancelToken.Token );
+      CancellationTokenSource cancelTokenSource;
+      lock ( _cancelTokenLock )
+      {
+         cancelTokenSource = new CancellationTokenSource();
+         _cancelTokenSources.Add( cancelTokenSource );
+      }
 
-      return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : string.Empty;
+      try
+      {
+         var response = await _client.SendAsync( message, cancelTokenSource.Token );
+         return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : string.Empty;
+      }
+      finally
+      {
+         lock ( _cancelTokenLock )
+         {
+            cancelTokenSource.Dispose();
+            _cancelTokenSources.Remove( cancelTokenSource );
+         }
+      }
    }
 }

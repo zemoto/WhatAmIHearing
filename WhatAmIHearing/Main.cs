@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
@@ -13,11 +14,12 @@ internal sealed class Main : IDisposable
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager = new( ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
    private readonly SpotifyManager _spotifyManager = new();
-   private readonly SongDetector _songDetector = new();
+   private readonly ShazamApi _shazamApi = new();
 
    public Main()
    {
       _recordingManager.RecordingSuccess += OnRecordingSuccess;
+      _recordingManager.CancelRequested += OnCancelRequested;
       _spotifyManager.SignInComplete += OnSpotifySignInComplete;
 
       _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
@@ -30,7 +32,7 @@ internal sealed class Main : IDisposable
    {
       _recordingManager.Dispose();
       _spotifyManager.Dispose();
-      _songDetector.Dispose();
+      _shazamApi.Dispose();
    }
 
    public void Start()
@@ -60,7 +62,17 @@ internal sealed class Main : IDisposable
       _model.RecorderVm.State = RecorderState.Identifying;
       _model.RecorderVm.RecorderStatusText = $"Sending {args.RecordingData.Length} bytes to Shazam";
 
-      var detectedSong = await _songDetector.DetectSongAsync( args.RecordingData ).ConfigureAwait( true );
+      DetectedTrackInfo detectedSong;
+      try
+      {
+         detectedSong = await _shazamApi.DetectSongAsync( args.RecordingData ).ConfigureAwait( true );
+      }
+      catch ( TaskCanceledException )
+      {
+         _recordingManager.Reset();
+         return;
+      }
+
       if ( detectedSong?.IsComplete != true )
       {
          _model.RecorderVm.State = RecorderState.Error;
@@ -83,6 +95,8 @@ internal sealed class Main : IDisposable
          await _spotifyManager.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle );
       }
    }
+
+   private void OnCancelRequested( object sender, EventArgs e ) => _shazamApi.CancelRequests();
 
    private void OnSpotifySignInComplete( object sender, EventArgs e ) => ShowAndForegroundMainWindow();
 

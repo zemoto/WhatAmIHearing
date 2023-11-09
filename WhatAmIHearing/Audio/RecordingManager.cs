@@ -1,6 +1,5 @@
 using NAudio.Wave;
 using System;
-using WhatAmIHearing.Api;
 using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Audio;
@@ -11,6 +10,7 @@ internal sealed class RecordingManager : IDisposable
    private readonly DeviceProvider _deviceProvider = new();
 
    public event EventHandler<RecordingFinishedEventArgs> RecordingSuccess;
+   public event EventHandler CancelRequested;
 
    public RecorderViewModel Model { get; }
 
@@ -46,7 +46,7 @@ internal sealed class RecordingManager : IDisposable
          }
          case RecorderState.Identifying:
          {
-            ApiClient.CancelRequests();
+            CancelRequested?.Invoke( this, EventArgs.Empty );
             break;
          }
          case RecorderState.Error:

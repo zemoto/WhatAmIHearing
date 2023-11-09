@@ -45,6 +45,7 @@ public sealed partial class App : IDisposable
    protected override void OnExit( ExitEventArgs e )
    {
       AppSettings.Instance.Save();
+      Api.ApiClient.StaticDispose();
       Dispose();
    }
 

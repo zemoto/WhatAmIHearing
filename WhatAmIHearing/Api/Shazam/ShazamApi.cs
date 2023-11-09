@@ -12,6 +12,8 @@ internal sealed class ShazamApi : IDisposable
 
    public void Dispose() => _client.Dispose();
 
+   public void CancelRequests() => _client.CancelRequests();
+
    public async Task<DetectedTrackInfo> DetectSongAsync( byte[] audioData )
    {
       var detectResponse = await _client.SendPostRequestAsync( DetectApiEndpoint, audioData );
