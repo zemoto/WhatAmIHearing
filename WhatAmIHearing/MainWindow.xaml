@@ -6,7 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:spotify="clr-namespace:WhatAmIHearing.Api.Spotify"
         xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
-        xmlns:commonui="clr-namespace:ZemotoCommon.UI.Controls"
+        xmlns:commonUi="clr-namespace:ZemotoCommon.UI"
+        xmlns:commonControls="clr-namespace:ZemotoCommon.UI.Controls"
         xmlns:local="clr-namespace:WhatAmIHearing"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -63,7 +64,7 @@
 
          <audio:RecorderControls DataContext="{Binding RecorderVm, Mode=OneTime}" />
 
-         <commonui:AnimatedGroupedExpander Header="Window Settings"
+         <commonControls:AnimatedGroupedExpander Header="Window Settings"
                                            Margin="0,0,0,4"
                                            GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
@@ -81,9 +82,9 @@
                          Content="Keep window on top"
                          IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
             </StackPanel>
-         </commonui:AnimatedGroupedExpander>
+         </commonControls:AnimatedGroupedExpander>
 
-         <commonui:AnimatedGroupedExpander Header="Recorder Settings"
+         <commonControls:AnimatedGroupedExpander Header="Recorder Settings"
                                            Margin="0,0,0,4"
                                            GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
@@ -96,10 +97,23 @@
                          IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
 
-            </StackPanel>
-         </commonui:AnimatedGroupedExpander>
+               <StackPanel Orientation="Horizontal"
+                           Margin="0,4,0,0">
+                  <TextBlock Text="Progress Display:"
+                             Margin="0,0,4,1"
+                             VerticalAlignment="Center" />
+                  <ComboBox ItemsSource="{commonUi:GetEnumValues local:ProgressDisplayType}"
+                            SelectedValue="{Binding Settings.ProgressType, Mode=TwoWay}"
+                            IsEnabled="{Binding RecorderVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}"
+                            Height="20"
+                            Padding="6,0,0,2"
+                            Width="80" />
+               </StackPanel>
 
-         <commonui:AnimatedGroupedExpander Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
+            </StackPanel>
+         </commonControls:AnimatedGroupedExpander>
+
+         <commonControls:AnimatedGroupedExpander Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
                                            GroupName="Settings">
             <StackPanel Margin="8,8,0,0">
                <StackPanel Orientation="Horizontal">
@@ -119,7 +133,7 @@
                           Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}, Mode=OneWay}"
                           Text="{Binding SpotifyVm.ResultText, StringFormat='Result: {0}', Mode=OneWay}" />
             </StackPanel>
-         </commonui:AnimatedGroupedExpander>
+         </commonControls:AnimatedGroupedExpander>
 
       </StackPanel>
    </Grid>

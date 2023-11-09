@@ -60,7 +60,14 @@ internal sealed class Main : IDisposable
    private async void OnRecordingSuccess( object sender, RecordingFinishedEventArgs args )
    {
       _model.RecorderVm.State = RecorderState.Identifying;
-      _model.RecorderVm.RecorderStatusText = $"Sending {args.RecordingData.Length} bytes to Shazam";
+
+      _model.RecorderVm.RecorderStatusText = AppSettings.Instance.ProgressType switch
+      {
+         ProgressDisplayType.None => "Sending recorded audio to Shazam",
+         ProgressDisplayType.Bytes => $"Sending {args.RecordingData.Length} bytes of audio to Shazam",
+         ProgressDisplayType.Seconds => $"Sending {args.AudioDurationInSeconds} seconds of audio to Shazam",
+         _ => throw new InvalidEnumArgumentException()
+      };
 
       DetectedTrackInfo detectedSong;
       try

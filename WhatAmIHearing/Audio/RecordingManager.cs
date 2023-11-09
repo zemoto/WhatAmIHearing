@@ -66,8 +66,8 @@ internal sealed class RecordingManager : IDisposable
 
    private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
    {
-      Model.RecordingProgress = (double)e.BytesRecorded / _recorder.MaxBytesToRecord;
-      Model.RecorderStatusText = $"Recording: {e.BytesRecorded}/{e.BytesToRecord} bytes";
+      Model.RecordingProgress = e.Progress;
+      Model.RecorderStatusText = e.StatusText;
    }
 
    private void OnRecordingFinished( object sender, RecordingFinishedEventArgs args )

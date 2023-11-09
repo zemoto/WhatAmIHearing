@@ -6,6 +6,13 @@ using ZemotoCommon.UI;
 
 namespace WhatAmIHearing;
 
+internal enum ProgressDisplayType
+{
+   None,
+   Bytes,
+   Seconds
+}
+
 internal sealed class AppSettings : ViewModelBase
 {
    private const string _configName = "config.json";
@@ -64,6 +71,13 @@ internal sealed class AppSettings : ViewModelBase
    {
       get => _hideWindowAfterRecord;
       set => SetProperty( ref _hideWindowAfterRecord, value );
+   }
+
+   private ProgressDisplayType _progressType = ProgressDisplayType.Seconds;
+   public ProgressDisplayType ProgressType
+   {
+      get => _progressType;
+      set => SetProperty( ref _progressType, value );
    }
 
    private string _spotifyAccessToken;

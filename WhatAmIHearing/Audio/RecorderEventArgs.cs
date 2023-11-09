@@ -1,23 +1,32 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 
 namespace WhatAmIHearing.Audio;
 
 internal sealed class RecordingFinishedEventArgs : EventArgs
 {
    public byte[] RecordingData { get; }
+   public double AudioDurationInSeconds { get; }
    public bool Cancelled => RecordingData is null;
 
-   public RecordingFinishedEventArgs( byte[] recordedData ) => RecordingData = recordedData;
+   public RecordingFinishedEventArgs( byte[] recordedData, WaveFormat audioFormat )
+   {
+      RecordingData = recordedData;
+      if ( recordedData is not null )
+      {
+         AudioDurationInSeconds = Math.Round( (double)recordedData.Length / audioFormat.AverageBytesPerSecond, 2 );
+      }
+   }
 }
 
 internal sealed class RecordingProgressEventArgs : EventArgs
 {
-   public long BytesRecorded { get; }
-   public long BytesToRecord { get; }
+   public double Progress { get; }
+   public string StatusText { get; }
 
-   public RecordingProgressEventArgs( long bytesRecorded, long bytesToRecord )
+   public RecordingProgressEventArgs( double progress, string statusText )
    {
-      BytesRecorded = bytesRecorded;
-      BytesToRecord = bytesToRecord;
+      Progress = progress;
+      StatusText = statusText;
    }
 }
