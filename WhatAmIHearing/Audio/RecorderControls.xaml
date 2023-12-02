@@ -4,6 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:main="clr-namespace:WhatAmIHearing"
              xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type={x:Type audio:RecorderViewModel}}"
@@ -23,7 +24,7 @@
                 Grid.Column="0"
                 ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
                 SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
-                IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}" />
+                IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static main:AppState.Stopped}, Mode=OneWay}" />
 
       <Grid Grid.Row="2"
             Grid.Column="0"
@@ -37,7 +38,7 @@
 
          <TextBlock Text="{Binding RecorderStatusText, Mode=OneWay}"
                     Margin="6,0,0,0"
-                    Foreground="{Binding State, Converter={StaticResource StatusTextColorConverter}, ConverterParameter={x:Static audio:RecorderState.Error}, Mode=OneWay}"
+                    Foreground="{Binding StateVm.State, Converter={StaticResource StatusTextColorConverter}, ConverterParameter={x:Static main:AppState.Error}, Mode=OneWay}"
                     VerticalAlignment="Center" />
       </Grid>
 
@@ -48,11 +49,12 @@
               Thumb.DragStarted="OnRecordPercentSliderDragStarted"
               Thumb.DragDelta="OnRecordPercentSliderDragDelta"
               Thumb.DragCompleted="OnRecordPercentSliderDragCompleted"
-              IsEnabled="{Binding State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}" />
+              IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static main:AppState.Stopped}, Mode=OneWay}" />
 
       <Button Grid.Row="0"
               Grid.RowSpan="3"
               Grid.Column="2"
+              DataContext="{Binding StateVm, Mode=OneTime}"
               Command="{Binding ChangeStateCommand, Mode=OneTime}"
               Height="50"
               Width="50"
@@ -65,7 +67,7 @@
                    BasedOn="{StaticResource MainButtonStyle}">
                <Style.Triggers>
                   <DataTrigger Binding="{Binding State, Mode=OneWay}"
-                               Value="{x:Static audio:RecorderState.Recording}">
+                               Value="{x:Static main:AppState.Recording}">
                      <Setter Property="Content">
                         <Setter.Value>
                            <Path Fill="White"
@@ -75,7 +77,7 @@
                      </Setter>
                   </DataTrigger>
                   <DataTrigger Binding="{Binding State, Mode=OneWay}"
-                               Value="{x:Static audio:RecorderState.Identifying}">
+                               Value="{x:Static main:AppState.Identifying}">
                      <Setter Property="Content">
                         <Setter.Value>
                            <Path Stroke="White"
@@ -86,7 +88,7 @@
                      </Setter>
                   </DataTrigger>
                   <DataTrigger Binding="{Binding State, Mode=OneWay}"
-                               Value="{x:Static audio:RecorderState.Stopped}">
+                               Value="{x:Static main:AppState.Stopped}">
                      <Setter Property="Content">
                         <Setter.Value>
                            <Ellipse Fill="White" />
@@ -94,7 +96,7 @@
                      </Setter>
                   </DataTrigger>
                   <DataTrigger Binding="{Binding State, Mode=OneWay}"
-                               Value="{x:Static audio:RecorderState.Error}">
+                               Value="{x:Static main:AppState.Error}">
                      <Setter Property="Content">
                         <Setter.Value>
                            <Path Stroke="White"

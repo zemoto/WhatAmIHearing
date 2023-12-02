@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
+using ZemotoCommon.UI;
 
 namespace WhatAmIHearing;
 
 internal sealed class Main : IDisposable
 {
    private readonly MainViewModel _model;
+   private readonly StateViewModel _stateVm;
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager;
    private readonly SpotifyManager _spotifyManager = new();
@@ -18,11 +20,12 @@ internal sealed class Main : IDisposable
 
    public Main()
    {
-      _recordingManager = new RecordingManager( ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes, async () => await ChangeStateAsync() );
+      _stateVm = new StateViewModel() { ChangeStateCommand = new RelayCommand( async () => await ChangeStateAsync() ) };
+      _recordingManager = new RecordingManager( _stateVm, ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
 
       _spotifyManager.SignInComplete += OnSpotifySignInComplete;
 
-      _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
+      _model = new MainViewModel( _stateVm, _recordingManager.Model, _spotifyManager.Model );
 
       _window = new MainWindow( _model );
       _window.Closing += OnWindowClosing;
@@ -59,24 +62,24 @@ internal sealed class Main : IDisposable
 
    public async Task ChangeStateAsync()
    {
-      switch ( _model.RecorderVm.State )
+      switch ( _stateVm.State )
       {
-         case RecorderState.Stopped:
+         case AppState.Stopped:
          {
             HandleRecordingResult( await _recordingManager.RecordAsync() );
             break;
          }
-         case RecorderState.Recording:
+         case AppState.Recording:
          {
             _recordingManager.CancelRecording();
             break;
          }
-         case RecorderState.Identifying:
+         case AppState.Identifying:
          {
             _shazamApi.CancelRequests();
             break;
          }
-         case RecorderState.Error:
+         case AppState.Error:
          {
             _recordingManager.Reset();
             break;
@@ -93,7 +96,7 @@ internal sealed class Main : IDisposable
       }
 
       _model.RecorderVm.RecordingProgress = 1;
-      _model.RecorderVm.State = RecorderState.Identifying;
+      _stateVm.State = AppState.Identifying;
 
       _model.RecorderVm.RecorderStatusText = AppSettings.Instance.ProgressType switch
       {
@@ -116,7 +119,7 @@ internal sealed class Main : IDisposable
 
       if ( detectedSong?.IsComplete != true )
       {
-         _model.RecorderVm.State = RecorderState.Error;
+         _stateVm.State = AppState.Error;
          _model.RecorderVm.RecordingProgress = 0;
          _model.RecorderVm.RecorderStatusText = "Shazam could not identify the audio";
          ShowAndForegroundMainWindow();
@@ -150,7 +153,7 @@ internal sealed class Main : IDisposable
 
    public async void OnRecordHotkey( object sender, EventArgs e )
    {
-      if ( _recordingManager.Model.State is RecorderState.Stopped )
+      if ( _stateVm.State is AppState.Stopped )
       {
          ShowAndForegroundMainWindow();
       }

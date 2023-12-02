@@ -2,7 +2,6 @@ using NAudio.Wave;
 using System;
 using System.Threading.Tasks;
 using ZemotoCommon;
-using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Audio;
 
@@ -15,12 +14,12 @@ internal sealed class RecordingManager : IDisposable
 
    public RecorderViewModel Model { get; }
 
-   public RecordingManager( WaveFormat waveFormat, long maxBytesToRecord, Action changeStateAction )
+   public RecordingManager( StateViewModel stateVm, WaveFormat waveFormat, long maxBytesToRecord )
    {
       _waveFormat = waveFormat;
       _maxBytesToRecord = maxBytesToRecord;
 
-      Model = new RecorderViewModel( _deviceProvider ) { ChangeStateCommand = new RelayCommand( changeStateAction ) };
+      Model = new RecorderViewModel( stateVm, _deviceProvider );
    }
 
    public void Dispose()
@@ -31,7 +30,7 @@ internal sealed class RecordingManager : IDisposable
 
    public async Task<RecordingResult> RecordAsync()
    {
-      Model.State = RecorderState.Recording;
+      Model.StateVm.State = AppState.Recording;
 
       using var recorder = new Recorder( _deviceProvider.GetSelectedDevice(), _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
       recorder.RecordingProgress += OnRecordingProgress;
@@ -42,7 +41,7 @@ internal sealed class RecordingManager : IDisposable
 
    public void Reset()
    {
-      Model.State = RecorderState.Stopped;
+      Model.StateVm.State = AppState.Stopped;
       Model.RecorderStatusText = string.Empty;
       Model.RecordingProgress = 0;
    }

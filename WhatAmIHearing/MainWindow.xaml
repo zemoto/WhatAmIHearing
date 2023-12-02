@@ -104,7 +104,7 @@
                              VerticalAlignment="Center" />
                   <ComboBox ItemsSource="{commonUi:GetEnumValues local:ProgressDisplayType}"
                             SelectedValue="{Binding Settings.ProgressType, Mode=TwoWay}"
-                            IsEnabled="{Binding RecorderVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static audio:RecorderState.Stopped}, Mode=OneWay}"
+                            IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}"
                             Height="20"
                             Padding="6,0,0,2"
                             Width="80" />
