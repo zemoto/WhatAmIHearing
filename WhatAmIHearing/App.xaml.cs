@@ -35,8 +35,8 @@ public sealed partial class App : IDisposable
 
    public void Dispose()
    {
-      _main.Dispose();
-      _trayIcon.Dispose();
+      _main?.Dispose();
+      _trayIcon?.Dispose();
       _singleInstance.Dispose();
    }
 
