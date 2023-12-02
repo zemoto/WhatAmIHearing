@@ -53,7 +53,7 @@
       <Button Grid.Row="0"
               Grid.RowSpan="3"
               Grid.Column="2"
-              Command="{Binding RecordStopCommand, Mode=OneTime}"
+              Command="{Binding ChangeStateCommand, Mode=OneTime}"
               Height="50"
               Width="50"
               Padding="12"

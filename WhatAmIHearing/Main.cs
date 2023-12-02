@@ -57,7 +57,7 @@ internal sealed class Main : IDisposable
       }
    }
 
-   private async void OnRecordingSuccess( object sender, RecordingFinishedEventArgs args )
+   private async void OnRecordingSuccess( object sender, RecordingResult args )
    {
       _model.RecorderVm.State = RecorderState.Identifying;
 
@@ -116,14 +116,14 @@ internal sealed class Main : IDisposable
       }
    }
 
-   public void OnRecordHotkey( object sender, EventArgs e )
+   public async void OnRecordHotkey( object sender, EventArgs e )
    {
       if ( _recordingManager.Model.State is RecorderState.Stopped )
       {
          ShowAndForegroundMainWindow();
       }
 
-      _recordingManager.Record();
+      await _recordingManager.ChangeStateAsync();
    }
 
    private void HideWindow()

@@ -3,6 +3,8 @@ using NAudio.Wave;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Audio;
 
@@ -12,15 +14,14 @@ internal sealed class Recorder : IDisposable
    private readonly WaveFormat _waveFormat;
    private readonly long _bytesToRecord;
    private readonly double _secondsOfAudioToRecord;
+   private readonly CancellationToken _cancelToken;
    private readonly WaveFileWriter _audioWriter;
    private readonly MemoryStream _recordedFileStream;
-
-   private bool _cancelled;
+   private readonly ManualResetEvent _recordingFinishedEvent = new( false );
 
    public event EventHandler<RecordingProgressEventArgs> RecordingProgress;
-   public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
 
-   public Recorder( MMDevice device, WaveFormat waveFormat, long bytesToRecord )
+   public Recorder( MMDevice device, WaveFormat waveFormat, long bytesToRecord, CancellationToken cancelToken )
    {
       _audioCapturer = new WasapiLoopbackCapture( device ) { WaveFormat = waveFormat };
       _audioCapturer.DataAvailable += OnDataCaptured;
@@ -28,6 +29,7 @@ internal sealed class Recorder : IDisposable
 
       _waveFormat = waveFormat;
       _bytesToRecord = bytesToRecord;
+      _cancelToken = cancelToken;
 
       _recordedFileStream = new MemoryStream();
       _audioWriter = new WaveFileWriter( _recordedFileStream, _waveFormat );
@@ -43,23 +45,30 @@ internal sealed class Recorder : IDisposable
       _audioCapturer.Dispose();
       _audioCapturer.DataAvailable -= OnDataCaptured;
       _audioCapturer.RecordingStopped -= OnRecordingStopped;
+
+      _recordingFinishedEvent.Dispose();
    }
 
-   public void StartRecording()
+   public async Task<RecordingResult> RecordAsync()
    {
       RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, GetStatusText( 0 ) ) );
       _audioCapturer.StartRecording();
-   }
 
-   public void CancelRecording()
-   {
-      _cancelled = true;
-      _audioCapturer.StopRecording();
+      await Task.Run( _recordingFinishedEvent.WaitOne );
+
+      byte[] data = null;
+      if ( !_cancelToken.IsCancellationRequested )
+      {
+         _audioWriter.Flush();
+         data = _recordedFileStream.ToArray();
+      }
+
+      return new RecordingResult( data, _waveFormat );
    }
 
    private void OnDataCaptured( object sender, WaveInEventArgs e )
    {
-      if ( _audioWriter.Position + e.BytesRecorded >= _bytesToRecord )
+      if ( _cancelToken.IsCancellationRequested || _audioWriter.Position + e.BytesRecorded >= _bytesToRecord )
       {
          _audioCapturer.StopRecording();
       }
@@ -70,18 +79,7 @@ internal sealed class Recorder : IDisposable
       }
    }
 
-   private void OnRecordingStopped( object sender, StoppedEventArgs e )
-   {
-      byte[] data = null;
-
-      if ( !_cancelled )
-      {
-         _audioWriter.Flush();
-         data = _recordedFileStream.ToArray();
-      }
-
-      RecordingFinished.Invoke( this, new RecordingFinishedEventArgs( data, _waveFormat ) );
-   }
+   private void OnRecordingStopped( object sender, StoppedEventArgs e ) => _recordingFinishedEvent.Set();
 
    private string GetStatusText( long bytesRecorded )
    {
