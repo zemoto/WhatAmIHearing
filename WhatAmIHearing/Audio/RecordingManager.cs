@@ -13,17 +13,14 @@ internal sealed class RecordingManager : IDisposable
    private readonly long _maxBytesToRecord;
    private readonly CancelTokenProvider _cancelTokenProvider = new();
 
-   public event EventHandler<RecordingResult> RecordingSuccess;
-   public event EventHandler CancelRequested;
-
    public RecorderViewModel Model { get; }
 
-   public RecordingManager( WaveFormat waveFormat, long maxBytesToRecord )
+   public RecordingManager( WaveFormat waveFormat, long maxBytesToRecord, Action changeStateAction )
    {
       _waveFormat = waveFormat;
       _maxBytesToRecord = maxBytesToRecord;
 
-      Model = new RecorderViewModel( _deviceProvider ) { ChangeStateCommand = new RelayCommand( async () => await ChangeStateAsync() ) };
+      Model = new RecorderViewModel( _deviceProvider ) { ChangeStateCommand = new RelayCommand( changeStateAction ) };
    }
 
    public void Dispose()
@@ -32,45 +29,16 @@ internal sealed class RecordingManager : IDisposable
       _cancelTokenProvider.Dispose();
    }
 
-   public async Task ChangeStateAsync()
+   public async Task<RecordingResult> RecordAsync()
    {
-      switch ( Model.State )
-      {
-         case RecorderState.Stopped:
-         {
-            Model.State = RecorderState.Recording;
+      Model.State = RecorderState.Recording;
 
-            using var recorder = new Recorder( _deviceProvider.GetSelectedDevice(), _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
-            recorder.RecordingProgress += OnRecordingProgress;
-            var result = await recorder.RecordAsync();
-            if ( result.Cancelled )
-            {
-               Reset();
-            }
-            else
-            {
-               Model.RecordingProgress = 1;
-               RecordingSuccess?.Invoke( this, result );
-            }
-            break;
-         }
-         case RecorderState.Recording:
-         {
-            _cancelTokenProvider.Cancel();
-            break;
-         }
-         case RecorderState.Identifying:
-         {
-            CancelRequested?.Invoke( this, EventArgs.Empty );
-            break;
-         }
-         case RecorderState.Error:
-         {
-            Reset();
-            break;
-         }
-      }
+      using var recorder = new Recorder( _deviceProvider.GetSelectedDevice(), _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
+      recorder.RecordingProgress += OnRecordingProgress;
+      return await recorder.RecordAsync();
    }
+
+   public void CancelRecording() => _cancelTokenProvider.Cancel();
 
    public void Reset()
    {

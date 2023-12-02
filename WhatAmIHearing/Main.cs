@@ -12,14 +12,14 @@ internal sealed class Main : IDisposable
 {
    private readonly MainViewModel _model;
    private readonly MainWindow _window;
-   private readonly RecordingManager _recordingManager = new( ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
+   private readonly RecordingManager _recordingManager;
    private readonly SpotifyManager _spotifyManager = new();
    private readonly ShazamApi _shazamApi = new();
 
    public Main()
    {
-      _recordingManager.RecordingSuccess += OnRecordingSuccess;
-      _recordingManager.CancelRequested += OnCancelRequested;
+      _recordingManager = new RecordingManager( ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes, async () => await ChangeStateAsync() );
+
       _spotifyManager.SignInComplete += OnSpotifySignInComplete;
 
       _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
@@ -57,22 +57,56 @@ internal sealed class Main : IDisposable
       }
    }
 
-   private async void OnRecordingSuccess( object sender, RecordingResult args )
+   public async Task ChangeStateAsync()
    {
+      switch ( _model.RecorderVm.State )
+      {
+         case RecorderState.Stopped:
+         {
+            HandleRecordingResult( await _recordingManager.RecordAsync() );
+            break;
+         }
+         case RecorderState.Recording:
+         {
+            _recordingManager.CancelRecording();
+            break;
+         }
+         case RecorderState.Identifying:
+         {
+            _shazamApi.CancelRequests();
+            break;
+         }
+         case RecorderState.Error:
+         {
+            _recordingManager.Reset();
+            break;
+         }
+      }
+   }
+
+   private async void HandleRecordingResult( RecordingResult result )
+   {
+      if ( result.Cancelled )
+      {
+         _recordingManager.Reset();
+         return;
+      }
+
+      _model.RecorderVm.RecordingProgress = 1;
       _model.RecorderVm.State = RecorderState.Identifying;
 
       _model.RecorderVm.RecorderStatusText = AppSettings.Instance.ProgressType switch
       {
          ProgressDisplayType.None => "Sending recorded audio to Shazam",
-         ProgressDisplayType.Bytes => $"Sending {args.RecordingData.Length} bytes of audio to Shazam",
-         ProgressDisplayType.Seconds => $"Sending {args.AudioDurationInSeconds} seconds of audio to Shazam",
+         ProgressDisplayType.Bytes => $"Sending {result.RecordingData.Length} bytes of audio to Shazam",
+         ProgressDisplayType.Seconds => $"Sending {result.AudioDurationInSeconds} seconds of audio to Shazam",
          _ => throw new InvalidEnumArgumentException()
       };
 
       DetectedTrackInfo detectedSong;
       try
       {
-         detectedSong = await _shazamApi.DetectSongAsync( args.RecordingData ).ConfigureAwait( true );
+         detectedSong = await _shazamApi.DetectSongAsync( result.RecordingData ).ConfigureAwait( true );
       }
       catch ( TaskCanceledException )
       {
@@ -103,8 +137,6 @@ internal sealed class Main : IDisposable
       }
    }
 
-   private void OnCancelRequested( object sender, EventArgs e ) => _shazamApi.CancelRequests();
-
    private void OnSpotifySignInComplete( object sender, EventArgs e ) => ShowAndForegroundMainWindow();
 
    private void OnWindowClosing( object sender, CancelEventArgs e )
@@ -123,7 +155,7 @@ internal sealed class Main : IDisposable
          ShowAndForegroundMainWindow();
       }
 
-      await _recordingManager.ChangeStateAsync();
+      await ChangeStateAsync();
    }
 
    private void HideWindow()

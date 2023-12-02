@@ -48,5 +48,5 @@ internal sealed class RecorderViewModel : ViewModelBase
       set => SetProperty( ref _recordPercent, Math.Clamp( value, 0.1, 1 ) );
    }
 
-   public ICommand ChangeStateCommand { get; set; }
+   public ICommand ChangeStateCommand { get; init; }
 }
