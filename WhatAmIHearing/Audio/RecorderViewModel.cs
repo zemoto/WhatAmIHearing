@@ -38,7 +38,7 @@ internal sealed class RecorderViewModel : ViewModelBase
    public double RecordingProgress
    {
       get => _recordingProgress;
-      set => SetProperty( ref _recordingProgress, value );
+      set => SetProperty( ref _recordingProgress, value * RecordPercent );
    }
 
    private double _recordPercent = 1.0;

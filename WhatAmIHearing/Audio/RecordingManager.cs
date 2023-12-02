@@ -8,6 +8,7 @@ internal sealed class RecordingManager : IDisposable
 {
    private readonly Recorder _recorder;
    private readonly DeviceProvider _deviceProvider = new();
+   private readonly long _maxBytesToRecord;
 
    public event EventHandler<RecordingFinishedEventArgs> RecordingSuccess;
    public event EventHandler CancelRequested;
@@ -16,7 +17,9 @@ internal sealed class RecordingManager : IDisposable
 
    public RecordingManager( WaveFormat waveFormat, long maxBytesToRecord )
    {
-      _recorder = new Recorder( waveFormat, maxBytesToRecord );
+      _recorder = new Recorder( waveFormat );
+      _maxBytesToRecord = maxBytesToRecord;
+
       Model = new RecorderViewModel( _deviceProvider ) { RecordStopCommand = new RelayCommand( Record ) };
 
       _recorder.RecordingProgress += OnRecordingProgress;
@@ -36,7 +39,7 @@ internal sealed class RecordingManager : IDisposable
          case RecorderState.Stopped:
          {
             Model.State = RecorderState.Recording;
-            _recorder.StartRecording( _deviceProvider.GetSelectedDevice(), Model.RecordPercent );
+            _recorder.StartRecording( _deviceProvider.GetSelectedDevice(), (long)( Model.RecordPercent * _maxBytesToRecord ) );
             break;
          }
          case RecorderState.Recording:
@@ -78,7 +81,7 @@ internal sealed class RecordingManager : IDisposable
          return;
       }
 
-      Model.RecordingProgress = Model.RecordPercent;
+      Model.RecordingProgress = 1;
       RecordingSuccess?.Invoke( this, args );
    }
 }

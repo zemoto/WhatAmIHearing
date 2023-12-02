@@ -9,7 +9,6 @@ namespace WhatAmIHearing.Audio;
 internal sealed class Recorder : IDisposable
 {
    private readonly WaveFormat _waveFormat;
-   private readonly long _maxBytesToRecord;
 
    private bool _cancelled;
    private long _bytesToRecord;
@@ -21,15 +20,11 @@ internal sealed class Recorder : IDisposable
    public event EventHandler<RecordingProgressEventArgs> RecordingProgress;
    public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
 
-   public Recorder( WaveFormat waveFormat, long maxBytesToRecord )
-   {
-      _waveFormat = waveFormat;
-      _maxBytesToRecord = maxBytesToRecord;
-   }
+   public Recorder( WaveFormat waveFormat ) => _waveFormat = waveFormat;
 
    public void Dispose() => Cleanup();
 
-   public void StartRecording( MMDevice device, double percentToRecord )
+   public void StartRecording( MMDevice device, long bytesToRecord )
    {
       _audioCapturer = new WasapiLoopbackCapture( device ) { WaveFormat = _waveFormat };
       _audioCapturer.DataAvailable += OnDataCaptured;
@@ -38,7 +33,7 @@ internal sealed class Recorder : IDisposable
       _recordedFileStream = new MemoryStream();
       _audioWriter = new WaveFileWriter( _recordedFileStream, _waveFormat );
 
-      _bytesToRecord = (int)( percentToRecord * _maxBytesToRecord );
+      _bytesToRecord = bytesToRecord;
       _secondsOfAudioToRecord = Math.Round( (double)_bytesToRecord / _waveFormat.AverageBytesPerSecond, 2 );
 
       RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, GetStatusText( 0 ) ) );
@@ -61,7 +56,7 @@ internal sealed class Recorder : IDisposable
       else
       {
          _audioWriter.Write( e.Buffer, 0, e.BytesRecorded );
-         RecordingProgress.Invoke( this, new RecordingProgressEventArgs( (double)_audioWriter.Position / _maxBytesToRecord, GetStatusText( _audioWriter.Position ) ) );
+         RecordingProgress.Invoke( this, new RecordingProgressEventArgs( (double)_audioWriter.Position / _bytesToRecord, GetStatusText( _audioWriter.Position ) ) );
       }
    }
 
