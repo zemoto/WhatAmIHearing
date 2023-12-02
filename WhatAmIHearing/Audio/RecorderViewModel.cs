@@ -16,13 +16,6 @@ internal sealed class RecorderViewModel : ViewModelBase
    public StateViewModel StateVm { get; }
    public IReadOnlyCollection<string> DeviceNameList { get; }
 
-   private string _recorderStatusText;
-   public string RecorderStatusText
-   {
-      get => _recorderStatusText;
-      set => SetProperty( ref _recorderStatusText, value );
-   }
-
    private double _recordingProgress;
    public double RecordingProgress
    {

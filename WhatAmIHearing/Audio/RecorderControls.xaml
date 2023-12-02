@@ -36,7 +36,7 @@
                       Maximum="1"
                       Value="{Binding RecordingProgress, Mode=OneWay}" />
 
-         <TextBlock Text="{Binding RecorderStatusText, Mode=OneWay}"
+         <TextBlock Text="{Binding StateVm.StatusText, Mode=OneWay}"
                     Margin="6,0,0,0"
                     Foreground="{Binding StateVm.State, Converter={StaticResource StatusTextColorConverter}, ConverterParameter={x:Static main:AppState.Error}, Mode=OneWay}"
                     VerticalAlignment="Center" />

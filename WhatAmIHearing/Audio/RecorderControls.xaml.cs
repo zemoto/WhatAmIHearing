@@ -15,7 +15,7 @@ internal partial class RecorderControls
 
    private void OnRecordPercentSliderDragDelta( object sender, DragDeltaEventArgs e ) => SetRecordPercentStatusText();
 
-   private void OnRecordPercentSliderDragCompleted( object sender, DragCompletedEventArgs e ) => _model.RecorderStatusText = string.Empty;
+   private void OnRecordPercentSliderDragCompleted( object sender, DragCompletedEventArgs e ) => _model.StateVm.StatusText = string.Empty;
 
-   private void SetRecordPercentStatusText() => _model.RecorderStatusText = $"Record {(int)( _model.RecordPercent * 100)}% of allowed audio";
+   private void SetRecordPercentStatusText() => _model.StateVm.StatusText = $"Record {(int)( _model.RecordPercent * 100)}% of allowed audio";
 }

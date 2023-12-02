@@ -96,7 +96,7 @@ internal sealed class Main : IDisposable
       _model.RecorderVm.RecordingProgress = 1;
       _stateVm.State = AppState.Identifying;
 
-      _model.RecorderVm.RecorderStatusText = AppSettings.Instance.ProgressType switch
+      _stateVm.StatusText = AppSettings.Instance.ProgressType switch
       {
          ProgressDisplayType.None => "Sending recorded audio to Shazam",
          ProgressDisplayType.Bytes => $"Sending {result.RecordingData.Length} bytes of audio to Shazam",
@@ -118,8 +118,8 @@ internal sealed class Main : IDisposable
       if ( detectedSong?.IsComplete != true )
       {
          _stateVm.State = AppState.Error;
+         _stateVm.StatusText = "Shazam could not identify the audio";
          _model.RecorderVm.RecordingProgress = 0;
-         _model.RecorderVm.RecorderStatusText = "Shazam could not identify the audio";
          ShowAndForegroundMainWindow();
          return;
       }

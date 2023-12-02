@@ -20,5 +20,12 @@ internal sealed class StateViewModel : ViewModelBase
       set => SetProperty( ref _state, value );
    }
 
+   private string _statusText;
+   public string StatusText
+   {
+      get => _statusText;
+      set => SetProperty( ref _statusText, value );
+   }
+
    public ICommand ChangeStateCommand { get; init; }
 }
