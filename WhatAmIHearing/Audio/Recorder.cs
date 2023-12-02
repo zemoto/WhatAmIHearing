@@ -8,36 +8,46 @@ namespace WhatAmIHearing.Audio;
 
 internal sealed class Recorder : IDisposable
 {
+   private readonly WasapiLoopbackCapture _audioCapturer;
    private readonly WaveFormat _waveFormat;
+   private readonly long _bytesToRecord;
+   private readonly double _secondsOfAudioToRecord;
+   private readonly WaveFileWriter _audioWriter;
+   private readonly MemoryStream _recordedFileStream;
 
    private bool _cancelled;
-   private long _bytesToRecord;
-   private double _secondsOfAudioToRecord;
-   private WasapiLoopbackCapture _audioCapturer;
-   private WaveFileWriter _audioWriter;
-   private MemoryStream _recordedFileStream;
 
    public event EventHandler<RecordingProgressEventArgs> RecordingProgress;
    public event EventHandler<RecordingFinishedEventArgs> RecordingFinished;
 
-   public Recorder( WaveFormat waveFormat ) => _waveFormat = waveFormat;
-
-   public void Dispose() => Cleanup();
-
-   public void StartRecording( MMDevice device, long bytesToRecord )
+   public Recorder( MMDevice device, WaveFormat waveFormat, long bytesToRecord )
    {
-      _audioCapturer = new WasapiLoopbackCapture( device ) { WaveFormat = _waveFormat };
+      _audioCapturer = new WasapiLoopbackCapture( device ) { WaveFormat = waveFormat };
       _audioCapturer.DataAvailable += OnDataCaptured;
       _audioCapturer.RecordingStopped += OnRecordingStopped;
+
+      _waveFormat = waveFormat;
+      _bytesToRecord = bytesToRecord;
 
       _recordedFileStream = new MemoryStream();
       _audioWriter = new WaveFileWriter( _recordedFileStream, _waveFormat );
 
-      _bytesToRecord = bytesToRecord;
       _secondsOfAudioToRecord = Math.Round( (double)_bytesToRecord / _waveFormat.AverageBytesPerSecond, 2 );
+   }
 
+   public void Dispose()
+   {
+      _audioWriter.Dispose();
+      _recordedFileStream.Dispose();
+
+      _audioCapturer.Dispose();
+      _audioCapturer.DataAvailable -= OnDataCaptured;
+      _audioCapturer.RecordingStopped -= OnRecordingStopped;
+   }
+
+   public void StartRecording()
+   {
       RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, GetStatusText( 0 ) ) );
-
       _audioCapturer.StartRecording();
    }
 
@@ -71,7 +81,6 @@ internal sealed class Recorder : IDisposable
       }
 
       RecordingFinished.Invoke( this, new RecordingFinishedEventArgs( data, _waveFormat ) );
-      Cleanup();
    }
 
    private string GetStatusText( long bytesRecorded )
@@ -87,25 +96,6 @@ internal sealed class Recorder : IDisposable
             return $"Recording: {secondsRecorded}/{_secondsOfAudioToRecord} seconds";
          default:
             throw new InvalidEnumArgumentException();
-      }
-   }
-
-   private void Cleanup()
-   {
-      _cancelled = false;
-
-      _audioWriter?.Dispose();
-      _audioWriter = null;
-
-      _recordedFileStream?.Dispose();
-      _recordedFileStream = null;
-
-      if ( _audioCapturer is not null )
-      {
-         _audioCapturer.Dispose();
-         _audioCapturer.DataAvailable -= OnDataCaptured;
-         _audioCapturer.RecordingStopped -= OnRecordingStopped;
-         _audioCapturer = null;
       }
    }
 }

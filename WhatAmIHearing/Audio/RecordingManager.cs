@@ -6,9 +6,11 @@ namespace WhatAmIHearing.Audio;
 
 internal sealed class RecordingManager : IDisposable
 {
-   private readonly Recorder _recorder;
    private readonly DeviceProvider _deviceProvider = new();
+   private readonly WaveFormat _waveFormat;
    private readonly long _maxBytesToRecord;
+
+   private Recorder _recorder;
 
    public event EventHandler<RecordingFinishedEventArgs> RecordingSuccess;
    public event EventHandler CancelRequested;
@@ -17,20 +19,13 @@ internal sealed class RecordingManager : IDisposable
 
    public RecordingManager( WaveFormat waveFormat, long maxBytesToRecord )
    {
-      _recorder = new Recorder( waveFormat );
+      _waveFormat = waveFormat;
       _maxBytesToRecord = maxBytesToRecord;
 
       Model = new RecorderViewModel( _deviceProvider ) { RecordStopCommand = new RelayCommand( Record ) };
-
-      _recorder.RecordingProgress += OnRecordingProgress;
-      _recorder.RecordingFinished += OnRecordingFinished;
    }
 
-   public void Dispose()
-   {
-      _recorder.Dispose();
-      _deviceProvider.Dispose();
-   }
+   public void Dispose() => _deviceProvider.Dispose();
 
    public void Record()
    {
@@ -39,7 +34,10 @@ internal sealed class RecordingManager : IDisposable
          case RecorderState.Stopped:
          {
             Model.State = RecorderState.Recording;
-            _recorder.StartRecording( _deviceProvider.GetSelectedDevice(), (long)( Model.RecordPercent * _maxBytesToRecord ) );
+            _recorder = new Recorder( _deviceProvider.GetSelectedDevice(), _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ) );
+            _recorder.RecordingProgress += OnRecordingProgress;
+            _recorder.RecordingFinished += OnRecordingFinished;
+            _recorder.StartRecording();
             break;
          }
          case RecorderState.Recording:
@@ -75,6 +73,9 @@ internal sealed class RecordingManager : IDisposable
 
    private void OnRecordingFinished( object sender, RecordingFinishedEventArgs args )
    {
+      _recorder.Dispose();
+      _recorder = null;
+
       if ( args.Cancelled )
       {
          Reset();
