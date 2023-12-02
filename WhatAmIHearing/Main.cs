@@ -15,16 +15,14 @@ internal sealed class Main : IDisposable
    private readonly StateViewModel _stateVm;
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager;
-   private readonly SpotifyManager _spotifyManager = new();
+   private readonly SpotifyManager _spotifyManager;
    private readonly ShazamApi _shazamApi = new();
 
    public Main()
    {
       _stateVm = new StateViewModel() { ChangeStateCommand = new RelayCommand( async () => await ChangeStateAsync() ) };
       _recordingManager = new RecordingManager( _stateVm, ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
-
-      _spotifyManager.SignInComplete += OnSpotifySignInComplete;
-
+      _spotifyManager = new SpotifyManager( ShowAndForegroundMainWindow );
       _model = new MainViewModel( _stateVm, _recordingManager.Model, _spotifyManager.Model );
 
       _window = new MainWindow( _model );
@@ -139,8 +137,6 @@ internal sealed class Main : IDisposable
          await _spotifyManager.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle );
       }
    }
-
-   private void OnSpotifySignInComplete( object sender, EventArgs e ) => ShowAndForegroundMainWindow();
 
    private void OnWindowClosing( object sender, CancelEventArgs e )
    {

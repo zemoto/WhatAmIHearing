@@ -7,12 +7,15 @@ namespace WhatAmIHearing.Api.Spotify;
 internal sealed class SpotifyManager : IDisposable
 {
    private readonly SpotifyApi _api = new();
+   private readonly Action _signInCompleteAction;
 
    public SpotifyViewModel Model { get; }
 
-   public event EventHandler SignInComplete;
-
-   public SpotifyManager() => Model = new SpotifyViewModel { SignInOutCommand = new RelayCommand( OnSpotifySignInOut ) };
+   public SpotifyManager( Action signInCompleteAction )
+   {
+      _signInCompleteAction = signInCompleteAction;
+      Model = new SpotifyViewModel { SignInOutCommand = new RelayCommand( OnSpotifySignInOut ) };
+   }
 
    public void Dispose() => _api.Dispose();
 
@@ -26,7 +29,7 @@ internal sealed class SpotifyManager : IDisposable
          }
          else if ( await authenticator.SignInAsync().ConfigureAwait( true ) )
          {
-            SignInComplete.Invoke( this, EventArgs.Empty );
+            _signInCompleteAction.Invoke();
          }
       }
 

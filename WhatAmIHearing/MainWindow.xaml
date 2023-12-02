@@ -65,8 +65,8 @@
          <audio:RecorderControls DataContext="{Binding RecorderVm, Mode=OneTime}" />
 
          <commonControls:AnimatedGroupedExpander Header="Window Settings"
-                                           Margin="0,0,0,4"
-                                           GroupName="Settings">
+                                                 Margin="0,0,0,4"
+                                                 GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
                          Margin="0,0,0,2"
@@ -85,8 +85,8 @@
          </commonControls:AnimatedGroupedExpander>
 
          <commonControls:AnimatedGroupedExpander Header="Recorder Settings"
-                                           Margin="0,0,0,4"
-                                           GroupName="Settings">
+                                                 Margin="0,0,0,4"
+                                                 GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
                <TextBlock Margin="0,0,8,4"
                           FontWeight="SemiBold"
@@ -114,7 +114,7 @@
          </commonControls:AnimatedGroupedExpander>
 
          <commonControls:AnimatedGroupedExpander Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
-                                           GroupName="Settings">
+                                                 GroupName="Settings">
             <StackPanel Margin="8,8,0,0">
                <StackPanel Orientation="Horizontal">
                   <Button Style="{StaticResource MainButtonStyle}"
