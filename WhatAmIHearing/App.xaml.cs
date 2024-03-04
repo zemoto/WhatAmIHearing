@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
+using System.Windows.Threading;
 using ZemotoCommon;
 using TrayIcon = System.Windows.Forms.NotifyIcon;
 
@@ -18,6 +20,8 @@ public sealed partial class App : IDisposable
          Shutdown();
          return;
       }
+
+      DispatcherUnhandledException += OnUnhandledException;
 
       InitializeComponent();
 
@@ -48,6 +52,8 @@ public sealed partial class App : IDisposable
       Api.ApiClient.StaticDispose();
       Dispose();
    }
+
+   private void OnUnhandledException( object sender, DispatcherUnhandledExceptionEventArgs e ) => File.WriteAllText( "crash.txt", e.Exception.ToString() );
 
    private void OnTrayIconClicked( object sender, System.Windows.Forms.MouseEventArgs e )
    {
