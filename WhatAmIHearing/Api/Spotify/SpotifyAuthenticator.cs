@@ -97,7 +97,7 @@ internal sealed class SpotifyAuthenticator : IDisposable
       return await ExchangeTokensAsync( data );
    }
 
-   private async Task<bool> ExchangeTokensAsync( Dictionary<string,string> requestData )
+   private async Task<bool> ExchangeTokensAsync( Dictionary<string, string> requestData )
    {
       using var client = new SpotifyApiClient( false );
       var responseJson = await client.SendPostRequestAsync( TokenExchangeEndpoint, requestData );

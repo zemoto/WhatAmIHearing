@@ -3,19 +3,12 @@ using WhatAmIHearing.Audio;
 
 namespace WhatAmIHearing;
 
-internal sealed class MainViewModel : ZemotoCommon.UI.ViewModelBase
+internal sealed class MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, SpotifyViewModel spotifyVm ) : ZemotoCommon.UI.ViewModelBase
 {
-   public MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, SpotifyViewModel spotifyVm )
-   {
-      StateVm = stateVm;
-      RecorderVm = recorderVm;
-      SpotifyVm = spotifyVm;
-   }
-
    public AppSettings Settings { get; } = AppSettings.Instance;
-   public StateViewModel StateVm { get; }
-   public RecorderViewModel RecorderVm { get; }
-   public SpotifyViewModel SpotifyVm { get; }
+   public StateViewModel StateVm { get; } = stateVm;
+   public RecorderViewModel RecorderVm { get; } = recorderVm;
+   public SpotifyViewModel SpotifyVm { get; } = spotifyVm;
 
    private string _hotkeyStatusText;
    public string HotkeyStatusText

@@ -19,14 +19,8 @@ internal sealed class RecordingResult
    }
 }
 
-internal sealed class RecordingProgressEventArgs : EventArgs
+internal sealed class RecordingProgressEventArgs( double progress, string statusText ) : EventArgs
 {
-   public double Progress { get; }
-   public string StatusText { get; }
-
-   public RecordingProgressEventArgs( double progress, string statusText )
-   {
-      Progress = progress;
-      StatusText = statusText;
-   }
+   public double Progress { get; } = progress;
+   public string StatusText { get; } = statusText;
 }

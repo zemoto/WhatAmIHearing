@@ -44,7 +44,7 @@ internal abstract class ApiClient : IDisposable
       return await SendMessageAsync( message );
    }
 
-   public async Task<string> SendPostRequestAsync( string endpoint, Dictionary<string,string> formUrlEncodedData )
+   public async Task<string> SendPostRequestAsync( string endpoint, Dictionary<string, string> formUrlEncodedData )
    {
       using var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new FormUrlEncodedContent( formUrlEncodedData ) };
       return await SendMessageAsync( message );

@@ -4,17 +4,11 @@ using ZemotoCommon.UI;
 
 namespace WhatAmIHearing.Audio;
 
-internal sealed class RecorderViewModel : ViewModelBase
+internal sealed class RecorderViewModel( StateViewModel stateVm, DeviceProvider deviceProvider ) : ViewModelBase
 {
-   public RecorderViewModel( StateViewModel stateVm, DeviceProvider deviceProvider )
-   {
-      StateVm = stateVm;
-      DeviceNameList = deviceProvider.GetDeviceNameList();
-   }
-
    public AppSettings Settings { get; } = AppSettings.Instance;
-   public StateViewModel StateVm { get; }
-   public IReadOnlyCollection<string> DeviceNameList { get; }
+   public StateViewModel StateVm { get; } = stateVm;
+   public IReadOnlyCollection<string> DeviceNameList { get; } = deviceProvider.GetDeviceNameList();
 
    private double _recordingProgress;
    public double RecordingProgress

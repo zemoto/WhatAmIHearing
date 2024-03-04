@@ -3,7 +3,7 @@ using System.Windows.Controls.Primitives;
 
 namespace WhatAmIHearing.Audio;
 
-internal partial class RecorderControls
+internal sealed partial class RecorderControls
 {
    private RecorderViewModel _model;
 
@@ -17,5 +17,5 @@ internal partial class RecorderControls
 
    private void OnRecordPercentSliderDragCompleted( object sender, DragCompletedEventArgs e ) => _model.StateVm.StatusText = string.Empty;
 
-   private void SetRecordPercentStatusText() => _model.StateVm.StatusText = $"Record {(int)( _model.RecordPercent * 100)}% of allowed audio";
+   private void SetRecordPercentStatusText() => _model.StateVm.StatusText = $"Record {(int)( _model.RecordPercent * 100 )}% of allowed audio";
 }

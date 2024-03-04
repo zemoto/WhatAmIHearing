@@ -6,7 +6,7 @@ using System.Windows.Interop;
 
 namespace WhatAmIHearing;
 
-internal partial class MainWindow
+internal sealed partial class MainWindow
 {
    [DllImport( "user32.dll" )]
    [DefaultDllImportSearchPaths( DllImportSearchPath.System32 )]
