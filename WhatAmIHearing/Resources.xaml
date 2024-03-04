@@ -10,9 +10,9 @@
                                  EqualValue="{x:Static Visibility.Collapsed}"
                                  NotEqualValue="{x:Static Visibility.Visible}" />
 
-   <ui:EqualityToObjectConverter x:Key="StatusTextColorConverter"
-                                 EqualValue="Red"
-                                 NotEqualValue="Black" />
+   <ui:BoolToObjectConverter x:Key="StatusTextColorConverter"
+                             TrueValue="Red"
+                             FalseValue="Black" />
 
    <ui:BoolToObjectConverter x:Key="SignedInStatusConverter"
                              TrueValue="Spotify Integration (Signed In)"

@@ -77,11 +77,6 @@ internal sealed class Main : IDisposable
             _shazamApi.CancelRequests();
             break;
          }
-         case AppState.Error:
-         {
-            _recordingManager.Reset();
-            break;
-         }
       }
    }
 
@@ -96,13 +91,13 @@ internal sealed class Main : IDisposable
       _model.RecorderVm.RecordingProgress = 1;
       _stateVm.State = AppState.Identifying;
 
-      _stateVm.StatusText = AppSettings.Instance.ProgressType switch
+      _stateVm.SetStatusText( AppSettings.Instance.ProgressType switch
       {
          ProgressDisplayType.None => "Sending recorded audio to Shazam",
          ProgressDisplayType.Bytes => $"Sending {result.RecordingData.Length} bytes of audio to Shazam",
          ProgressDisplayType.Seconds => $"Sending {result.AudioDurationInSeconds} seconds of audio to Shazam",
          _ => throw new InvalidEnumArgumentException()
-      };
+      } );
 
       DetectedTrackInfo detectedSong;
       try
@@ -117,8 +112,8 @@ internal sealed class Main : IDisposable
 
       if ( detectedSong?.IsComplete != true )
       {
-         _stateVm.State = AppState.Error;
-         _stateVm.StatusText = "Shazam could not identify the audio";
+         _stateVm.State = AppState.Stopped;
+         _stateVm.SetStatusText( "Shazam could not identify the audio", isError: true );
          _model.RecorderVm.RecordingProgress = 0;
          ShowAndForegroundMainWindow();
          return;

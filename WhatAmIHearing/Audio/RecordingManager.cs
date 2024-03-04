@@ -42,13 +42,13 @@ internal sealed class RecordingManager : IDisposable
    public void Reset()
    {
       Model.StateVm.State = AppState.Stopped;
-      Model.StateVm.StatusText = string.Empty;
+      Model.StateVm.SetStatusText( string.Empty );
       Model.RecordingProgress = 0;
    }
 
    private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
    {
       Model.RecordingProgress = e.Progress;
-      Model.StateVm.StatusText = e.StatusText;
+      Model.StateVm.SetStatusText( e.StatusText );
    }
 }

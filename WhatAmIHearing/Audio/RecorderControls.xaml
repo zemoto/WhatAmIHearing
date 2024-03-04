@@ -38,7 +38,7 @@
 
          <TextBlock Text="{Binding StateVm.StatusText, Mode=OneWay}"
                     Margin="6,0,0,0"
-                    Foreground="{Binding StateVm.State, Converter={StaticResource StatusTextColorConverter}, ConverterParameter={x:Static main:AppState.Error}, Mode=OneWay}"
+                    Foreground="{Binding StateVm.ShowingErrorText, Converter={StaticResource StatusTextColorConverter}, Mode=OneWay}"
                     VerticalAlignment="Center" />
       </Grid>
 
@@ -92,20 +92,6 @@
                      <Setter Property="Content">
                         <Setter.Value>
                            <Ellipse Fill="White" />
-                        </Setter.Value>
-                     </Setter>
-                  </DataTrigger>
-                  <DataTrigger Binding="{Binding State, Mode=OneWay}"
-                               Value="{x:Static main:AppState.Error}">
-                     <Setter Property="Content">
-                        <Setter.Value>
-                           <Path Stroke="White"
-                                 StrokeThickness="4"
-                                 Stretch="UniformToFill"
-                                 StrokeLineJoin="Round"
-                                 StrokeEndLineCap="Round"
-                                 StrokeStartLineCap="Round"
-                                 Data="M 0,2.2 L 1.6,4 L 4,0" />
                         </Setter.Value>
                      </Setter>
                   </DataTrigger>
