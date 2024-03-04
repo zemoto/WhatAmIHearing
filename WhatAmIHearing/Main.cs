@@ -64,7 +64,7 @@ internal sealed class Main : IDisposable
       {
          case AppState.Stopped:
          {
-            HandleRecordingResult( await _recordingManager.RecordAsync() );
+            HandleRecordingResult( await _recordingManager.RecordAsync().ConfigureAwait( true ) );
             break;
          }
          case AppState.Recording:
