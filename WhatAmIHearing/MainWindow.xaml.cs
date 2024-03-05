@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using ZemotoCommon.UI;
 
 namespace WhatAmIHearing;
 
@@ -26,6 +27,7 @@ internal sealed partial class MainWindow
    public MainWindow( MainViewModel model )
    {
       DataContext = model;
+      DwmDropShadow.AddDropShadowToWindow( this );
       InitializeComponent();
    }
 

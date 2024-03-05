@@ -14,7 +14,7 @@
         SizeToContent="WidthAndHeight"
         WindowStyle="None"
         ResizeMode="CanMinimize"
-        AllowsTransparency="True"
+        AllowsTransparency="False"
         Background="Transparent"
         ShowActivated="True"
         SnapsToDevicePixels="True"
@@ -24,14 +24,8 @@
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24" />
    </WindowChrome.WindowChrome>
-   <Window.Effect>
-      <DropShadowEffect BlurRadius="8"
-                        Opacity="0.25"
-                        Direction="270"
-                        ShadowDepth="2" />
-   </Window.Effect>
-
-   <Grid Margin="4">
+   
+   <Grid>
       <Grid.RowDefinitions>
          <RowDefinition Height="24" />
          <RowDefinition Height="Auto" />
