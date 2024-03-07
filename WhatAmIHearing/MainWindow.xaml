@@ -49,7 +49,8 @@
               HorizontalAlignment="Right"
               WindowChrome.IsHitTestVisibleInChrome="True"
               Click="OnCloseClicked"
-              Style="{StaticResource CloseButtonStyle}" />
+              Style="{StaticResource CloseButtonStyle}"
+              IsCancel="True" />
 
       <StackPanel x:Name="WindowContents"
                   Grid.Row="1"
