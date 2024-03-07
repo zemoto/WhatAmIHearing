@@ -23,7 +23,7 @@ internal sealed class Main : IDisposable
       _stateVm = new StateViewModel() { ChangeStateCommand = new RelayCommand( async () => await ChangeStateAsync() ) };
       _recordingManager = new RecordingManager( _stateVm, ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
       _spotifyManager = new SpotifyManager( ShowAndForegroundMainWindow );
-      _model = new MainViewModel( _stateVm, _recordingManager.Model, _spotifyManager.Model );
+      _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
 
       _window = new MainWindow( _model );
       _window.Closing += OnWindowClosing;
