@@ -1,0 +1,70 @@
+﻿<Button x:Class="WhatAmIHearing.Audio.RecordButton"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:whatamihearing="clr-namespace:WhatAmIHearing"
+        mc:Ignorable="d"
+        Style="{StaticResource MainButtonStyle}"
+        Height="50"
+        Width="50"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        Padding="12"
+        d:DataContext="{d:DesignInstance Type={x:Type whatamihearing:StateViewModel}}">
+   <VisualStateManager.VisualStateGroups>
+      <VisualStateGroup x:Name="GlyphStates">
+         <VisualState x:Name="StoppedState">
+            <Storyboard>
+               <DoubleAnimation Storyboard.TargetName="MainGlyph"
+                                Storyboard.TargetProperty="RadiusX"
+                                To="13"
+                                Duration="0:0:0.075" />
+               <DoubleAnimation Storyboard.TargetName="MainGlyph"
+                                Storyboard.TargetProperty="RadiusY"
+                                To="13"
+                                Duration="0:0:0.075" />
+            </Storyboard>
+         </VisualState>
+         <VisualState x:Name="RecordingState">
+            <Storyboard>
+               <DoubleAnimation Storyboard.TargetName="MainGlyph"
+                                Storyboard.TargetProperty="RadiusX"
+                                To="0"
+                                Duration="0:0:0.075" />
+               <DoubleAnimation Storyboard.TargetName="MainGlyph"
+                                Storyboard.TargetProperty="RadiusY"
+                                To="0"
+                                Duration="0:0:0.075" />
+            </Storyboard>
+         </VisualState>
+         <VisualState x:Name="IdentifyingState">
+            <Storyboard>
+               <DoubleAnimation Storyboard.TargetName="MainGlyph"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0" />
+               <DoubleAnimation Storyboard.TargetName="CancelGlyph"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                Duration="0" />
+            </Storyboard>
+         </VisualState>
+      </VisualStateGroup>
+   </VisualStateManager.VisualStateGroups>
+
+   <Grid>
+      <Rectangle x:Name="MainGlyph"
+                 Fill="White"
+                 RadiusX="13"
+                 RadiusY="13" />
+
+      <Path x:Name="CancelGlyph"
+            Stroke="White"
+            Opacity="0"
+            StrokeThickness="4"
+            Stretch="UniformToFill"
+            Data="M 0,0 L 5,5 M 0,5 L 5,0" />
+   </Grid>
+</Button>

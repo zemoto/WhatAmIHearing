@@ -14,7 +14,7 @@ internal sealed class RecorderViewModel( StateViewModel stateVm, DeviceProvider 
    public double RecordingProgress
    {
       get => _recordingProgress;
-      set => SetProperty( ref _recordingProgress, value * RecordPercent );
+      set => SetProperty( ref _recordingProgress, value * _recordPercent );
    }
 
    private double _recordPercent = 1.0;

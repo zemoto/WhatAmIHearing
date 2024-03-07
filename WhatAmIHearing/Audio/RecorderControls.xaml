@@ -51,53 +51,11 @@
               Thumb.DragCompleted="OnRecordPercentSliderDragCompleted"
               IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static main:AppState.Stopped}, Mode=OneWay}" />
 
-      <Button Grid.Row="0"
-              Grid.RowSpan="3"
-              Grid.Column="2"
-              DataContext="{Binding StateVm, Mode=OneTime}"
-              Command="{Binding ChangeStateCommand, Mode=OneTime}"
-              Height="50"
-              Width="50"
-              Padding="12"
-              VerticalAlignment="Top"
-              HorizontalContentAlignment="Stretch"
-              VerticalContentAlignment="Stretch">
-         <Button.Style>
-            <Style TargetType="{x:Type Button}"
-                   BasedOn="{StaticResource MainButtonStyle}">
-               <Style.Triggers>
-                  <DataTrigger Binding="{Binding State, Mode=OneWay}"
-                               Value="{x:Static main:AppState.Recording}">
-                     <Setter Property="Content">
-                        <Setter.Value>
-                           <Path Fill="White"
-                                 Stretch="UniformToFill"
-                                 Data="M 0,0 L 0,1 1,1 1,0 Z" />
-                        </Setter.Value>
-                     </Setter>
-                  </DataTrigger>
-                  <DataTrigger Binding="{Binding State, Mode=OneWay}"
-                               Value="{x:Static main:AppState.Identifying}">
-                     <Setter Property="Content">
-                        <Setter.Value>
-                           <Path Stroke="White"
-                                 StrokeThickness="4"
-                                 Stretch="UniformToFill"
-                                 Data="M 0,0 L 5,5 M 0,5 L 5,0" />
-                        </Setter.Value>
-                     </Setter>
-                  </DataTrigger>
-                  <DataTrigger Binding="{Binding State, Mode=OneWay}"
-                               Value="{x:Static main:AppState.Stopped}">
-                     <Setter Property="Content">
-                        <Setter.Value>
-                           <Ellipse Fill="White" />
-                        </Setter.Value>
-                     </Setter>
-                  </DataTrigger>
-               </Style.Triggers>
-            </Style>
-         </Button.Style>
-      </Button>
+      <audio:RecordButton Grid.Row="0"
+                          Grid.RowSpan="3"
+                          Grid.Column="2"
+                          VerticalAlignment="Top"
+                          State="{Binding StateVm.State, Mode=OneWay}"
+                          Command="{Binding StateVm.ChangeStateCommand, Mode=OneTime}" />
    </Grid>
 </UserControl>
