@@ -56,6 +56,7 @@
                           Grid.Column="2"
                           VerticalAlignment="Top"
                           State="{Binding StateVm.State, Mode=OneWay}"
-                          Command="{Binding StateVm.ChangeStateCommand, Mode=OneTime}" />
+                          Command="{Binding StateVm.ChangeStateCommand, Mode=OneTime}"
+                          IsDefault="True" />
    </Grid>
 </UserControl>
