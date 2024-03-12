@@ -29,27 +29,46 @@ internal sealed partial class MainWindow
       DataContext = model;
       DwmDropShadow.AddDropShadowToWindow( this );
       InitializeComponent();
+
+      var helper = new WindowInteropHelper( this );
+      _ = helper.EnsureHandle();
+      _handle = helper.Handle;
+
+      var source = HwndSource.FromHwnd( _handle );
+      source?.AddHook( WndProc );
    }
 
-   public bool RegisterRecordHotkey()
+   public bool RegisterRecordHotkey( Hotkey hotkey, out string error )
    {
-      if ( _recordHotkeyRegistered )
+      if ( !UnregisterRecordHotkey( out error ) )
+      {
+         return false;
+      }
+
+      if ( hotkey.IsNone() )
       {
          return true;
       }
 
-      var helper = new WindowInteropHelper( this );
-      helper.EnsureHandle();
-
-      _handle = helper.Handle;
-      _recordHotkeyRegistered = RegisterHotKey( _handle, _recordingHotkeyId, (uint)ModifierKeys.Shift, (uint)KeyInterop.VirtualKeyFromKey( Key.F2 ) );
-      if ( _recordHotkeyRegistered )
+      _recordHotkeyRegistered = RegisterHotKey( _handle, _recordingHotkeyId, (uint)hotkey.Modifiers, (uint)KeyInterop.VirtualKeyFromKey( hotkey.Key ) );
+      if ( !_recordHotkeyRegistered )
       {
-         var source = HwndSource.FromHwnd( _handle );
-         source?.AddHook( WndProc );
+         error = "Failed to register hotkey";
+      }
+      return _recordHotkeyRegistered;
+   }
+
+   private bool UnregisterRecordHotkey( out string error )
+   {
+      error = string.Empty;
+      if ( _recordHotkeyRegistered && !UnregisterHotKey( _handle, _recordingHotkeyId ) )
+      {
+         error = "Failed to unregister hotkey";
+         return false;
       }
 
-      return _recordHotkeyRegistered;
+      _recordHotkeyRegistered = false;
+      return true;
    }
 
    private void OnCloseClicked( object s, RoutedEventArgs e ) => Close();
@@ -58,7 +77,16 @@ internal sealed partial class MainWindow
    {
       if ( msg == 0x0312/*WM_HOTKEY*/ )
       {
-         RecordHotkeyPressed?.Invoke( this, EventArgs.Empty );
+         if ( RecordHotkeyControl.IsKeyboardFocused )
+         {
+            // Take focus off the hotkey control if the user hits the already registered hotkey
+            FocusManager.SetFocusedElement( this, this );
+         }
+         else
+         {
+            RecordHotkeyPressed?.Invoke( this, EventArgs.Empty );
+         }
+
          handled = true;
       }
 
@@ -67,11 +95,7 @@ internal sealed partial class MainWindow
 
    protected override void OnClosed( EventArgs e )
    {
-      if ( _recordHotkeyRegistered )
-      {
-         _ = UnregisterHotKey( _handle, _recordingHotkeyId );
-      }
-
+      _ = UnregisterRecordHotkey( out _ );
       base.OnClosed( e );
    }
 }

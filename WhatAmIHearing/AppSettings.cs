@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using System.Windows.Input;
 using ZemotoCommon.UI;
 
 namespace WhatAmIHearing;
@@ -11,6 +12,14 @@ internal enum ProgressDisplayType
    None,
    Bytes,
    Seconds
+}
+
+internal readonly struct Hotkey( Key key, ModifierKeys modifiers )
+{
+   public Key Key { get; init; } = key;
+   public ModifierKeys Modifiers { get; init; } = modifiers;
+
+   public bool IsNone() => Key is Key.None;
 }
 
 internal sealed class AppSettings : ViewModelBase
@@ -106,5 +115,12 @@ internal sealed class AppSettings : ViewModelBase
    {
       get => _addSongsToSpotifyPlaylist;
       set => SetProperty( ref _addSongsToSpotifyPlaylist, value );
+   }
+
+   private Hotkey _recordHotkey = new( Key.F2, ModifierKeys.Shift );
+   public Hotkey RecordHotkey
+   {
+      get => _recordHotkey;
+      set => SetProperty( ref _recordHotkey, value );
    }
 }

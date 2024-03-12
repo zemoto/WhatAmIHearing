@@ -23,10 +23,11 @@ internal sealed class Main : IDisposable
       _stateVm = new StateViewModel() { ChangeStateCommand = new RelayCommand( async () => await ChangeStateAsync() ) };
       _recordingManager = new RecordingManager( _stateVm, ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
       _spotifyManager = new SpotifyManager( ShowAndForegroundMainWindow );
-      _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model );
+      _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model, SetHotkey );
 
       _window = new MainWindow( _model );
       _window.Closing += OnWindowClosing;
+      _window.RecordHotkeyPressed += OnRecordHotkey;
    }
 
    public void Dispose()
@@ -38,15 +39,7 @@ internal sealed class Main : IDisposable
 
    public void Start()
    {
-      if ( _window.RegisterRecordHotkey() )
-      {
-         _window.RecordHotkeyPressed += OnRecordHotkey;
-         _model.HotkeyStatusText = "Shift + F2";
-      }
-      else
-      {
-         _model.HotkeyStatusText = "Failed to register";
-      }
+      SetHotkey( _model.Settings.RecordHotkey );
 
       if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.OpenHidden )
       {
@@ -78,6 +71,16 @@ internal sealed class Main : IDisposable
             break;
          }
       }
+   }
+
+   private void SetHotkey( Hotkey hotkey )
+   {
+      if ( _window.RegisterRecordHotkey( hotkey, out var error ) )
+      {
+         _model.Settings.RecordHotkey = hotkey;
+      }
+
+      _model.HotkeyRegisterError = error;
    }
 
    private async void HandleRecordingResult( RecordingResult result )

@@ -83,10 +83,20 @@
                                                  Margin="0,0,0,4"
                                                  GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
-               <TextBlock Margin="0,0,8,4"
-                          FontWeight="SemiBold"
-                          HorizontalAlignment="Left"
-                          Text="{Binding HotkeyStatusText, StringFormat='Recording Hotkey: {0}', Mode=OneWay}" />
+               <StackPanel Orientation="Horizontal"
+                           Margin="0,0,8,4"
+                           HorizontalAlignment="Left">
+                  <TextBlock Text="Record Hotkey:"
+                             Margin="0,0,8,0"
+                             VerticalAlignment="Center" />
+
+                  <local:HotkeyControl x:Name="RecordHotkeyControl" 
+                                       Hotkey="{Binding Settings.RecordHotkey.Key, Mode=OneWay}"
+                                       HotkeyModifiers="{Binding Settings.RecordHotkey.Modifiers, Mode=OneWay}"
+                                       SetHotkeyCommand="{Binding SetHotkeyCommand, Mode=OneTime}"
+                                       ErrorMessage="{Binding HotkeyRegisterError, Mode=OneWay}" />
+               </StackPanel>
+               
 
                <CheckBox Content="Minimize to tray after recording is done"
                          IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"

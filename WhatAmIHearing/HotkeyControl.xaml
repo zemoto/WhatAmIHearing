@@ -1,0 +1,44 @@
+﻿<TextBox x:Class="WhatAmIHearing.HotkeyControl"
+         x:ClassModifier="internal"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         mc:Ignorable="d"
+         IsReadOnly="True"
+         IsReadOnlyCaretVisible="False"
+         Height="20"
+         Width="152"
+         Padding="2,0"
+         VerticalContentAlignment="Center"
+         IsTabStop="False"
+         FontWeight="SemiBold"
+         Loaded="OnLoaded"
+         GotKeyboardFocus="OnGotKeyboardFocus"
+         LostKeyboardFocus="OnLostKeyboardFocus"
+         KeyDown="OnKeyDown">
+   <TextBox.Template>
+      <ControlTemplate TargetType="{x:Type TextBox}">
+         <Grid>
+            <Rectangle x:Name="BackgroundRect"
+                       Fill="White"
+                       Stroke="Black"
+                       StrokeThickness="1"
+                       RadiusX="2"
+                       RadiusY="2" />
+            <ScrollViewer x:Name="PART_ContentHost" />
+         </Grid>
+         <ControlTemplate.Triggers>
+            <Trigger Property="IsKeyboardFocused"
+                     Value="True">
+               <Setter TargetName="BackgroundRect"
+                       Property="Stroke"
+                       Value="{StaticResource MainColorBrush}" />
+               <Setter TargetName="BackgroundRect"
+                       Property="StrokeThickness"
+                       Value="2" />
+            </Trigger>
+         </ControlTemplate.Triggers>
+      </ControlTemplate>
+   </TextBox.Template>
+</TextBox>
