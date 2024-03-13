@@ -1,10 +1,10 @@
-﻿using NAudio.CoreAudioApi;
-using NAudio.Wave;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using NAudio.CoreAudioApi;
+using NAudio.Wave;
 
 namespace WhatAmIHearing.Audio;
 

@@ -32,11 +32,11 @@ internal sealed class StateViewModel : ViewModelBase
       private set => SetProperty( ref _statusText, value );
    }
 
-   private bool _ShowingErrorText;
+   private bool _showingErrorText;
    public bool ShowingErrorText
    {
-      get => _ShowingErrorText;
-      private set => SetProperty( ref _ShowingErrorText, value );
+      get => _showingErrorText;
+      private set => SetProperty( ref _showingErrorText, value );
    }
 
    public ICommand ChangeStateCommand { get; init; }
