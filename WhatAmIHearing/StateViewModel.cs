@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+﻿using System;
 using ZemotoCommon.UI;
 
 namespace WhatAmIHearing;
@@ -10,7 +10,7 @@ internal enum AppState
    Identifying = 2,
 }
 
-internal sealed class StateViewModel : ViewModelBase
+internal sealed class StateViewModel( Action changeStateAction ) : ViewModelBase
 {
    public void SetStatusText( string text, bool isError = false )
    {
@@ -39,5 +39,5 @@ internal sealed class StateViewModel : ViewModelBase
       private set => SetProperty( ref _showingErrorText, value );
    }
 
-   public ICommand ChangeStateCommand { get; init; }
+   public RelayCommand ChangeStateCommand { get; } = new( changeStateAction );
 }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
-using ZemotoCommon.UI;
 
 namespace WhatAmIHearing;
 
@@ -20,7 +19,7 @@ internal sealed class Main : IDisposable
 
    public Main()
    {
-      _stateVm = new StateViewModel() { ChangeStateCommand = new RelayCommand( async () => await ChangeStateAsync() ) };
+      _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm, ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
       _spotifyManager = new SpotifyManager( ShowAndForegroundMainWindow );
       _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model, SetHotkey );
@@ -51,7 +50,7 @@ internal sealed class Main : IDisposable
       }
    }
 
-   public async Task ChangeStateAsync()
+   private async void ChangeStateAsync()
    {
       switch ( _stateVm.State )
       {
@@ -145,14 +144,14 @@ internal sealed class Main : IDisposable
       }
    }
 
-   public async void OnRecordHotkey( object sender, EventArgs e )
+   private void OnRecordHotkey( object sender, EventArgs e )
    {
       if ( _stateVm.State is AppState.Stopped )
       {
          ShowAndForegroundMainWindow();
       }
 
-      await ChangeStateAsync();
+      ChangeStateAsync();
    }
 
    private void HideWindow()
