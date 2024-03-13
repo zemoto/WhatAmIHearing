@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Text.Json;
 using System.Windows.Input;
 using ZemotoCommon.UI;
@@ -24,27 +23,26 @@ internal readonly struct Hotkey( Key key, ModifierKeys modifiers )
 
 internal sealed class AppSettings : ViewModelBase
 {
-   private const string _configName = "config.json";
-   private static readonly string _configFilePath = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), _configName );
+   private const string _configFileName = "config.json";
 
    private static AppSettings _instance;
    public static AppSettings Instance => _instance ??= Load();
 
    private static AppSettings Load()
    {
-      if ( !File.Exists( _configFilePath ) )
+      if ( !File.Exists( _configFileName ) )
       {
-         return new();
+         return new AppSettings();
       }
 
-      var configString = File.ReadAllText( _configFilePath );
+      var configString = File.ReadAllText( _configFileName );
       return JsonSerializer.Deserialize<AppSettings>( configString );
    }
 
    public void Save()
    {
       var configJson = JsonSerializer.Serialize( this );
-      File.WriteAllText( _configFilePath, configJson );
+      File.WriteAllText( _configFileName, configJson );
    }
 
    private string _selectedDevice = Constants.DefaultDeviceName;
