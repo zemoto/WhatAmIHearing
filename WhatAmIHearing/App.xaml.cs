@@ -1,59 +1,54 @@
-﻿using System;
-using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Threading;
-using ZemotoCommon;
+using ZemotoCommon.UI;
 using TrayIcon = System.Windows.Forms.NotifyIcon;
 
 namespace WhatAmIHearing;
 
-public sealed partial class App : IDisposable
+internal sealed partial class App : CommonApp
 {
    private readonly Main _main;
    private readonly TrayIcon _trayIcon;
-   private readonly SingleInstance _singleInstance = new( Constants.InstanceName, listenForOtherInstances: true );
 
    public App()
+      : base( Constants.InstanceName, listenForOtherInstances: true )
    {
-      if ( !_singleInstance.Claim() )
-      {
-         Shutdown();
-         return;
-      }
-
-      DispatcherUnhandledException += OnUnhandledException;
-
       InitializeComponent();
 
       _main = new Main();
-      _trayIcon = new TrayIcon();
 
-      _singleInstance.PingedByOtherProcess += ( s, a ) => Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
-
-      _trayIcon.Icon = new System.Drawing.Icon( GetType(), "Icon.ico" );
+      _trayIcon = new TrayIcon { Icon = new System.Drawing.Icon( GetType(), "Icon.ico" ) };
       _trayIcon.MouseClick += OnTrayIconClicked;
       _trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
       _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, ( s, a ) => Shutdown() );
       _trayIcon.Visible = true;
    }
 
-   public void Dispose()
+   public override void Dispose()
    {
       _main?.Dispose();
       _trayIcon?.Dispose();
-      _singleInstance.Dispose();
+      base.Dispose();
    }
 
-   protected override void OnStartup( StartupEventArgs e ) => _main.Start();
+   protected override void OnStartup( StartupEventArgs e )
+   {
+      _main.Start();
+      base.OnStartup( e );
+   }
 
    protected override void OnExit( ExitEventArgs e )
    {
       AppSettings.Instance.Save();
       Api.ApiClient.StaticDispose();
-      Dispose();
+      base.OnExit( e );
    }
 
-   private void OnUnhandledException( object sender, DispatcherUnhandledExceptionEventArgs e ) => File.WriteAllText( "crash.txt", e.Exception.ToString() );
+   protected override void OnPingedByOtherProcess()
+   {
+      Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
+      base.OnPingedByOtherProcess();
+   }
 
    private void OnTrayIconClicked( object sender, System.Windows.Forms.MouseEventArgs e )
    {
