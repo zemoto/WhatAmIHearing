@@ -27,7 +27,7 @@ internal sealed partial class MainWindow
    public MainWindow( MainViewModel model )
    {
       DataContext = model;
-      DwmDropShadow.AddDropShadowToWindow( this );
+      DwmHelper.EnableDwmManagementOfWindow( this );
       InitializeComponent();
 
       var helper = new WindowInteropHelper( this );

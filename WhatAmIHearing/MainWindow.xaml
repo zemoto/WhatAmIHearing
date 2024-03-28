@@ -24,19 +24,12 @@
    <WindowChrome.WindowChrome>
       <WindowChrome CaptionHeight="24" />
    </WindowChrome.WindowChrome>
-   
-   <Grid>
+
+   <Grid Background="#D9E8FF">
       <Grid.RowDefinitions>
          <RowDefinition Height="24" />
          <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
-      <Rectangle Grid.RowSpan="99"
-                 Fill="#D9E8FF"
-                 Stroke="#333333"
-                 RadiusX="4"
-                 RadiusY="4"
-                 StrokeThickness="1" />
-
       <TextBlock Grid.Row="0"
                  Text="What Am I Hearing?"
                  FontSize="14"
