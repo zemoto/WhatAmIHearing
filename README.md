@@ -1,7 +1,5 @@
 # WhatAmIHearing
 
-## NOTE: Current Release has hit the monthly Shazam API Quota and does not work. I will release a version that allows you to configure your own. For now only workaround is to build the app yourself with your own api key (See Shazam API link below).
-
 <img src="https://github.com/zemoto/WhatAmIHearing/assets/27508773/78aa41bb-5af5-4a97-bb39-8cfd51f3d4ca" Width="358" />
 
 App that will record system audio and send it off to the Shazam API to be identified. For when your phone's microphone just can't quite capture the song well enough for Shazam to figure it out.
@@ -13,6 +11,14 @@ NAudio (https://github.com/naudio/NAudio) used for recording, resampling, and pl
 ZemotoCommon (https://github.com/zemoto/ZemotoCommon/tree/master) is my utility submodule containing classes that I use in all of my projects.
 
 Uses POST calls to Shazam's API (see documentation at https://rapidapi.com/apidojo/api/shazam) with the raw audio in the body for song detection.
+
+## Rate Limiting
+
+Shazam's API has a rather stingy 500 requests per month on the free tier, and the higher tiers are unreasonably expensive for a non-business. To work around this the app supports using your own API key in place of the one I bundle with the app. 
+
+To get an API key You will have to go to https://rapidapi.com and make an account with RapidAPI. Then go to https://rapidapi.com/apidojo/api/shazam and go to the "Pricing" section and subscribe to the free tier. You can then click "Apps" at the top right of the page to find your newly created App. The Authorization section of that App contains the API key which you can then paste into the `ShazamApiKey.json` file now bundled with the WhatAmIHearing.
+
+Sorry I can't do much to make this easier other than spend a bunch of money to upgrade the API tier.
 
 ## Spotify Integration
 
