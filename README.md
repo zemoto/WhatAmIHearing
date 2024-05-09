@@ -1,5 +1,7 @@
 # WhatAmIHearing
 
+## NOTE: Current Release has hit the monthly Shazam API Quota and does not work. I will release a version that allows you to configure your own. For now only workaround is to build the app yourself with your own api key (See Shazam API link below).
+
 <img src="https://github.com/zemoto/WhatAmIHearing/assets/27508773/78aa41bb-5af5-4a97-bb39-8cfd51f3d4ca" Width="358" />
 
 App that will record system audio and send it off to the Shazam API to be identified. For when your phone's microphone just can't quite capture the song well enough for Shazam to figure it out.
