@@ -1,0 +1,4 @@
+{
+	"Note" : "Go to https://rapidapi.com/apidojo/api/shazam, create a RapidApi account, then subscribe to the 'Free Tier' of the Shazam API to create your own app registration. Finally, put the Application Key in the below field and restart WhatAmIHearing.",
+	"ShazamApiKey" : "Put your API Key in between these quotes"
+}

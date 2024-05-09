@@ -23,12 +23,19 @@
   <ItemGroup>
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
     <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="Polly" Version="8.3.1" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ShazamApiKey.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Import Project="..\ZemotoCommon\ZemotoCommon\ZemotoCommon.projitems" Label="Shared" />

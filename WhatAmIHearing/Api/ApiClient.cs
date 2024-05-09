@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Polly;
+using Polly.RateLimit;
+using Polly.Retry;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +19,19 @@ internal abstract class ApiClient : IDisposable
 
    private readonly List<CancellationTokenSource> _cancelTokenSources = new();
    private readonly object _cancelTokenLock = new();
+   private readonly ResiliencePipeline<HttpResponseMessage> _pipeline;
+
+   protected ApiClient()
+   {
+      var retryStrategy = new RetryStrategyOptions<HttpResponseMessage>
+      {
+         Delay = TimeSpan.FromSeconds( 3 ),
+         BackoffType = DelayBackoffType.Constant,
+         MaxRetryAttempts = 2,
+         ShouldHandle = new PredicateBuilder<HttpResponseMessage>().HandleResult( x => x.StatusCode == HttpStatusCode.TooManyRequests ),
+      };
+      _pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>().AddRetry( retryStrategy ).Build();
+   }
 
    public void CancelRequests()
    {
@@ -28,41 +45,55 @@ internal abstract class ApiClient : IDisposable
 
    public async Task<string> SendPostRequestAsync( string endpoint )
    {
-      using var message = new HttpRequestMessage( HttpMethod.Post, endpoint );
-      return await SendMessageAsync( message );
+      var messageBuilder = CreateMessageBuilder( HttpMethod.Post, endpoint );
+      return await SendMessageAsync( messageBuilder );
    }
 
    public async Task<string> SendPostRequestAsync( string endpoint, string body )
    {
-      using var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( body ) };
-      return await SendMessageAsync( message );
+      var messageBuilder = CreateMessageBuilder( HttpMethod.Post, endpoint, () => new StringContent( body ) );
+      return await SendMessageAsync( messageBuilder );
    }
 
    public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
    {
-      using var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new StringContent( Convert.ToBase64String( data ) ) };
-      return await SendMessageAsync( message );
+      var messageBuilder = CreateMessageBuilder( HttpMethod.Post, endpoint, () => new StringContent( Convert.ToBase64String( data ) ) );
+      return await SendMessageAsync( messageBuilder );
    }
 
    public async Task<string> SendPostRequestAsync( string endpoint, Dictionary<string, string> formUrlEncodedData )
    {
-      using var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = new FormUrlEncodedContent( formUrlEncodedData ) };
-      return await SendMessageAsync( message );
+      var messageBuilder = CreateMessageBuilder( HttpMethod.Post, endpoint, () => new FormUrlEncodedContent( formUrlEncodedData ) );
+      return await SendMessageAsync( messageBuilder );
    }
 
    public async Task<string> SendGetRequestAsync( string endpoint )
    {
-      using var message = new HttpRequestMessage( HttpMethod.Get, endpoint );
-      return await SendMessageAsync( message );
+      var messageBuilder = CreateMessageBuilder( HttpMethod.Get, endpoint );
+      return await SendMessageAsync( messageBuilder );
    }
 
-   private async Task<string> SendMessageAsync( HttpRequestMessage message )
+   private Func<HttpRequestMessage> CreateMessageBuilder( HttpMethod method, string endpoint, Func<HttpContent> contentBuilder = null )
    {
-      foreach ( var (key, value) in ApiHeaders )
+      return () =>
       {
-         message.Headers.Add( key, value );
-      }
+         var message = new HttpRequestMessage( method, endpoint );
+         if ( contentBuilder is not null )
+         {
+            message.Content = contentBuilder();
+         }
 
+         foreach ( var (key, value) in ApiHeaders )
+         {
+            message.Headers.Add( key, value );
+         }
+
+         return message;
+      };
+   }
+
+   private async Task<string> SendMessageAsync( Func<HttpRequestMessage> messageBuilder )
+   {
       CancellationTokenSource cancelTokenSource;
       lock ( _cancelTokenLock )
       {
@@ -72,7 +103,17 @@ internal abstract class ApiClient : IDisposable
 
       try
       {
-         var response = await _client.SendAsync( message, cancelTokenSource.Token );
+         var response = await _pipeline.ExecuteAsync( async token =>
+         {
+            using var message = messageBuilder();
+            return await _client.SendAsync( message, token );
+         }, cancelTokenSource.Token );
+
+         if ( response.StatusCode is HttpStatusCode.TooManyRequests )
+         {
+            OnRateLimited();
+         }
+
          return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : string.Empty;
       }
       finally
@@ -84,4 +125,6 @@ internal abstract class ApiClient : IDisposable
          }
       }
    }
+
+   protected virtual void OnRateLimited() { }
 }
