@@ -16,7 +16,11 @@ Uses POST calls to Shazam's API (see documentation at https://rapidapi.com/apido
 
 Shazam's API has a rather stingy 500 requests per month on the free tier, and the higher tiers are unreasonably expensive for a non-business. To work around this the app supports using your own API key in place of the one I bundle with the app. 
 
-To get an API key You will have to go to https://rapidapi.com and make an account with RapidAPI. Then go to https://rapidapi.com/apidojo/api/shazam and go to the "Pricing" section and subscribe to the free tier. You can then click "Apps" at the top right of the page to find your newly created App. The Authorization section of that App contains the API key which you can then paste into the `ShazamApiKey.json` file now bundled with the WhatAmIHearing.
+To get an API key:
+1. Go to https://rapidapi.com and make an account.
+2. Go to https://rapidapi.com/apidojo/api/shazam and under the "Pricing" section subscribe to the free tier. This should not require any additional info.
+3. Click "Apps" at the top right of the page to find your newly created Shazam App on the left side of the page. Should be named something like `default-application_#######`.
+4. The Authorization section of that App contains the API key which you can then paste into the `ShazamApiKey.json` file bundled with the WhatAmIHearing.
 
 Sorry I can't do much to make this easier other than spend a bunch of money to upgrade the API tier.
 
