@@ -1,25 +1,17 @@
-﻿using ZemotoCommon.UI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace WhatAmIHearing.Api.Spotify;
 
-internal sealed class SpotifyViewModel : ViewModelBase
+internal sealed partial class SpotifyViewModel : ObservableObject
 {
    public void NotifySignedInChanged() => OnPropertyChanged( nameof( SignedIn ) );
 
    public bool SignedIn => !string.IsNullOrEmpty( AppSettings.Instance.SpotifyAccessToken );
 
+   [ObservableProperty]
+   [NotifyPropertyChangedFor( nameof( ResultText ) )]
    private AddToPlaylistResult _result;
-   public AddToPlaylistResult Result
-   {
-      get => _result;
-      set
-      {
-         if ( SetProperty( ref _result, value ) )
-         {
-            OnPropertyChanged( nameof( ResultText ) );
-         }
-      }
-   }
 
    public string ResultText => _result switch
    {

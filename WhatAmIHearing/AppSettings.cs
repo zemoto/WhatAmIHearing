@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
-using ZemotoCommon.UI;
 
 namespace WhatAmIHearing;
 
@@ -21,7 +21,7 @@ internal readonly struct Hotkey( Key key, ModifierKeys modifiers )
    public bool IsNone() => Key is Key.None;
 }
 
-internal sealed class AppSettings : ViewModelBase
+internal sealed partial class AppSettings : ObservableObject
 {
    private const string _configFileName = "config.json";
 
@@ -45,80 +45,36 @@ internal sealed class AppSettings : ViewModelBase
       File.WriteAllText( _configFileName, configJson );
    }
 
+   [ObservableProperty]
    private string _selectedDevice = Constants.DefaultDeviceName;
-   public string SelectedDevice
-   {
-      get => _selectedDevice;
-      set => SetProperty( ref _selectedDevice, value );
-   }
 
+   [ObservableProperty]
    private bool _keepOpenInTray = true;
-   public bool KeepOpenInTray
-   {
-      get => _keepOpenInTray;
-      set => SetProperty( ref _keepOpenInTray, value );
-   }
 
+   [ObservableProperty]
    private bool _openHidden;
-   public bool OpenHidden
-   {
-      get => _openHidden;
-      set => SetProperty( ref _openHidden, value );
-   }
 
+   [ObservableProperty]
    private bool _keepWindowTopmost;
-   public bool KeepWindowTopmost
-   {
-      get => _keepWindowTopmost;
-      set => SetProperty( ref _keepWindowTopmost, value );
-   }
 
+   [ObservableProperty]
    private bool _hideWindowAfterRecord;
-   public bool HideWindowAfterRecord
-   {
-      get => _hideWindowAfterRecord;
-      set => SetProperty( ref _hideWindowAfterRecord, value );
-   }
 
+   [ObservableProperty]
    private ProgressDisplayType _progressType = ProgressDisplayType.Seconds;
-   public ProgressDisplayType ProgressType
-   {
-      get => _progressType;
-      set => SetProperty( ref _progressType, value );
-   }
 
+   [ObservableProperty]
    private string _spotifyAccessToken;
-   public string SpotifyAccessToken
-   {
-      get => _spotifyAccessToken;
-      set => SetProperty( ref _spotifyAccessToken, value );
-   }
 
+   [ObservableProperty]
    private string _spotifyRefreshToken;
-   public string SpotifyRefreshToken
-   {
-      get => _spotifyRefreshToken;
-      set => SetProperty( ref _spotifyRefreshToken, value );
-   }
 
+   [ObservableProperty]
    private DateTime _spotifyExpirationTimeUtc;
-   public DateTime SpotifyExpirationTimeUtc
-   {
-      get => _spotifyExpirationTimeUtc;
-      set => SetProperty( ref _spotifyExpirationTimeUtc, value );
-   }
 
+   [ObservableProperty]
    private bool _addSongsToSpotifyPlaylist;
-   public bool AddSongsToSpotifyPlaylist
-   {
-      get => _addSongsToSpotifyPlaylist;
-      set => SetProperty( ref _addSongsToSpotifyPlaylist, value );
-   }
 
+   [ObservableProperty]
    private Hotkey _recordHotkey = new( Key.F2, ModifierKeys.Shift );
-   public Hotkey RecordHotkey
-   {
-      get => _recordHotkey;
-      set => SetProperty( ref _recordHotkey, value );
-   }
 }

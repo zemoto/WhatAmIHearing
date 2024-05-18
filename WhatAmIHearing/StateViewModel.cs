@@ -1,5 +1,6 @@
-﻿using System;
-using ZemotoCommon.UI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
 
 namespace WhatAmIHearing;
 
@@ -10,7 +11,7 @@ internal enum AppState
    Identifying = 2,
 }
 
-internal sealed class StateViewModel( Action changeStateAction ) : ViewModelBase
+internal sealed partial class StateViewModel( Action changeStateAction ) : ObservableObject
 {
    public void SetStatusText( string text, bool isError = false )
    {
@@ -18,12 +19,8 @@ internal sealed class StateViewModel( Action changeStateAction ) : ViewModelBase
       ShowingErrorText = isError;
    }
 
+   [ObservableProperty]
    private AppState _state;
-   public AppState State
-   {
-      get => _state;
-      set => SetProperty( ref _state, value );
-   }
 
    private string _statusText;
    public string StatusText

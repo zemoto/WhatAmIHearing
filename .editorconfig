@@ -11,3 +11,6 @@ dotnet_diagnostic.IDE0022.severity = none
 
 # IDE0130: Namespace does not match folder structure
 dotnet_diagnostic.IDE0130.severity = none
+
+# MVVMTK0034: Direct field reference to [ObservableProperty] backing field
+dotnet_diagnostic.MVVMTK0034.severity = none
