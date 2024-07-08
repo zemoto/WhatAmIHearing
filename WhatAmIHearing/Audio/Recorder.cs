@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NAudio.CoreAudioApi;
+using NAudio.Wave;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using NAudio.CoreAudioApi;
-using NAudio.Wave;
 
 namespace WhatAmIHearing.Audio;
 
@@ -54,7 +54,7 @@ internal sealed class Recorder : IDisposable
       RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, GetStatusText( 0 ) ) );
       _audioCapturer.StartRecording();
 
-      await Task.Run( _recordingFinishedEvent.WaitOne );
+      _ = await Task.Run( _recordingFinishedEvent.WaitOne );
 
       byte[] data = null;
       if ( !_cancelToken.IsCancellationRequested )

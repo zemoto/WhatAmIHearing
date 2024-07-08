@@ -65,18 +65,18 @@ internal sealed partial class HotkeyControl
       var sb = new StringBuilder();
       if ( HotkeyModifiers.HasFlag( ModifierKeys.Control ) )
       {
-         sb.Append( "Ctrl + " );
+         _ = sb.Append( "Ctrl + " );
       }
       if ( HotkeyModifiers.HasFlag( ModifierKeys.Alt ) )
       {
-         sb.Append( "Alt + " );
+         _ = sb.Append( "Alt + " );
       }
       if ( HotkeyModifiers.HasFlag( ModifierKeys.Shift ) )
       {
-         sb.Append( "Shift + " );
+         _ = sb.Append( "Shift + " );
       }
 
-      sb.Append( Hotkey );
+      _ = sb.Append( Hotkey );
 
       Foreground = Brushes.Black;
       Text = sb.ToString();

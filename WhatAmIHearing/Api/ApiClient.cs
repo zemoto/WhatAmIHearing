@@ -16,7 +16,7 @@ internal abstract class ApiClient : IDisposable
 
    protected abstract Dictionary<string, string> ApiHeaders { get; }
 
-   private readonly List<CancellationTokenSource> _cancelTokenSources = new();
+   private readonly List<CancellationTokenSource> _cancelTokenSources = [];
    private readonly object _cancelTokenLock = new();
    private readonly ResiliencePipeline<HttpResponseMessage> _pipeline;
 
@@ -120,7 +120,7 @@ internal abstract class ApiClient : IDisposable
          lock ( _cancelTokenLock )
          {
             cancelTokenSource.Dispose();
-            _cancelTokenSources.Remove( cancelTokenSource );
+            _ = _cancelTokenSources.Remove( cancelTokenSource );
          }
       }
    }

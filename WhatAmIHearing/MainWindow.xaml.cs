@@ -22,7 +22,7 @@ internal sealed partial class MainWindow
    public event EventHandler RecordHotkeyPressed;
 
    private bool _recordHotkeyRegistered;
-   private IntPtr _handle;
+   private readonly IntPtr _handle;
 
    public MainWindow( MainViewModel model )
    {
