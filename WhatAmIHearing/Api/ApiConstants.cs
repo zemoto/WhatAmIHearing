@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Text.Json;
+using ZemotoCommon;
 
 namespace WhatAmIHearing.Api;
 
@@ -19,16 +18,12 @@ internal static class ApiConstants
    public const string SpotifyClientId = "<Placeholder>";
    public const string SpotifyClientSecret = "<Placeholder>";
    private const string DefaultShazamApiKey = "<Placeholder>";
-   private const string _keyFileName = "ShazamApiKey.json";
+
+   private static readonly SystemFile _keyFile = new( "ShazamApiKey.json" );
+
    public static string GetShazamApiKey()
    {
-      if ( !File.Exists( _keyFileName ) )
-      {
-         return DefaultShazamApiKey;
-      }
-
-      var configString = File.ReadAllText( _keyFileName );
-      var customKey = JsonSerializer.Deserialize<CustomShazamApiKey>( configString );
-      return customKey.IsValidKey() ? customKey.ShazamApiKey : DefaultShazamApiKey;
+      var customKey = _keyFile.DeserializeContents<CustomShazamApiKey>();
+      return customKey?.IsValidKey() == true ? customKey.ShazamApiKey : DefaultShazamApiKey;
    }
 }

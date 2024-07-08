@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using System.IO;
-using System.Text.Json;
 using System.Windows.Input;
+using ZemotoCommon;
 
 namespace WhatAmIHearing;
 
@@ -23,27 +22,14 @@ internal readonly struct Hotkey( Key key, ModifierKeys modifiers )
 
 internal sealed partial class AppSettings : ObservableObject
 {
-   private const string _configFileName = "config.json";
+   private static readonly SystemFile _configFile = new( "config.json" );
 
    private static AppSettings _instance;
    public static AppSettings Instance => _instance ??= Load();
 
-   private static AppSettings Load()
-   {
-      if ( !File.Exists( _configFileName ) )
-      {
-         return new AppSettings();
-      }
+   private static AppSettings Load() => _configFile.DeserializeContents<AppSettings>() ?? new AppSettings();
 
-      var configString = File.ReadAllText( _configFileName );
-      return JsonSerializer.Deserialize<AppSettings>( configString );
-   }
-
-   public void Save()
-   {
-      var configJson = JsonSerializer.Serialize( this );
-      File.WriteAllText( _configFileName, configJson );
-   }
+   public void Save() => _configFile.SerializeInto( this );
 
    [ObservableProperty]
    private string _selectedDevice = Constants.DefaultDeviceName;
