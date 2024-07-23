@@ -1,10 +1,9 @@
-﻿<Window x:Class="WhatAmIHearing.MainWindow"
+<Window x:Class="WhatAmIHearing.MainWindow"
         x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:spotify="clr-namespace:WhatAmIHearing.Api.Spotify"
         xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
         xmlns:commonUi="clr-namespace:ZemotoCommon.UI"
         xmlns:commonControls="clr-namespace:ZemotoCommon.UI.Controls"
@@ -74,7 +73,6 @@
          </commonControls:AnimatedGroupedExpander>
 
          <commonControls:AnimatedGroupedExpander Header="Recorder Settings"
-                                                 Margin="0,0,0,4"
                                                  GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
                <StackPanel Orientation="Horizontal"
@@ -108,28 +106,6 @@
                             Width="80" />
                </StackPanel>
 
-            </StackPanel>
-         </commonControls:AnimatedGroupedExpander>
-
-         <commonControls:AnimatedGroupedExpander Header="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignedInStatusConverter}, Mode=OneWay}"
-                                                 GroupName="Settings">
-            <StackPanel Margin="8,8,0,0">
-               <StackPanel Orientation="Horizontal">
-                  <Button Style="{StaticResource MainButtonStyle}"
-                          Command="{Binding SpotifyVm.SignInOutCommand, Mode=OneTime}"
-                          Content="{Binding SpotifyVm.SignedIn, Converter={StaticResource SignInButtonContentConverter}, Mode=OneWay}"
-                          HorizontalAlignment="Left" />
-
-                  <CheckBox Content="Add detected songs to private playlist"
-                            IsEnabled="{Binding SpotifyVm.SignedIn, Mode=OneWay}"
-                            IsChecked="{Binding Settings.AddSongsToSpotifyPlaylist, Mode=TwoWay}"
-                            VerticalAlignment="Center"
-                            Margin="12,0,0,0" />
-               </StackPanel>
-
-               <TextBlock Margin="0,8,0,0"
-                          Visibility="{Binding SpotifyVm.Result, Converter={StaticResource VisibleIfNotEqual}, ConverterParameter={x:Static spotify:AddToPlaylistResult.None}, Mode=OneWay}"
-                          Text="{Binding SpotifyVm.ResultText, StringFormat='Result: {0}', Mode=OneWay}" />
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 

@@ -50,17 +50,5 @@ internal sealed partial class AppSettings : ObservableObject
    private ProgressDisplayType _progressType = ProgressDisplayType.Seconds;
 
    [ObservableProperty]
-   private string _spotifyAccessToken;
-
-   [ObservableProperty]
-   private string _spotifyRefreshToken;
-
-   [ObservableProperty]
-   private DateTime _spotifyExpirationTimeUtc;
-
-   [ObservableProperty]
-   private bool _addSongsToSpotifyPlaylist;
-
-   [ObservableProperty]
    private Hotkey _recordHotkey = new( Key.F2, ModifierKeys.Shift );
 }

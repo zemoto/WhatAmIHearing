@@ -15,8 +15,6 @@ internal sealed class CustomShazamApiKey
 
 internal static class ApiConstants
 {
-   public const string SpotifyClientId = "<Placeholder>";
-   public const string SpotifyClientSecret = "<Placeholder>";
    private const string DefaultShazamApiKey = "<Placeholder>";
 
    private static readonly SystemFile _keyFile = new( "ShazamApiKey.json" );

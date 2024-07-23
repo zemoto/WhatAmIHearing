@@ -17,10 +17,6 @@
                                 TrueValue="Red"
                                 FalseValue="Black" />
 
-      <ui:BoolToObjectConverter x:Key="SignedInStatusConverter"
-                                TrueValue="Spotify Integration (Signed In)"
-                                FalseValue="Spotify Integration (Signed Out)" />
-
       <ui:BoolToObjectConverter x:Key="SignInButtonContentConverter"
                                 TrueValue="Sign Out"
                                 FalseValue="Sign In" />

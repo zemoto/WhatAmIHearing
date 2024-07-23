@@ -1,9 +1,7 @@
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using WhatAmIHearing.Api.Shazam;
-using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Result;
 
@@ -15,15 +13,13 @@ internal sealed class Main : IDisposable
    private readonly StateViewModel _stateVm;
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager;
-   private readonly SpotifyManager _spotifyManager;
    private readonly ShazamApi _shazamApi = new();
 
    public Main()
    {
       _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm, ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
-      _spotifyManager = new SpotifyManager( ShowAndForegroundMainWindow );
-      _model = new MainViewModel( _recordingManager.Model, _spotifyManager.Model, SetHotkey );
+      _model = new MainViewModel( _recordingManager.Model, SetHotkey );
 
       _window = new MainWindow( _model );
       _window.Closing += OnWindowClosing;
@@ -33,7 +29,6 @@ internal sealed class Main : IDisposable
    public void Dispose()
    {
       _recordingManager.Dispose();
-      _spotifyManager.Dispose();
       _shazamApi.Dispose();
    }
 
@@ -129,11 +124,6 @@ internal sealed class Main : IDisposable
       if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
       {
          HideWindow();
-      }
-
-      if ( AppSettings.Instance.AddSongsToSpotifyPlaylist )
-      {
-         await _spotifyManager.AddSongToOurPlaylistAsync( detectedSong.Title, detectedSong.Subtitle );
       }
    }
 
