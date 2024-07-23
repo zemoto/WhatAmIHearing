@@ -52,6 +52,7 @@ internal sealed class Main : IDisposable
       {
          case AppState.Stopped:
          {
+            _model.ResultVm = null;
             HandleRecordingResult( await _recordingManager.RecordAsync().ConfigureAwait( true ) );
             break;
          }
