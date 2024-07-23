@@ -9,6 +9,7 @@
         Style="{StaticResource MainButtonStyle}"
         Height="50"
         Width="50"
+        MinWidth="50"
         HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"
         Padding="12"

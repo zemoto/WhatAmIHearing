@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Api.Spotify;
 using WhatAmIHearing.Audio;
+using WhatAmIHearing.Result;
 
 namespace WhatAmIHearing;
 
@@ -122,7 +123,8 @@ internal sealed class Main : IDisposable
       }
 
       _recordingManager.Reset();
-      _ = Process.Start( new ProcessStartInfo( detectedSong.Url ) { UseShellExecute = true } );
+      _model.ResultVm = new ResultViewModel( detectedSong );
+      _model.ResultsIsExpanded = true;
 
       if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
       {

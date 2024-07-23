@@ -21,4 +21,16 @@ internal sealed class DetectedTrackInfo
 
    [JsonPropertyName( "url" )]
    public string Url { get; set; }
+
+   [JsonPropertyName( "share" )]
+   public DetectedTrackShareInfo ShareInfo { get; set; }
+}
+
+internal sealed class DetectedTrackShareInfo
+{
+   [JsonPropertyName( "image" )]
+   public string CoverArtUrl { get; set; }
+
+   [JsonPropertyName( "href" )]
+   public string ShazamUrl  { get; set; }
 }
