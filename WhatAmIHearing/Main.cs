@@ -121,9 +121,14 @@ internal sealed class Main : IDisposable
       _model.ResultVm = new ResultViewModel( detectedSong );
       _model.ResultsIsExpanded = true;
 
-      if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
+      if ( AppSettings.Instance.OpenShazamOnResultFound )
       {
-         HideWindow();
+         _model.ResultVm.OpenInShazamCommand.Execute( null );
+
+         if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
+         {
+            HideWindow();
+         }
       }
    }
 

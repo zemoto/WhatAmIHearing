@@ -44,6 +44,9 @@ internal sealed partial class AppSettings : ObservableObject
    private bool _keepWindowTopmost;
 
    [ObservableProperty]
+   private bool _openShazamOnResultFound;
+
+   [ObservableProperty]
    private bool _hideWindowAfterRecord;
 
    [ObservableProperty]
