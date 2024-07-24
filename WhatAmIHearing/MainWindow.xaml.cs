@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -36,6 +37,12 @@ internal sealed partial class MainWindow
 
       var source = HwndSource.FromHwnd( _handle );
       source?.AddHook( WndProc );
+   }
+
+   public new void Hide()
+   {
+      ShowInTaskbar = false;
+      base.Hide();
    }
 
    public bool RegisterRecordHotkey( Hotkey hotkey, out string error )
@@ -91,6 +98,16 @@ internal sealed partial class MainWindow
       }
 
       return IntPtr.Zero;
+   }
+
+   protected override void OnClosing( CancelEventArgs e )
+   {
+      if ( AppSettings.Instance.KeepOpenInTray )
+      {
+         e.Cancel = true;
+         Hide();
+      }
+      base.OnClosing( e );
    }
 
    protected override void OnClosed( EventArgs e )

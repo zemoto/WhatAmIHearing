@@ -25,7 +25,6 @@ internal sealed class Main : IDisposable
       _model = new MainViewModel( _recordingManager.Model, _historyManager, SetHotkey );
 
       _window = new MainWindow( _model );
-      _window.Closing += OnWindowClosing;
       _window.RecordHotkeyPressed += OnRecordHotkey;
    }
 
@@ -42,12 +41,19 @@ internal sealed class Main : IDisposable
 
       if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.OpenHidden )
       {
-         HideWindow();
+         _window.Hide();
       }
       else
       {
          ShowAndForegroundMainWindow();
       }
+   }
+
+   public void ShowAndForegroundMainWindow()
+   {
+      _window.ShowInTaskbar = true;
+      _window.Show();
+      _ = _window.Activate();
    }
 
    private async void ChangeStateAsync()
@@ -134,17 +140,8 @@ internal sealed class Main : IDisposable
 
          if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
          {
-            HideWindow();
+            _window.Hide();
          }
-      }
-   }
-
-   private void OnWindowClosing( object sender, CancelEventArgs e )
-   {
-      if ( AppSettings.Instance.KeepOpenInTray )
-      {
-         e.Cancel = true;
-         HideWindow();
       }
    }
 
@@ -156,18 +153,5 @@ internal sealed class Main : IDisposable
       }
 
       ChangeStateAsync();
-   }
-
-   private void HideWindow()
-   {
-      _window.ShowInTaskbar = false;
-      _window.Hide();
-   }
-
-   public void ShowAndForegroundMainWindow()
-   {
-      _window.ShowInTaskbar = true;
-      _window.Show();
-      _ = _window.Activate();
    }
 }
