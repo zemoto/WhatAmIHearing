@@ -119,8 +119,7 @@ internal sealed class Main : IDisposable
       }
 
       _recordingManager.Reset();
-      _model.ResultVm = new ResultViewModel( detectedSong );
-      _model.ResultsIsExpanded = true;
+      _model.ResultVm = new SongViewModel( detectedSong );
 
       if ( AppSettings.Instance.OpenShazamOnResultFound )
       {

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using WhatAmIHearing.Audio;
@@ -12,10 +12,7 @@ internal sealed partial class MainViewModel( RecorderViewModel recorderVm, Actio
    public RecorderViewModel RecorderVm { get; } = recorderVm;
 
    [ObservableProperty]
-   public ResultViewModel _resultVm;
-
-   [ObservableProperty]
-   public bool _resultsIsExpanded;
+   public SongViewModel _resultVm;
 
    [ObservableProperty]
    private string _hotkeyRegisterError;

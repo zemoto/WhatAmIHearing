@@ -8,7 +8,6 @@
         xmlns:commonUi="clr-namespace:ZemotoCommon.UI"
         xmlns:commonControls="clr-namespace:ZemotoCommon.UI.Controls"
         xmlns:local="clr-namespace:WhatAmIHearing"
-        xmlns:result="clr-namespace:WhatAmIHearing.Result"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
@@ -115,14 +114,9 @@
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
-         <commonControls:AnimatedGroupedExpander Header="Result"
-                                                 Margin="0,4,0,0"
-                                                 IsExpanded="{Binding ResultsIsExpanded, Mode=TwoWay}"
-                                                 Visibility="{Binding ResultVm, Mode=OneWay, Converter={x:Static commonUi:NullVisibilityConverter.Instance}}">
-            <result:ResultControl DataContext="{Binding ResultVm, Mode=OneWay}"
-                                  Margin="0,4,0,0" />
-         </commonControls:AnimatedGroupedExpander>
-
+         <ContentControl Content="{Binding ResultVm, Mode=OneWay}"
+                         Visibility="{Binding ResultVm, Mode=OneWay, Converter={x:Static commonUi:NullVisibilityConverter.Instance}}"
+                         Margin="0,6,0,0" />
       </StackPanel>
    </Grid>
 </Window>

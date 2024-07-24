@@ -4,7 +4,8 @@
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:ui="clr-namespace:ZemotoCommon.UI"
               xmlns:commonControls="clr-namespace:ZemotoCommon.UI.Controls"
-              xmlns:commonUi="clr-namespace:ZemotoCommon.UI">
+              xmlns:commonUi="clr-namespace:ZemotoCommon.UI"
+              xmlns:result="clr-namespace:WhatAmIHearing.Result">
    <Application.Resources>
       <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
       <ui:EqualityConverter x:Key="IsEqual" />
@@ -30,6 +31,9 @@
 
       <SolidColorBrush x:Key="MainBackgroundBrush"
                        Color="#D9E8FF" />
+
+      <SolidColorBrush x:Key="LightBackgroundBrush"
+                       Color="#99FFFFFF" />
 
       <Style x:Key="FocusVisualStyle"
              TargetType="{x:Type Control}">
@@ -664,5 +668,78 @@
             </Setter.Value>
          </Setter>
       </Style>
+
+      <DataTemplate DataType="{x:Type result:SongViewModel}">
+         <Grid Background="{StaticResource MainBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="Auto" />
+               <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0"
+                    CornerRadius="8"
+                    Background="{StaticResource LightBackgroundBrush}"
+                    VerticalAlignment="Center">
+               <Image Source="{Binding CoverArt, Mode=OneTime}"
+                      Margin="8"
+                      Stretch="Uniform"
+                      Width="100"
+                      Height="100" />
+            </Border>
+
+            <Border Grid.Column="1"
+                    Margin="8,0,0,0"
+                    CornerRadius="8"
+                    Background="{StaticResource LightBackgroundBrush}">
+               <Grid Margin="12,8,12,10">
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="Auto" />
+                     <RowDefinition Height="Auto" />
+                     <RowDefinition Height="*" />
+                  </Grid.RowDefinitions>
+                  <TextBlock Grid.Row="0"
+                             Text="{Binding Title, Mode=OneTime}"
+                             TextWrapping="Wrap"
+                             FontWeight="Bold"
+                             FontSize="20" />
+
+                  <TextBlock Grid.Row="1"
+                             Text="{Binding Subtitle, Mode=OneTime}"
+                             TextWrapping="Wrap"
+                             Margin="0,8,0,0"
+                             FontWeight="DemiBold"
+                             FontSize="16" />
+
+                  <UniformGrid Grid.Row="2"
+                               Columns="3"
+                               Margin="-2,12,-2,0"
+                               VerticalAlignment="Bottom">
+                     <Button Style="{StaticResource MainButtonStyle}"
+                             Content="YouTube"
+                             Command="{Binding FindInYouTubeCommand, Mode=OneTime}"
+                             MinWidth="60"
+                             Background="#FF0000"
+                             commonUi:CustomProperties.MouseOverBrush="#ff3030"
+                             commonUi:CustomProperties.PressedBrush="#F00000"
+                             Margin="0,0,4,0" />
+                     <Button Style="{StaticResource MainButtonStyle}"
+                             Content="Spotify"
+                             Command="{Binding FindInSpotifyCommand, Mode=OneTime}"
+                             MinWidth="60"
+                             Background="#1DB954"
+                             commonUi:CustomProperties.MouseOverBrush="#1ec157"
+                             commonUi:CustomProperties.PressedBrush="#10B050"
+                             Margin="0,0,4,0" />
+                     <Button Style="{StaticResource MainButtonStyle}"
+                             Content="Shazam"
+                             Command="{Binding OpenInShazamCommand, Mode=OneTime}"
+                             MinWidth="60"
+                             Background="#0088FF"
+                             commonUi:CustomProperties.MouseOverBrush="#088cff"
+                             commonUi:CustomProperties.PressedBrush="#0080F0" />
+                  </UniformGrid>
+               </Grid>
+            </Border>
+         </Grid>
+      </DataTemplate>
    </Application.Resources>
 </ui:CommonApp>

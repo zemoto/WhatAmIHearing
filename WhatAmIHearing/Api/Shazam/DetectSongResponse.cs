@@ -32,5 +32,5 @@ internal sealed class DetectedTrackShareInfo
    public string CoverArtUrl { get; set; }
 
    [JsonPropertyName( "href" )]
-   public string ShazamUrl  { get; set; }
+   public string ShazamUrl { get; set; }
 }

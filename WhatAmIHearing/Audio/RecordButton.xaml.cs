@@ -11,13 +11,13 @@ internal sealed partial class RecordButton
       switch ( State )
       {
          case AppState.Stopped:
-            VisualStateManager.GoToElementState( this, StoppedState.Name, true );
+            _ = VisualStateManager.GoToElementState( this, StoppedState.Name, true );
             break;
          case AppState.Recording:
-            VisualStateManager.GoToElementState( this, RecordingState.Name, true );
+            _ = VisualStateManager.GoToElementState( this, RecordingState.Name, true );
             break;
          case AppState.Identifying:
-            VisualStateManager.GoToElementState( this, IdentifyingState.Name, true );
+            _ = VisualStateManager.GoToElementState( this, IdentifyingState.Name, true );
             break;
       }
    }
