@@ -14,15 +14,13 @@ internal sealed class Main : IDisposable
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager;
    private readonly ShazamApi _shazamApi = new();
-   private readonly HistoryManager _historyManager = new();
+   private readonly ResultHistory _history = ResultHistory.Load();
 
    public Main()
    {
-      _historyManager.Load();
-
       _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm, ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
-      _model = new MainViewModel( _recordingManager.Model, _historyManager, SetHotkey, _historyManager.Delete );
+      _model = new MainViewModel( _recordingManager.Model, _history, SetHotkey );
 
       _window = new MainWindow( _model );
       _window.RecordHotkeyPressed += OnRecordHotkey;
@@ -30,7 +28,7 @@ internal sealed class Main : IDisposable
 
    public void Dispose()
    {
-      _historyManager.Save();
+      _history.Save();
       _recordingManager.Dispose();
       _shazamApi.Dispose();
    }
@@ -131,7 +129,7 @@ internal sealed class Main : IDisposable
       _recordingManager.Reset();
 
       var songVm = new SongViewModel( detectedSong );
-      _historyManager.History.Insert( 0, songVm );
+      _history.Insert( 0, songVm );
       _model.SelectedSong = songVm;
 
       if ( AppSettings.Instance.OpenShazamOnResultFound )

@@ -7,20 +7,26 @@ using WhatAmIHearing.Result;
 
 namespace WhatAmIHearing;
 
-internal sealed partial class MainViewModel( RecorderViewModel recorderVm, HistoryManager historyManager, Action<Hotkey> setHotkeyAction, Action<SongViewModel> deleteSongFromHistoryAction ) : ObservableObject
+internal sealed partial class MainViewModel : ObservableObject
 {
+   public MainViewModel( RecorderViewModel recorderVm, ResultHistory history, Action<Hotkey> setHotkeyAction )
+   {
+      RecorderVm = recorderVm;
+      History = history;
+      SetHotkeyCommand = new RelayCommand<Hotkey>( setHotkeyAction );
+      DeleteSongFromHistoryCommand = new RelayCommand<SongViewModel>( song => _ = History.Remove( song ) );
+   }
+
    public AppSettings Settings { get; } = AppSettings.Instance;
-   public RecorderViewModel RecorderVm { get; } = recorderVm;
+   public RecorderViewModel RecorderVm { get; }
+   public ObservableCollection<SongViewModel> History { get; }
 
    [ObservableProperty]
    private string _hotkeyRegisterError;
 
-   public ObservableCollection<SongViewModel> History => historyManager.History;
-
    [ObservableProperty]
    public SongViewModel _selectedSong;
 
-   public RelayCommand<Hotkey> SetHotkeyCommand { get; } = new( setHotkeyAction );
-
-   public RelayCommand<SongViewModel> DeleteSongFromHistoryCommand { get; } = new( deleteSongFromHistoryAction );
+   public RelayCommand<Hotkey> SetHotkeyCommand { get; }
+   public RelayCommand<SongViewModel> DeleteSongFromHistoryCommand { get; }
 }
