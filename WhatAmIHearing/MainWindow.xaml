@@ -117,14 +117,15 @@
 
          <commonControls:AnimatedGroupedExpander Header="History">
             <ListBox x:Name="HistoryListBox" 
+                     Style="{StaticResource HistoryListBoxStyle}"
                      ItemsSource="{Binding History, Mode=OneWay}"
                      SelectedItem="{Binding SelectedSong, Mode=TwoWay}"
                      Height="80"
-                     Margin="0,4,0,0"
-                     DisplayMemberPath="SearchText" />
+                     Margin="0,4,0,0" />
          </commonControls:AnimatedGroupedExpander>
 
          <ContentControl Content="{Binding SelectedSong, Mode=OneWay}"
+                         IsTabStop="False"
                          Visibility="{Binding SelectedSong, Mode=OneWay, Converter={x:Static commonUi:NullVisibilityConverter.Instance}}"
                          Margin="0,6,0,0" />
       </StackPanel>

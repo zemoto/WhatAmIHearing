@@ -7,7 +7,7 @@ using WhatAmIHearing.Result;
 
 namespace WhatAmIHearing;
 
-internal sealed partial class MainViewModel( RecorderViewModel recorderVm, HistoryManager historyManager, Action<Hotkey> setHotkeyAction ) : ObservableObject
+internal sealed partial class MainViewModel( RecorderViewModel recorderVm, HistoryManager historyManager, Action<Hotkey> setHotkeyAction, Action<SongViewModel> deleteSongFromHistoryAction ) : ObservableObject
 {
    public AppSettings Settings { get; } = AppSettings.Instance;
    public RecorderViewModel RecorderVm { get; } = recorderVm;
@@ -21,4 +21,6 @@ internal sealed partial class MainViewModel( RecorderViewModel recorderVm, Histo
    public SongViewModel _selectedSong;
 
    public RelayCommand<Hotkey> SetHotkeyCommand { get; } = new( setHotkeyAction );
+
+   public RelayCommand<SongViewModel> DeleteSongFromHistoryCommand { get; } = new( deleteSongFromHistoryAction );
 }

@@ -620,7 +620,7 @@
                                 Fill="White" />
 
                      <Path Grid.Column="0"
-                           Margin="0,1,0,0"
+                           Margin="1,1,0,0"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            StrokeThickness="2"
@@ -741,5 +741,164 @@
             </Border>
          </Grid>
       </DataTemplate>
+
+      <Style x:Key="HistoryListBoxStyle"
+             TargetType="{x:Type ListBox}">
+         <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+               <Style TargetType="{x:Type ListBoxItem}">
+                  <Setter Property="Template">
+                     <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                           <Grid>
+                              <Rectangle x:Name="background"
+                                         Opacity="0"
+                                         Fill="{StaticResource MainColorBrush}"
+                                         RadiusX="2"
+                                         RadiusY="2" />
+                              <ContentPresenter />
+                           </Grid>
+                           <ControlTemplate.Triggers>
+                              <MultiTrigger>
+                                 <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected"
+                                               Value="False" />
+                                    <Condition Property="IsMouseOver"
+                                               Value="True" />
+                                 </MultiTrigger.Conditions>
+                                 <MultiTrigger.Setters>
+                                    <Setter TargetName="background"
+                                            Property="Opacity"
+                                            Value="0.2" />
+                                 </MultiTrigger.Setters>
+                              </MultiTrigger>
+                              <Trigger Property="IsSelected"
+                                       Value="True">
+                                 <Setter TargetName="background"
+                                         Property="Opacity"
+                                         Value="0.4" />
+                              </Trigger>
+                           </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                     </Setter.Value>
+                  </Setter>
+               </Style>
+            </Setter.Value>
+         </Setter>
+         <Setter Property="ItemTemplate">
+            <Setter.Value>
+               <DataTemplate DataType="{x:Type result:SongViewModel}">
+                  <Grid Background="Transparent">
+                     <TextBlock Margin="4,2"
+                                Text="{Binding SearchText, Mode=OneTime}" />
+
+                     <Button x:Name="DeleteButton"
+                             IsTabStop="False"
+                             Visibility="Collapsed"
+                             Margin="0,0,8,0"
+                             HorizontalAlignment="Right"
+                             Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.DeleteSongFromHistoryCommand, Mode=OneTime}"
+                             CommandParameter="{Binding ., Mode=OneTime}">
+                        <Button.Template>
+                           <ControlTemplate TargetType="{x:Type Button}">
+                              <Border Background="Transparent">
+                                 <Path x:Name="glyph"
+                                       Opacity="0.5"
+                                       Width="9"
+                                       Height="9"
+                                       Stretch="Fill"
+                                       StrokeThickness="1"
+                                       Stroke="Black"
+                                       Fill="Black"
+                                       Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                              </Border>
+                              <ControlTemplate.Triggers>
+                                 <Trigger Property="IsMouseOver"
+                                          Value="True">
+                                    <Setter TargetName="glyph"
+                                            Property="Opacity"
+                                            Value="1.0" />
+                                 </Trigger>
+                              </ControlTemplate.Triggers>
+                           </ControlTemplate>
+                        </Button.Template>
+                     </Button>
+                  </Grid>
+                  <DataTemplate.Triggers>
+                     <Trigger Property="IsMouseOver"
+                              Value="True">
+                        <Setter TargetName="DeleteButton"
+                                Property="Visibility"
+                                Value="Visible" />
+                     </Trigger>
+                  </DataTemplate.Triggers>
+               </DataTemplate>
+            </Setter.Value>
+         </Setter>
+         <Setter Property="Template">
+            <Setter.Value>
+               <ControlTemplate TargetType="{x:Type ListBox}">
+                  <Border CornerRadius="4"
+                          BorderBrush="{StaticResource MainColorBrush}"
+                          BorderThickness="1"
+                          Background="{StaticResource LightBackgroundBrush}">
+                     <ScrollViewer HorizontalScrollBarVisibility="Hidden">
+                        <ScrollViewer.Template>
+                           <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                              <Grid>
+                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                 </Grid.ColumnDefinitions>
+                                 <ScrollContentPresenter Grid.Column="0"
+                                                         CanContentScroll="{TemplateBinding CanContentScroll}" />
+                                 <ScrollBar x:Name="PART_VerticalScrollBar"
+                                            Grid.Column="1"
+                                            MinWidth="0"
+                                            Width="8"
+                                            Value="{TemplateBinding VerticalOffset}"
+                                            Maximum="{TemplateBinding ScrollableHeight}"
+                                            ViewportSize="{TemplateBinding ViewportHeight}"
+                                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}">
+                                    <ScrollBar.Template>
+                                       <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                          <Grid Margin="0,1,2,1"
+                                                HorizontalAlignment="Right"
+                                                Width="6">
+                                             <Rectangle Fill="{StaticResource MainColorBrush}"
+                                                        Opacity="0.2"
+                                                        RadiusX="3"
+                                                        RadiusY="3" />
+                                             <Track x:Name="PART_Track"
+                                                    IsDirectionReversed="true"
+                                                    Opacity="0.9">
+                                                <Track.Thumb>
+                                                   <Thumb>
+                                                      <Thumb.Template>
+                                                         <ControlTemplate TargetType="{x:Type Thumb}">
+                                                            <Rectangle Fill="{StaticResource MainColorBrush}"
+                                                                       RadiusX="3"
+                                                                       RadiusY="3" />
+                                                         </ControlTemplate>
+                                                      </Thumb.Template>
+                                                   </Thumb>
+                                                </Track.Thumb>
+                                             </Track>
+                                          </Grid>
+                                       </ControlTemplate>
+                                    </ScrollBar.Template>
+                                 </ScrollBar>
+                              </Grid>
+                           </ControlTemplate>
+                        </ScrollViewer.Template>
+                        <StackPanel Margin="2"
+                                    IsItemsHost="True" />
+                     </ScrollViewer>
+                  </Border>
+               </ControlTemplate>
+            </Setter.Value>
+         </Setter>
+      </Style>
+      
    </Application.Resources>
 </ui:CommonApp>
