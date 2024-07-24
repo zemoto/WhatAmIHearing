@@ -11,27 +11,44 @@ internal class SongViewModel
    private const string _youTubeUrl = "https://www.youtube.com/results?search_query={0}";
    private const string _spotifyUrl = "https://open.spotify.com/search/{0}";
 
+   public SongViewModel()
+   {
+   }
+
    public SongViewModel( DetectedTrackInfo songInfo )
    {
-      CoverArt = new BitmapImage();
-      CoverArt.BeginInit();
-      CoverArt.UriSource = new Uri( songInfo.ShareInfo.CoverArtUrl, UriKind.Absolute );
-      CoverArt.EndInit();
-
+      CoverArtUrl = songInfo.ShareInfo.CoverArtUrl;
       Title = songInfo.Title;
       Subtitle = songInfo.Subtitle;
       ShazamUrl = songInfo.ShareInfo.ShazamUrl;
    }
 
-   public BitmapImage CoverArt { get; }
+   public string CoverArtUrl { get; init; }
 
-   public string Title { get; }
+   private BitmapImage _coverArt;
+   public BitmapImage CoverArt
+   {
+      get
+      {
+         if ( _coverArt is null )
+         {
+            _coverArt = new BitmapImage();
+            _coverArt.BeginInit();
+            _coverArt.UriSource = new Uri( CoverArtUrl, UriKind.Absolute );
+            _coverArt.EndInit();
+         }
 
-   public string Subtitle { get; }
+         return _coverArt;
+      }
+   }
 
-   public string ShazamUrl { get; }
+   public string Title { get; init; }
 
-   private string SearchText => $"{Title} - {Subtitle}";
+   public string Subtitle { get; init; }
+
+   public string ShazamUrl { get; init; }
+
+   public string SearchText => $"{Title} - {Subtitle}";
 
    private RelayCommand _findInYouTubeCommand;
    public RelayCommand FindInYouTubeCommand => _findInYouTubeCommand ??= new RelayCommand( () => OpenInBrowser( string.Format( _youTubeUrl, SearchText ) ) );

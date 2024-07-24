@@ -72,7 +72,8 @@
          </commonControls:AnimatedGroupedExpander>
 
          <commonControls:AnimatedGroupedExpander Header="Recorder Settings"
-                                                 GroupName="Settings">
+                                                 GroupName="Settings"
+                                                 Margin="0,0,0,4">
             <StackPanel Margin="16,2,0,0">
                <StackPanel Orientation="Horizontal"
                            Margin="0,0,8,4"
@@ -114,8 +115,17 @@
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
-         <ContentControl Content="{Binding ResultVm, Mode=OneWay}"
-                         Visibility="{Binding ResultVm, Mode=OneWay, Converter={x:Static commonUi:NullVisibilityConverter.Instance}}"
+         <commonControls:AnimatedGroupedExpander Header="History">
+            <ListBox x:Name="HistoryListBox" 
+                     ItemsSource="{Binding History, Mode=OneWay}"
+                     SelectedItem="{Binding SelectedSong, Mode=TwoWay}"
+                     Height="80"
+                     Margin="0,4,0,0"
+                     DisplayMemberPath="SearchText" />
+         </commonControls:AnimatedGroupedExpander>
+
+         <ContentControl Content="{Binding SelectedSong, Mode=OneWay}"
+                         Visibility="{Binding SelectedSong, Mode=OneWay, Converter={x:Static commonUi:NullVisibilityConverter.Instance}}"
                          Margin="0,6,0,0" />
       </StackPanel>
    </Grid>
