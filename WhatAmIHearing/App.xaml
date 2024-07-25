@@ -8,19 +8,12 @@
               xmlns:result="clr-namespace:WhatAmIHearing.Result">
    <Application.Resources>
       <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
+      
       <ui:EqualityConverter x:Key="IsEqual" />
-
-      <ui:EqualityToObjectConverter x:Key="VisibleIfNotEqual"
-                                    EqualValue="{x:Static Visibility.Collapsed}"
-                                    NotEqualValue="{x:Static Visibility.Visible}" />
 
       <ui:BoolToObjectConverter x:Key="StatusTextColorConverter"
                                 TrueValue="Red"
                                 FalseValue="Black" />
-
-      <ui:BoolToObjectConverter x:Key="SignInButtonContentConverter"
-                                TrueValue="Sign Out"
-                                FalseValue="Sign In" />
 
       <SolidColorBrush x:Key="MainColorBrush"
                        Color="#3975A7" />
