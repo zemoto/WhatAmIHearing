@@ -9,8 +9,9 @@ namespace WhatAmIHearing;
 
 internal sealed partial class MainViewModel : ObservableObject
 {
-   public MainViewModel( RecorderViewModel recorderVm, ResultHistory history, Action<Hotkey> setHotkeyAction )
+   public MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, ResultHistory history, Action<Hotkey> setHotkeyAction )
    {
+      StateVm = stateVm;
       RecorderVm = recorderVm;
       History = history;
       SetHotkeyCommand = new RelayCommand<Hotkey>( setHotkeyAction );
@@ -18,6 +19,7 @@ internal sealed partial class MainViewModel : ObservableObject
    }
 
    public AppSettings Settings { get; } = AppSettings.Instance;
+   public StateViewModel StateVm { get; }
    public RecorderViewModel RecorderVm { get; }
    public ObservableCollection<SongViewModel> History { get; }
 

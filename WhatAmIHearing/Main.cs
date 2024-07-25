@@ -20,7 +20,7 @@ internal sealed class Main : IDisposable
    {
       _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm );
-      _model = new MainViewModel( _recordingManager.Model, _history, SetHotkey );
+      _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, SetHotkey );
 
       _window = new MainWindow( _model );
       _window.RecordHotkeyPressed += OnRecordHotkey;

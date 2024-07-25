@@ -4,10 +4,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WhatAmIHearing"
         xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
         xmlns:commonUi="clr-namespace:ZemotoCommon.UI"
         xmlns:commonControls="clr-namespace:ZemotoCommon.UI.Controls"
-        xmlns:local="clr-namespace:WhatAmIHearing"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
@@ -116,7 +116,8 @@
          </commonControls:AnimatedGroupedExpander>
 
          <commonControls:AnimatedGroupedExpander Header="History">
-            <Grid Margin="0,4,0,0">
+            <Grid Margin="0,4,0,0"
+                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
                <ListBox x:Name="HistoryListBox"
                         Height="{Binding Settings.HistoryHeight, Mode=TwoWay}"
                         MinHeight="60"

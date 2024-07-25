@@ -1009,6 +1009,15 @@
                </ControlTemplate>
             </Setter.Value>
          </Setter>
+         <Style.Triggers>
+            <Trigger Property="IsEnabled"
+                     Value="False">
+               <Setter Property="Opacity"
+                       Value="0.7" />
+               <Setter Property="ToolTip"
+                       Value="Disabled during recording" />
+            </Trigger>
+         </Style.Triggers>
       </Style>
 
       <ControlTemplate x:Key="HistoryResizeGripperTemplate"

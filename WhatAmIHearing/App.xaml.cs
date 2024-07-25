@@ -63,6 +63,7 @@ internal sealed partial class App : CommonApp
 
    private static void OverrideDefaultValues()
    {
+      ToolTipService.ShowOnDisabledProperty.OverrideMetadata( typeof( FrameworkElement ), new FrameworkPropertyMetadata( true ) );
       ToolTipService.InitialShowDelayProperty.OverrideMetadata( typeof( FrameworkElement ), new FrameworkPropertyMetadata( 750 ) );
    }
 }
