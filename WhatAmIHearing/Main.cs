@@ -132,6 +132,11 @@ internal sealed class Main : IDisposable
       _history.Insert( 0, songVm );
       _model.SelectedSong = songVm;
 
+      if ( AppSettings.Instance.PutTitleOnClipboard )
+      {
+         _model.SelectedSong.CopyTitleToClipboard.Execute( null );
+      }
+
       if ( AppSettings.Instance.OpenShazamOnResultFound )
       {
          _model.SelectedSong.OpenInShazamCommand.Execute( null );
