@@ -35,6 +35,13 @@
       <SolidColorBrush x:Key="LightBackgroundBrush"
                        Color="#99FFFFFF" />
 
+      <ControlTemplate x:Key="CopyGlyph"
+                       TargetType="{x:Type Control}">
+         <Path Fill="Black"
+               Stretch="Fill"
+               Data="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" />
+      </ControlTemplate>
+
       <Style x:Key="FocusVisualStyle"
              TargetType="{x:Type Control}">
          <Setter Property="Template">
@@ -155,6 +162,44 @@
                                 Value="#4DFFFFFF" />
                      </Trigger>
                   </ControlTemplate.Triggers>
+               </ControlTemplate>
+            </Setter.Value>
+         </Setter>
+      </Style>
+
+      <Style x:Key="GlyphButtonStyle"
+             TargetType="{x:Type Button}">
+         <Setter Property="Focusable"
+                 Value="False" />
+         <Setter Property="OverridesDefaultStyle"
+                 Value="True" />
+         <Setter Property="Template">
+            <Setter.Value>
+               <ControlTemplate TargetType="{x:Type Button}">
+                  <Grid Background="Transparent"
+                        Opacity="0.5">
+                     <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="CommonStates">
+                           <VisualState x:Name="Normal" />
+                           <VisualState x:Name="MouseOver">
+                              <Storyboard>
+                                 <DoubleAnimation Storyboard.TargetProperty="(Grid.Opacity)"
+                                                  To="1.0"
+                                                  Duration="0" />
+                              </Storyboard>
+                           </VisualState>
+                           <VisualState x:Name="Pressed">
+                              <Storyboard>
+                                 <DoubleAnimation Storyboard.TargetProperty="(Grid.Opacity)"
+                                                  To="0.6"
+                                                  Duration="0" />
+                              </Storyboard>
+                           </VisualState>
+                           <VisualState x:Name="Disabled" />
+                        </VisualStateGroup>
+                     </VisualStateManager.VisualStateGroups>
+                     <ContentPresenter />
+                  </Grid>
                </ControlTemplate>
             </Setter.Value>
          </Setter>
@@ -702,6 +747,18 @@
                              FontWeight="Bold"
                              FontSize="20" />
 
+                  <Button Grid.Row="0"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Right"
+                          Margin="0,2,0,0"
+                          Width="12.5"
+                          Height="14"
+                          ToolTip="Copy title to clipboard"
+                          Style="{StaticResource GlyphButtonStyle}"
+                          Command="{Binding CopyTitleToClipboard, Mode=OneTime}">
+                     <Control Template="{StaticResource CopyGlyph}" />
+                  </Button>
+
                   <TextBlock Grid.Row="1"
                              Text="{Binding Subtitle, Mode=OneTime}"
                              TextWrapping="Wrap"
@@ -756,7 +813,7 @@
                                          Fill="{StaticResource MainColorBrush}"
                                          RadiusX="2"
                                          RadiusY="2" />
-                              <ContentPresenter />
+                              <ContentPresenter MaxWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth, Mode=OneWay}"/>
                            </Grid>
                            <ControlTemplate.Triggers>
                               <MultiTrigger>
@@ -789,45 +846,54 @@
             <Setter.Value>
                <DataTemplate DataType="{x:Type result:SongViewModel}">
                   <Grid Background="Transparent">
-                     <TextBlock Margin="4,2"
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                     </Grid.ColumnDefinitions>
+                     
+                     <TextBlock Grid.Column="0"
+                                TextTrimming="CharacterEllipsis"
+                                Margin="4,2"
+                                HorizontalAlignment="Left"
                                 Text="{Binding SearchText, Mode=OneTime}" />
 
+                     <Button x:Name="CopyButton"
+                             Grid.Column="1"
+                             Visibility="Hidden"
+                             Margin="0,0,12,0"
+                             Width="9"
+                             Height="10"
+                             ToolTip="Copy title to clipboard"
+                             Style="{StaticResource GlyphButtonStyle}"
+                             Command="{Binding CopyTitleToClipboard, Mode=OneTime}">
+                        <Control Template="{StaticResource CopyGlyph}" />
+                     </Button>
+
                      <Button x:Name="DeleteButton"
-                             IsTabStop="False"
-                             Visibility="Collapsed"
+                             Grid.Column="2"
+                             Visibility="Hidden"
                              Margin="0,0,8,0"
-                             HorizontalAlignment="Right"
+                             Width="9"
+                             Height="9"
+                             ToolTip="Delete from history"
+                             Style="{StaticResource GlyphButtonStyle}"
                              Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.DeleteSongFromHistoryCommand, Mode=OneTime}"
                              CommandParameter="{Binding ., Mode=OneTime}">
-                        <Button.Template>
-                           <ControlTemplate TargetType="{x:Type Button}">
-                              <Border Background="Transparent">
-                                 <Path x:Name="glyph"
-                                       Opacity="0.5"
-                                       Width="9"
-                                       Height="9"
-                                       Stretch="Fill"
-                                       StrokeThickness="1"
-                                       Stroke="Black"
-                                       Fill="Black"
-                                       Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-                              </Border>
-                              <ControlTemplate.Triggers>
-                                 <Trigger Property="IsMouseOver"
-                                          Value="True">
-                                    <Setter TargetName="glyph"
-                                            Property="Opacity"
-                                            Value="1.0" />
-                                 </Trigger>
-                              </ControlTemplate.Triggers>
-                           </ControlTemplate>
-                        </Button.Template>
+                        <Path Stretch="Fill"
+                              StrokeThickness="1"
+                              Stroke="Black"
+                              Fill="Black"
+                              Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
                      </Button>
                   </Grid>
                   <DataTemplate.Triggers>
                      <Trigger Property="IsMouseOver"
                               Value="True">
                         <Setter TargetName="DeleteButton"
+                                Property="Visibility"
+                                Value="Visible" />
+                        <Setter TargetName="CopyButton"
                                 Property="Visibility"
                                 Value="Visible" />
                      </Trigger>

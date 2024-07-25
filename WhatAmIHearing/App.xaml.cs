@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using ZemotoCommon.UI;
 using TrayIcon = System.Windows.Forms.NotifyIcon;
@@ -22,6 +23,8 @@ internal sealed partial class App : CommonApp
       _trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
       _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, ( s, a ) => Shutdown() );
       _trayIcon.Visible = true;
+
+      OverrideDefaultValues();
    }
 
    public override void Dispose()
@@ -56,5 +59,10 @@ internal sealed partial class App : CommonApp
       {
          _main.ShowAndForegroundMainWindow();
       }
+   }
+
+   private static void OverrideDefaultValues()
+   {
+      ToolTipService.InitialShowDelayProperty.OverrideMetadata( typeof( FrameworkElement ), new FrameworkPropertyMetadata( 750 ) );
    }
 }

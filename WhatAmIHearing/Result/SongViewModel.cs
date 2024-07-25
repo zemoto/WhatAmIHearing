@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using WhatAmIHearing.Api.Shazam;
 
@@ -49,6 +50,16 @@ internal class SongViewModel
    public string ShazamUrl { get; init; }
 
    public string SearchText => $"{Title} - {Subtitle}";
+
+   private RelayCommand _copyTitleToClipboard;
+   public RelayCommand CopyTitleToClipboard => _copyTitleToClipboard ??= new RelayCommand( () =>
+   {
+      try
+      {
+         Clipboard.SetDataObject( new DataObject( DataFormats.UnicodeText, SearchText, true ), true );
+      }
+      catch { }
+   } );
 
    private RelayCommand _findInYouTubeCommand;
    public RelayCommand FindInYouTubeCommand => _findInYouTubeCommand ??= new RelayCommand( () => OpenInBrowser( string.Format( _youTubeUrl, SearchText ) ) );
