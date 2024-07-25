@@ -8,19 +8,13 @@ namespace WhatAmIHearing.Audio;
 internal sealed class RecordingManager : IDisposable
 {
    private readonly DeviceProvider _deviceProvider = new();
-   private readonly WaveFormat _waveFormat;
-   private readonly long _maxBytesToRecord;
+   private readonly WaveFormat _waveFormat = new( rate: 44100, bits: 16, channels: 1 ); // Format required by Shazam API
+   private readonly long _maxBytesToRecord = 500 * 1000; // 500KB. Max recording size according to Shazam API
    private readonly CancelTokenProvider _cancelTokenProvider = new();
 
    public RecorderViewModel Model { get; }
 
-   public RecordingManager( StateViewModel stateVm, WaveFormat waveFormat, long maxBytesToRecord )
-   {
-      _waveFormat = waveFormat;
-      _maxBytesToRecord = maxBytesToRecord;
-
-      Model = new RecorderViewModel( stateVm, _deviceProvider );
-   }
+   public RecordingManager( StateViewModel stateVm ) => Model = new RecorderViewModel( stateVm, _deviceProvider );
 
    public void Dispose()
    {

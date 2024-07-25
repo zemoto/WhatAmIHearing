@@ -19,7 +19,7 @@ internal sealed class Main : IDisposable
    public Main()
    {
       _stateVm = new StateViewModel( ChangeStateAsync );
-      _recordingManager = new RecordingManager( _stateVm, ShazamSpecProvider.ShazamWaveFormat, ShazamSpecProvider.MaxBytes );
+      _recordingManager = new RecordingManager( _stateVm );
       _model = new MainViewModel( _recordingManager.Model, _history, SetHotkey );
 
       _window = new MainWindow( _model );
