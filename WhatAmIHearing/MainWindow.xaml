@@ -116,12 +116,20 @@
          </commonControls:AnimatedGroupedExpander>
 
          <commonControls:AnimatedGroupedExpander Header="History">
-            <ListBox x:Name="HistoryListBox" 
-                     Style="{StaticResource HistoryListBoxStyle}"
-                     ItemsSource="{Binding History, Mode=OneWay}"
-                     SelectedItem="{Binding SelectedSong, Mode=TwoWay}"
-                     Height="80"
-                     Margin="0,4,0,0" />
+            <Grid Margin="0,4,0,0">
+               <ListBox x:Name="HistoryListBox"
+                        Height="{Binding Settings.HistoryHeight, Mode=TwoWay}"
+                        MinHeight="60"
+                        Style="{StaticResource HistoryListBoxStyle}"
+                        ItemsSource="{Binding History, Mode=OneWay}"
+                        SelectedItem="{Binding SelectedSong, Mode=TwoWay}" />
+               <commonControls:ResizeGripper Focusable="False" 
+                                             Template="{StaticResource HistoryResizeGripperTemplate}"
+                                             VerticalAlignment="Bottom"
+                                             HorizontalAlignment="Center"
+                                             Direction="Vertical"
+                                             Target="{Binding ElementName=HistoryListBox, Mode=OneTime}" />
+            </Grid>
          </commonControls:AnimatedGroupedExpander>
 
          <ContentControl Content="{Binding SelectedSong, Mode=OneWay}"

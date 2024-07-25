@@ -53,4 +53,7 @@ internal sealed partial class AppSettings : ObservableObject
 
    [ObservableProperty]
    private Hotkey _recordHotkey = new( Key.F2, ModifierKeys.Shift );
+
+   [ObservableProperty]
+   private double _historyHeight = 80;
 }
