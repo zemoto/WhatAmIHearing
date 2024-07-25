@@ -1,4 +1,4 @@
 {
-	"Note" : "Go to https://rapidapi.com/apidojo/api/shazam, create a RapidApi account, then subscribe to the 'Free Tier' of the Shazam API to create your own app registration. Finally, put the Application Key in the below field and restart WhatAmIHearing.",
-	"ShazamApiKey" : "Put your API Key in between these quotes"
+	"Note": "Go to https://github.com/zemoto/WhatAmIHearing?tab=readme-ov-file#rate-limiting for instructions on how to get your own Shazam API key.",
+	"ShazamApiKey": "Put your API Key in between these quotes"
 }
