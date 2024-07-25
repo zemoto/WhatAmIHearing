@@ -734,23 +734,29 @@
                      <RowDefinition Height="Auto" />
                      <RowDefinition Height="*" />
                   </Grid.RowDefinitions>
-                  <TextBlock Grid.Row="0"
-                             Text="{Binding Title, Mode=OneTime}"
-                             TextWrapping="Wrap"
-                             FontWeight="Bold"
-                             FontSize="20" />
 
-                  <Button Grid.Row="0"
-                          VerticalAlignment="Center"
-                          HorizontalAlignment="Right"
-                          Margin="0,2,0,0"
-                          Width="12.5"
-                          Height="14"
-                          ToolTip="Copy title to clipboard"
-                          Style="{StaticResource GlyphButtonStyle}"
-                          Command="{Binding CopyTitleToClipboard, Mode=OneTime}">
-                     <Control Template="{StaticResource CopyGlyph}" />
-                  </Button>
+                  <Grid Grid.Row="0">
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                     </Grid.ColumnDefinitions>
+                     <TextBlock Grid.Column="0" 
+                                Text="{Binding Title, Mode=OneTime}"
+                                TextWrapping="Wrap"
+                                FontWeight="Bold"
+                                FontSize="20" />
+
+                     <Button Grid.Column="1"
+                             VerticalAlignment="Top"
+                             Margin="6,7.5,0,0"
+                             Width="12.5"
+                             Height="14"
+                             ToolTip="Copy title to clipboard"
+                             Style="{StaticResource GlyphButtonStyle}"
+                             Command="{Binding CopyTitleToClipboard, Mode=OneTime}">
+                        <Control Template="{StaticResource CopyGlyph}" />
+                     </Button>
+                  </Grid>
 
                   <TextBlock Grid.Row="1"
                              Text="{Binding Subtitle, Mode=OneTime}"
