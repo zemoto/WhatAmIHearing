@@ -2,15 +2,18 @@
 
 An app that will record system audio and send it off to the Shazam API to be identified. For when your phone's microphone just can't quite capture the song well enough for Shazam to figure it out.
 
-<img src="https://github.com/user-attachments/assets/bd2e8883-8b82-4923-a1ab-a4cfcc086fa6" Width="358" />
+<img src="https://github.com/user-attachments/assets/5a51cf0f-642c-41a8-bec5-8b016d09178e" Width="358" />
 
-## How to I Download it?
+## How do I Download it?
 
 Go to the Releases Page on the right side of the GitHub repo and on the latest release you'll see a zip file attached named `WhatAmIHearing.zip`:
 
 <img src="https://github.com/user-attachments/assets/826267ec-c643-4f5f-90e2-cf00ccffd1c1" Width="600" />
 
 Click that link to download the zip file, unzip it, and run `WhatAmIHearing.exe` to open the app.
+
+#### Updating
+Settings are stored in a `config.json` and history is stored in `history.json`. Both files are kept right next to your `WhatAmIHearing.exe`. When updating all you need to do is take those files from your previous version and put them next to the new `WhatAmIHearing.exe`. If you're using your own API key, be sure to also bring in your `ShazamApiKey.json` file.
 
 ## Rate Limiting
 
@@ -35,4 +38,4 @@ Uses POST calls to Shazam's API (see documentation at https://rapidapi.com/apido
 ### Audio recording
 NAudio (https://github.com/naudio/NAudio) used for recording, resampling, and playback. See the [Recorder](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/Audio/Recorder.cs) class for the meat of the logic.
 
-Uses NAudio's `WasapiLoopbackCapture` class to record system audio. Shazam allows for up to 500KB of audio to be sent to their API, so we record the maximum amount we can. As of NAudio v2.1 the recorder supports resampling the audio during recording so it is already in a format that Shazam will take once we are done. The WaveFormat is provided by the [ShazamSpecProvider](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/Api/Shazam/ShazamSpecProvider.cs).
+Uses NAudio's `WasapiLoopbackCapture` class to record system audio. Shazam allows for up to 500KB of audio to be sent to their API, so we record the maximum amount we can. As of NAudio v2.1 the recorder supports resampling the audio during recording so it is already in a format that Shazam will take once we are done.
