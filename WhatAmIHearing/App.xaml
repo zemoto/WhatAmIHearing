@@ -8,7 +8,7 @@
               xmlns:result="clr-namespace:WhatAmIHearing.Result">
    <Application.Resources>
       <BooleanToVisibilityConverter x:Key="VisibleIfTrue" />
-      
+
       <ui:EqualityConverter x:Key="IsEqual" />
 
       <ui:BoolToObjectConverter x:Key="StatusTextColorConverter"
@@ -792,108 +792,190 @@
          </Grid>
       </DataTemplate>
 
-      <Style x:Key="HistoryListBoxStyle"
-             TargetType="{x:Type ListBox}">
-         <Setter Property="ItemContainerStyle">
+      <Style x:Key="ScrollBarPageButtonStyle"
+             TargetType="{x:Type RepeatButton}">
+         <Setter Property="SnapsToDevicePixels"
+                 Value="True" />
+         <Setter Property="OverridesDefaultStyle"
+                 Value="True" />
+         <Setter Property="IsTabStop"
+                 Value="False" />
+         <Setter Property="Focusable"
+                 Value="False" />
+         <Setter Property="Template">
             <Setter.Value>
-               <Style TargetType="{x:Type ListBoxItem}">
+               <ControlTemplate TargetType="{x:Type RepeatButton}">
+                  <Border Background="Transparent" />
+               </ControlTemplate>
+            </Setter.Value>
+         </Setter>
+      </Style>
+
+      <Style x:Key="VerticalScrollBarStyle"
+             TargetType="{x:Type ScrollBar}">
+         <Setter Property="MinWidth"
+                 Value="0" />
+         <Setter Property="Width"
+                 Value="8" />
+         <Setter Property="Template">
+            <Setter.Value>
+               <ControlTemplate TargetType="{x:Type ScrollBar}">
+                  <Grid Margin="0,1,2,1"
+                        HorizontalAlignment="Right"
+                        Width="6">
+                     <Rectangle Fill="{StaticResource MainColorBrush}"
+                                Opacity="0.2"
+                                RadiusX="3"
+                                RadiusY="3" />
+                     <Track x:Name="PART_Track"
+                            IsDirectionReversed="true"
+                            Opacity="0.9">
+                        <Track.DecreaseRepeatButton>
+                           <RepeatButton Style="{StaticResource ScrollBarPageButtonStyle}"
+                                         Command="ScrollBar.PageUpCommand" />
+                        </Track.DecreaseRepeatButton>
+                        <Track.Thumb>
+                           <Thumb>
+                              <Thumb.Template>
+                                 <ControlTemplate TargetType="{x:Type Thumb}">
+                                    <Rectangle Fill="{StaticResource MainColorBrush}"
+                                               RadiusX="3"
+                                               RadiusY="3" />
+                                 </ControlTemplate>
+                              </Thumb.Template>
+                           </Thumb>
+                        </Track.Thumb>
+                        <Track.IncreaseRepeatButton>
+                           <RepeatButton Style="{StaticResource ScrollBarPageButtonStyle}"
+                                         Command="ScrollBar.PageDownCommand" />
+                        </Track.IncreaseRepeatButton>
+                     </Track>
+                  </Grid>
+               </ControlTemplate>
+            </Setter.Value>
+         </Setter>
+      </Style>
+
+      <Style x:Key="HistoryListBoxItemContainerStyle"
+             TargetType="{x:Type ListBoxItem}">
+         <Setter Property="FocusVisualStyle">
+            <Setter.Value>
+               <Style TargetType="{x:Type Control}">
                   <Setter Property="Template">
                      <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                           <Grid>
-                              <Rectangle x:Name="background"
-                                         Opacity="0"
-                                         Fill="{StaticResource MainColorBrush}"
-                                         RadiusX="2"
-                                         RadiusY="2" />
-                              <ContentPresenter MaxWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth, Mode=OneWay}"/>
-                           </Grid>
-                           <ControlTemplate.Triggers>
-                              <MultiTrigger>
-                                 <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected"
-                                               Value="False" />
-                                    <Condition Property="IsMouseOver"
-                                               Value="True" />
-                                 </MultiTrigger.Conditions>
-                                 <MultiTrigger.Setters>
-                                    <Setter TargetName="background"
-                                            Property="Opacity"
-                                            Value="0.2" />
-                                 </MultiTrigger.Setters>
-                              </MultiTrigger>
-                              <Trigger Property="IsSelected"
-                                       Value="True">
-                                 <Setter TargetName="background"
-                                         Property="Opacity"
-                                         Value="0.4" />
-                              </Trigger>
-                           </ControlTemplate.Triggers>
+                        <ControlTemplate TargetType="{x:Type Control}">
+                           <Rectangle Margin="1.5"
+                                      StrokeDashArray="2 2"
+                                      RadiusX="2"
+                                      RadiusY="2"
+                                      StrokeThickness="1"
+                                      Stroke="Black" />
                         </ControlTemplate>
                      </Setter.Value>
                   </Setter>
                </Style>
             </Setter.Value>
          </Setter>
-         <Setter Property="ItemTemplate">
+         <Setter Property="Template">
             <Setter.Value>
-               <DataTemplate DataType="{x:Type result:SongViewModel}">
-                  <Grid Background="Transparent">
-                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                     </Grid.ColumnDefinitions>
-                     
-                     <TextBlock Grid.Column="0"
-                                TextTrimming="CharacterEllipsis"
-                                Margin="4,2"
-                                HorizontalAlignment="Left"
-                                Text="{Binding SearchText, Mode=OneTime}" />
-
-                     <Button x:Name="CopyButton"
-                             Grid.Column="1"
-                             Visibility="Hidden"
-                             Margin="0,0,12,0"
-                             Width="9"
-                             Height="10"
-                             ToolTip="Copy title to clipboard"
-                             Style="{StaticResource GlyphButtonStyle}"
-                             Command="{Binding CopyTitleToClipboard, Mode=OneTime}">
-                        <Control Template="{StaticResource CopyGlyph}" />
-                     </Button>
-
-                     <Button x:Name="DeleteButton"
-                             Grid.Column="2"
-                             Visibility="Hidden"
-                             Margin="0,0,8,0"
-                             Width="9"
-                             Height="9"
-                             ToolTip="Delete from history"
-                             Style="{StaticResource GlyphButtonStyle}"
-                             Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.DeleteSongFromHistoryCommand, Mode=OneTime}"
-                             CommandParameter="{Binding ., Mode=OneTime}">
-                        <Path Stretch="Fill"
-                              StrokeThickness="1"
-                              Stroke="Black"
-                              Fill="Black"
-                              Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-                     </Button>
+               <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                  <Grid>
+                     <Rectangle x:Name="background"
+                                Opacity="0"
+                                Fill="{StaticResource MainColorBrush}"
+                                RadiusX="2"
+                                RadiusY="2" />
+                     <ContentPresenter MaxWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth, Mode=OneWay}" />
                   </Grid>
-                  <DataTemplate.Triggers>
-                     <Trigger Property="IsMouseOver"
+                  <ControlTemplate.Triggers>
+                     <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                           <Condition Property="IsSelected"
+                                      Value="False" />
+                           <Condition Property="IsMouseOver"
+                                      Value="True" />
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                           <Setter TargetName="background"
+                                   Property="Opacity"
+                                   Value="0.2" />
+                        </MultiTrigger.Setters>
+                     </MultiTrigger>
+                     <Trigger Property="IsSelected"
                               Value="True">
-                        <Setter TargetName="DeleteButton"
-                                Property="Visibility"
-                                Value="Visible" />
-                        <Setter TargetName="CopyButton"
-                                Property="Visibility"
-                                Value="Visible" />
+                        <Setter TargetName="background"
+                                Property="Opacity"
+                                Value="0.4" />
                      </Trigger>
-                  </DataTemplate.Triggers>
-               </DataTemplate>
+                  </ControlTemplate.Triggers>
+               </ControlTemplate>
             </Setter.Value>
          </Setter>
+      </Style>
+
+      <DataTemplate x:Key="HistoryListBoxItemTemplate"
+                    DataType="{x:Type result:SongViewModel}">
+         <Grid Background="Transparent">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="*" />
+               <ColumnDefinition Width="Auto" />
+               <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       TextTrimming="CharacterEllipsis"
+                       Margin="4,2"
+                       HorizontalAlignment="Left"
+                       Text="{Binding SearchText, Mode=OneTime}" />
+
+            <Button x:Name="CopyButton"
+                    Grid.Column="1"
+                    Visibility="Hidden"
+                    Margin="0,0,12,0"
+                    Width="9"
+                    Height="10"
+                    ToolTip="Copy title to clipboard"
+                    Style="{StaticResource GlyphButtonStyle}"
+                    Command="{Binding CopyTitleToClipboard, Mode=OneTime}">
+               <Control Template="{StaticResource CopyGlyph}" />
+            </Button>
+
+            <Button x:Name="DeleteButton"
+                    Grid.Column="2"
+                    Visibility="Hidden"
+                    Margin="0,0,8,0"
+                    Width="9"
+                    Height="9"
+                    ToolTip="Delete from history"
+                    Style="{StaticResource GlyphButtonStyle}"
+                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.DeleteSongFromHistoryCommand, Mode=OneTime}"
+                    CommandParameter="{Binding ., Mode=OneTime}">
+               <Path Stretch="Fill"
+                     StrokeThickness="1"
+                     Stroke="Black"
+                     Fill="Black"
+                     Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+            </Button>
+         </Grid>
+         <DataTemplate.Triggers>
+            <Trigger Property="IsMouseOver"
+                     Value="True">
+               <Setter TargetName="DeleteButton"
+                       Property="Visibility"
+                       Value="Visible" />
+               <Setter TargetName="CopyButton"
+                       Property="Visibility"
+                       Value="Visible" />
+            </Trigger>
+         </DataTemplate.Triggers>
+      </DataTemplate>
+
+      <Style x:Key="HistoryListBoxStyle"
+             TargetType="{x:Type ListBox}">
+         <Setter Property="ItemContainerStyle"
+                 Value="{StaticResource HistoryListBoxItemContainerStyle}" />
+         <Setter Property="ItemTemplate"
+                 Value="{StaticResource HistoryListBoxItemTemplate}" />
          <Setter Property="Template">
             <Setter.Value>
                <ControlTemplate TargetType="{x:Type ListBox}">
@@ -909,48 +991,18 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
                                  </Grid.ColumnDefinitions>
-                                 <ScrollContentPresenter Grid.Column="0"
-                                                         CanContentScroll="{TemplateBinding CanContentScroll}" />
+                                 <ScrollContentPresenter Grid.Column="0" />
                                  <ScrollBar x:Name="PART_VerticalScrollBar"
                                             Grid.Column="1"
-                                            MinWidth="0"
-                                            Width="8"
                                             Value="{TemplateBinding VerticalOffset}"
                                             Maximum="{TemplateBinding ScrollableHeight}"
                                             ViewportSize="{TemplateBinding ViewportHeight}"
-                                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}">
-                                    <ScrollBar.Template>
-                                       <ControlTemplate TargetType="{x:Type ScrollBar}">
-                                          <Grid Margin="0,1,2,1"
-                                                HorizontalAlignment="Right"
-                                                Width="6">
-                                             <Rectangle Fill="{StaticResource MainColorBrush}"
-                                                        Opacity="0.2"
-                                                        RadiusX="3"
-                                                        RadiusY="3" />
-                                             <Track x:Name="PART_Track"
-                                                    IsDirectionReversed="true"
-                                                    Opacity="0.9">
-                                                <Track.Thumb>
-                                                   <Thumb>
-                                                      <Thumb.Template>
-                                                         <ControlTemplate TargetType="{x:Type Thumb}">
-                                                            <Rectangle Fill="{StaticResource MainColorBrush}"
-                                                                       RadiusX="3"
-                                                                       RadiusY="3" />
-                                                         </ControlTemplate>
-                                                      </Thumb.Template>
-                                                   </Thumb>
-                                                </Track.Thumb>
-                                             </Track>
-                                          </Grid>
-                                       </ControlTemplate>
-                                    </ScrollBar.Template>
-                                 </ScrollBar>
+                                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                            Style="{StaticResource VerticalScrollBarStyle}" />
                               </Grid>
                            </ControlTemplate>
                         </ScrollViewer.Template>
-                        <StackPanel Margin="2"
+                        <StackPanel Margin="2,1"
                                     IsItemsHost="True" />
                      </ScrollViewer>
                   </Border>
@@ -958,6 +1010,6 @@
             </Setter.Value>
          </Setter>
       </Style>
-      
+
    </Application.Resources>
 </ui:CommonApp>
