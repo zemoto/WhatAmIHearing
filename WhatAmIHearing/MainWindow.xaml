@@ -118,6 +118,31 @@
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
+         <commonControls:AnimatedGroupedExpander Header="API Key"
+                                                 GroupName="Settings"
+                                                 Margin="0,0,0,4">
+            <StackPanel Margin="16,2,0,0">
+               <StackPanel Orientation="Horizontal"
+                           Margin="0,0,8,4"
+                           HorizontalAlignment="Left">
+                  <TextBlock Text="Custom API Key:"
+                             Margin="0,0,8,0"
+                             VerticalAlignment="Center" />
+
+                  <TextBox x:Name="CustomApiKeyTextBox"
+                           Text="{Binding ShazamSettings.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                           Width="225"
+                           BorderBrush="{Binding ShazamSettings.CustomKeyIsValid, Converter={StaticResource IsValidColorConverter}, Mode=OneWay}" />
+               </StackPanel>
+
+               <TextBlock VerticalAlignment="Center">
+                  <Run Text="To get your own API Key, follow" />
+                  <Hyperlink Command="{Binding OpenHyperlinkCommand, Mode=OneTime}"
+                             CommandParameter="https://github.com/zemoto/WhatAmIHearing?tab=readme-ov-file#rate-limiting">these instructions.</Hyperlink>
+               </TextBlock>
+            </StackPanel>
+         </commonControls:AnimatedGroupedExpander>
+
          <commonControls:AnimatedGroupedExpander Header="History">
             <Grid Margin="0,4,0,0"
                   IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
@@ -127,7 +152,7 @@
                         Style="{StaticResource HistoryListBoxStyle}"
                         ItemsSource="{Binding History, Mode=OneWay}"
                         SelectedItem="{Binding SelectedSong, Mode=TwoWay}" />
-               <commonControls:ResizeGripper Focusable="False" 
+               <commonControls:ResizeGripper Focusable="False"
                                              Template="{StaticResource HistoryResizeGripperTemplate}"
                                              VerticalAlignment="Bottom"
                                              HorizontalAlignment="Center"

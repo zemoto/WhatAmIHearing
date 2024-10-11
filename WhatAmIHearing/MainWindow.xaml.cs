@@ -65,6 +65,8 @@ internal sealed partial class MainWindow
       return _recordHotkeyRegistered;
    }
 
+   public void FocusCustomApiKeyTextBox() => CustomApiKeyTextBox.Focus();
+
    private bool UnregisterRecordHotkey( out string error )
    {
       error = string.Empty;

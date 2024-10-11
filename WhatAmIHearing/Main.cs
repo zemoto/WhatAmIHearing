@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Audio;
@@ -24,7 +25,7 @@ internal sealed class Main : IDisposable
 
       _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm );
-      _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, SetHotkey );
+      _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, _shazamSettings, SetHotkey, OpenHyperlink );
 
       _window = new MainWindow( _model );
       _window.RecordHotkeyPressed += OnRecordHotkey;
@@ -92,6 +93,16 @@ internal sealed class Main : IDisposable
       _model.HotkeyRegisterError = error;
    }
 
+   private void OpenHyperlink( string hyperlinkUri )
+   {
+      var startInfo = new ProcessStartInfo( hyperlinkUri )
+      {
+         UseShellExecute = true
+      };
+
+      Process.Start( startInfo );
+   }
+
    private async void HandleRecordingResult( RecordingResult result )
    {
       if ( result.Cancelled )
@@ -124,8 +135,19 @@ internal sealed class Main : IDisposable
 
       if ( detectedSong?.IsComplete != true )
       {
+         string errorMessage;
+         if ( _shazamApi.LastStatusCode is System.Net.HttpStatusCode.TooManyRequests )
+         {
+            errorMessage = "Max API quota reached; custom API key required";
+            _window.FocusCustomApiKeyTextBox();
+         }
+         else
+         {
+            errorMessage = "Shazam could not identify the audio";
+         }
+
          _stateVm.State = AppState.Stopped;
-         _stateVm.SetStatusText( "Shazam could not identify the audio", isError: true );
+         _stateVm.SetStatusText( errorMessage, isError: true );
          _model.RecorderVm.RecordingProgress = 0;
          ShowAndForegroundMainWindow();
          return;

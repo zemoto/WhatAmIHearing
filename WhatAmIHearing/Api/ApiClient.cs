@@ -42,6 +42,8 @@ internal abstract class ApiClient : IDisposable
 
    public void Dispose() => CancelRequests();
 
+   public HttpStatusCode LastStatusCode { get; private set; }
+
    public async Task<string> SendPostRequestAsync( string endpoint )
    {
       var messageBuilder = CreateMessageBuilder( HttpMethod.Post, endpoint );
@@ -108,10 +110,7 @@ internal abstract class ApiClient : IDisposable
             return await _client.SendAsync( message, token );
          }, cancelTokenSource.Token );
 
-         if ( response.StatusCode is HttpStatusCode.TooManyRequests )
-         {
-            OnRateLimited();
-         }
+         LastStatusCode = response.StatusCode;
 
          return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : string.Empty;
       }
@@ -124,6 +123,4 @@ internal abstract class ApiClient : IDisposable
          }
       }
    }
-
-   protected virtual void OnRateLimited() { }
 }

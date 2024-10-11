@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ internal sealed class ShazamApi( ShazamApiSettings settings ) : IDisposable
    private const string DetectApiEndpoint = "https://shazam.p.rapidapi.com/songs/detect";
 
    private readonly ShazamApiClient _client = new( settings );
+
+   public HttpStatusCode LastStatusCode => _client.LastStatusCode;
 
    public void Dispose() => _client.Dispose();
 
