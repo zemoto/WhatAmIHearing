@@ -17,15 +17,15 @@ Settings are stored in a `config.json` and history is stored in `history.json`. 
 
 ## Rate Limiting
 
-Shazam's API has a rather stingy 500 requests per month on the free tier, and the higher tiers are unreasonably expensive for a non-business. To work around this the app supports using your own API key in place of the one I bundle with the app. 
+Shazam's API has a monthly quota of 500 requests per month on the free tier. To work around this the app supports using your own API key in place of the one I bundle with the app. 
 
 To get an API key:
 1. Go to https://rapidapi.com and make an account.
-2. Go to https://rapidapi.com/apidojo/api/shazam and under the "Pricing" section subscribe to the free tier. This should not require any additional info.
+2. Go to https://rapidapi.com/apidojo/api/shazam and subscribe to the free tier. This should not require any additional info.
 3. Go to https://rapidapi.com/developer/dashboard to see a new Shazam app created for you. Should be named something like `default-application_#######`.
-4. The Authorization section of that App contains the API key which you can then paste into the `ShazamApiKey.json` file bundled with the WhatAmIHearing.
+4. The Authorization section of that App contains the API key which can be pasted in the API Key text box in the app. WhatAmIHearing will immediately start using the new key without having to restart. 
 
-Sorry I can't do much to make this easier other than spend a bunch of money to upgrade the API tier. Feel free to ask me any question or report any issues by creating a [new Issue](https://github.com/zemoto/WhatAmIHearing/issues).
+Feel free to ask me any question or report any issues by creating a [new Issue](https://github.com/zemoto/WhatAmIHearing/issues).
 
 ## Technical Details
 
