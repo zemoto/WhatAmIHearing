@@ -129,9 +129,18 @@
                              Margin="0,0,8,0"
                              VerticalAlignment="Center" />
 
-                  <TextBox x:Name="CustomApiKeyTextBox"
-                           Text="{Binding ShazamSettings.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                           Width="270" />
+                  <Grid>
+                     <TextBox x:Name="CustomApiKeyTextBox"
+                              Text="{Binding ShazamSettings.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                              Width="270" />
+
+                     <TextBlock Text="Using default API Key"
+                                IsHitTestVisible="False"
+                                Margin="4,0,0,0"
+                                Opacity="0.6"
+                                Visibility="{Binding ShazamSettings.ShouldUseDefaultKey, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
+                                VerticalAlignment="Center" />
+                  </Grid>
                </StackPanel>
 
                <TextBlock VerticalAlignment="Center">
