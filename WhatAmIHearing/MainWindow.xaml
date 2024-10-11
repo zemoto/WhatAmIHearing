@@ -125,18 +125,17 @@
                <StackPanel Orientation="Horizontal"
                            Margin="0,0,8,4"
                            HorizontalAlignment="Left">
-                  <TextBlock Text="Custom API Key:"
+                  <TextBlock Text="API Key:"
                              Margin="0,0,8,0"
                              VerticalAlignment="Center" />
 
                   <TextBox x:Name="CustomApiKeyTextBox"
                            Text="{Binding ShazamSettings.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                           Width="225"
-                           BorderBrush="{Binding ShazamSettings.CustomKeyIsValid, Converter={StaticResource IsValidColorConverter}, Mode=OneWay}" />
+                           Width="270" />
                </StackPanel>
 
                <TextBlock VerticalAlignment="Center">
-                  <Run Text="To get your own API Key, follow" />
+                  <Run Text="To get an API Key, follow" />
                   <Hyperlink Command="{Binding OpenHyperlinkCommand, Mode=OneTime}"
                              CommandParameter="https://github.com/zemoto/WhatAmIHearing?tab=readme-ov-file#rate-limiting">these instructions.</Hyperlink>
                </TextBlock>

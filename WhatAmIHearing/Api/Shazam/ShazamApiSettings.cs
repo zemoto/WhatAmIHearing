@@ -22,10 +22,6 @@ internal sealed partial class ShazamApiSettings : ObservableObject
    public const string DefaultShazamApiKey = "<Placeholder>";
 
    [ObservableProperty]
-   [NotifyPropertyChangedFor( nameof( CustomKeyIsValid ) )]
    private string _shazamApiKey;
    partial void OnShazamApiKeyChanged( string value ) => _keyChanged = true;
-
-   // Just a random loose requirement so you can easily stop using a custom key
-   public bool CustomKeyIsValid => _shazamApiKey is not null && _shazamApiKey.Length > 46 && _shazamApiKey.Length < 54 && !_shazamApiKey.Contains( ' ' );
 }

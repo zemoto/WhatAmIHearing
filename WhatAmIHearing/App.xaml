@@ -15,10 +15,6 @@
                                 TrueValue="Red"
                                 FalseValue="Black" />
 
-      <ui:BoolToObjectConverter x:Key="IsValidColorConverter"
-                                TrueValue="Green"
-                                FalseValue="Red" />
-
       <SolidColorBrush x:Key="MainColorBrush"
                        Color="#3975A7" />
       <SolidColorBrush x:Key="MainColorMouseOverBrush"
@@ -1052,42 +1048,6 @@
             </Trigger>
          </ControlTemplate.Triggers>
       </ControlTemplate>
-
-      <Style TargetType="{x:Type TextBox}">
-         <Setter Property="MinWidth"
-                 Value="120" />
-         <Setter Property="Height"
-                 Value="20" />
-         <Setter Property="AllowDrop"
-                 Value="true" />
-         <Setter Property="FontSize"
-                 Value="10" />
-         <Setter Property="BorderBrush"
-                 Value="{StaticResource MainColorBrush}" />
-         <Setter Property="Template">
-            <Setter.Value>
-               <ControlTemplate TargetType="{x:Type TextBoxBase}">
-                  <Border Name="Border"
-                          CornerRadius="2"
-                          Padding="2"
-                          BorderThickness="1"
-                          Background="White"
-                          BorderBrush="{TemplateBinding BorderBrush}">
-                     <VisualStateManager.VisualStateGroups>
-                        <VisualStateGroup x:Name="CommonStates">
-                           <VisualState x:Name="Normal" />
-                           <VisualState x:Name="Disabled" />
-                           <VisualState x:Name="ReadOnly" />
-                           <VisualState x:Name="MouseOver" />
-                        </VisualStateGroup>
-                     </VisualStateManager.VisualStateGroups>
-                     <ScrollViewer x:Name="PART_ContentHost" />
-                  </Border>
-               </ControlTemplate>
-            </Setter.Value>
-         </Setter>
-      </Style>
-
 
    </Application.Resources>
 </ui:CommonApp>
