@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Api.Shazam;
 
-internal sealed class ShazamApi : IDisposable
+internal sealed class ShazamApi( ShazamApiSettings settings ) : IDisposable
 {
    private const string DetectApiEndpoint = "https://shazam.p.rapidapi.com/songs/detect";
 
-   private readonly ShazamApiClient _client = new();
+   private readonly ShazamApiClient _client = new( settings );
 
    public void Dispose() => _client.Dispose();
 

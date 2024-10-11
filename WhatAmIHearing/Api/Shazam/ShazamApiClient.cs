@@ -3,12 +3,12 @@ using System.Windows;
 
 namespace WhatAmIHearing.Api.Shazam;
 
-internal sealed class ShazamApiClient : ApiClient
+internal sealed class ShazamApiClient( ShazamApiSettings settings ) : ApiClient
 {
-   protected override Dictionary<string, string> ApiHeaders { get; } = new()
+   protected override Dictionary<string, string> ApiHeaders => new()
    {
       ["x-rapidapi-host"] = "shazam.p.rapidapi.com",
-      ["x-rapidapi-key"] = ApiConstants.GetShazamApiKey()
+      ["x-rapidapi-key"] = settings.CustomKeyIsValid ? settings.ShazamApiKey : ShazamApiSettings.DefaultShazamApiKey
    };
 
    protected override void OnRateLimited()

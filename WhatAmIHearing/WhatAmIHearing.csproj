@@ -33,12 +33,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="ShazamApiKey.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
   <Import Project="..\ZemotoCommon\ZemotoCommon\ZemotoCommon.projitems" Label="Shared" />
 
 </Project>

@@ -13,11 +13,15 @@ internal sealed class Main : IDisposable
    private readonly StateViewModel _stateVm;
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager;
-   private readonly ShazamApi _shazamApi = new();
+   private readonly ShazamApiSettings _shazamSettings;
+   private readonly ShazamApi _shazamApi;
    private readonly ResultHistory _history = ResultHistory.Load();
 
    public Main()
    {
+      _shazamSettings = ShazamApiSettings.Load();
+      _shazamApi = new ShazamApi( _shazamSettings );
+
       _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm );
       _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, SetHotkey );
@@ -28,6 +32,7 @@ internal sealed class Main : IDisposable
 
    public void Dispose()
    {
+      _shazamSettings.Save();
       _history.Save();
       _recordingManager.Dispose();
       _shazamApi.Dispose();
