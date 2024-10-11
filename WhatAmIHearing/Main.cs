@@ -141,6 +141,10 @@ internal sealed class Main : IDisposable
             errorMessage = "Max API quota reached; custom API key required";
             _window.FocusCustomApiKeyTextBox();
          }
+         else if ( _shazamApi.LastStatusCode is System.Net.HttpStatusCode.Forbidden )
+         {
+            errorMessage = "API Key is invalid";
+         }
          else
          {
             errorMessage = "Shazam could not identify the audio";
