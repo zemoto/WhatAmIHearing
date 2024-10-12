@@ -26,22 +26,18 @@ internal sealed partial class ApiViewModel : ObservableObject
    partial void OnShazamApiKeyChanged( string value )
    {
       QuotaLimit = 0;
-      QuotaRemaining = 0;
+      QuotaUsed = 0;
    }
 
    public bool UseDefaultKey => string.IsNullOrWhiteSpace( _shazamApiKey );
 
    [ObservableProperty]
-   [NotifyPropertyChangedFor( nameof( QuotaUsed ) )]
    [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
-   private int _quotaLimit;
+   private int _quotaLimit = -1;
 
    [ObservableProperty]
-   [NotifyPropertyChangedFor( nameof( QuotaUsed ) )]
    [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
-   private int _quotaRemaining;
+   private int _quotaUsed = -1;
 
-   public int QuotaUsed => _quotaLimit - _quotaRemaining;
-
-   public bool CanDisplayQuotaData => !UseDefaultKey && _quotaLimit > 0 && _quotaRemaining >= 0;
+   public bool CanDisplayQuotaData => !UseDefaultKey && _quotaLimit > 0 && _quotaUsed >= 0;
 }

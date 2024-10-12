@@ -107,14 +107,11 @@ internal sealed class ApiClient : IDisposable
 
    private void UpdateRateLimitValues( System.Net.Http.Headers.HttpResponseHeaders headers )
    {
-      if ( headers.TryGetValues( "X-RateLimit-Requests-Limit", out var limitValues ) && limitValues?.Any() == true && int.TryParse( limitValues.First(), out int quotaLimit ) )
+      if ( headers.TryGetValues( "X-RateLimit-Requests-Limit", out var limitValues ) && limitValues?.Any() == true && int.TryParse( limitValues.First(), out int quotaLimit ) &&
+           headers.TryGetValues( "X-RateLimit-Requests-Remaining", out var remainingValues ) && remainingValues?.Any() == true && int.TryParse( remainingValues.First(), out int quotaRemaining ) )
       {
          _apiVm.QuotaLimit = quotaLimit;
-      }
-
-      if ( headers.TryGetValues( "X-RateLimit-Requests-Remaining", out var remainingValues ) && remainingValues?.Any() == true && int.TryParse( remainingValues.First(), out int quotaRemaining ) )
-      {
-         _apiVm.QuotaRemaining = quotaRemaining;
+         _apiVm.QuotaUsed = quotaLimit - quotaRemaining;
       }
    }
 }
