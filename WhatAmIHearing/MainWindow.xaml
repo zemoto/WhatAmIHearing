@@ -136,7 +136,7 @@
 
                   <TextBox Grid.Column="1"
                            x:Name="CustomApiKeyTextBox"
-                           Text="{Binding ShazamSettings.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                           Text="{Binding ApiVm.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                            Width="270" />
 
                   <TextBlock Grid.Column="1" 
@@ -144,7 +144,7 @@
                              IsHitTestVisible="False"
                              Margin="4,0,0,0"
                              Opacity="0.6"
-                             Visibility="{Binding ShazamSettings.UseDefaultKey, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
+                             Visibility="{Binding ApiVm.UseDefaultKey, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                              VerticalAlignment="Center" />
                </Grid>
 

@@ -11,16 +11,16 @@ namespace WhatAmIHearing.Shazam;
 
 internal sealed class ApiClient : IDisposable
 {
-   private readonly ApiSettings _settings;
+   private readonly ApiViewModel _apiVm;
    private readonly ResiliencePipeline<HttpResponseMessage> _pipeline;
    private readonly HttpClient _client = new();
 
    private readonly List<CancellationTokenSource> _cancelTokenSources = [];
    private readonly object _cancelTokenLock = new();
 
-   public ApiClient( ApiSettings settings )
+   public ApiClient( ApiViewModel apiVm )
    {
-      _settings = settings;
+      _apiVm = apiVm;
 
       var retryStrategy = new RetryStrategyOptions<HttpResponseMessage>
       {
@@ -60,7 +60,7 @@ internal sealed class ApiClient : IDisposable
       {
          var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = contentBuilder() };
          message.Headers.Add( "x-rapidapi-host", "shazam.p.rapidapi.com" );
-         message.Headers.Add( "x-rapidapi-key", _settings.UseDefaultKey ? ApiSettings.DefaultShazamApiKey : _settings.ShazamApiKey );
+         message.Headers.Add( "x-rapidapi-key", _apiVm.UseDefaultKey ? ApiViewModel.DefaultShazamApiKey : _apiVm.ShazamApiKey );
          return message;
       }
 

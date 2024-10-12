@@ -3,11 +3,11 @@ using ZemotoCommon;
 
 namespace WhatAmIHearing.Shazam;
 
-internal sealed partial class ApiSettings : ObservableObject
+internal sealed partial class ApiViewModel : ObservableObject
 {
    private static readonly SystemFile _keyFile = new( "ShazamApiKey.json" );
 
-   public static ApiSettings Load() => _keyFile.DeserializeContents<ApiSettings>() ?? new();
+   public static ApiViewModel Load() => _keyFile.DeserializeContents<ApiViewModel>() ?? new();
 
    private bool _keyChanged;
 
