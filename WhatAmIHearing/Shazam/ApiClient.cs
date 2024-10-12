@@ -2,6 +2,7 @@
 using Polly.Retry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -86,7 +87,13 @@ internal sealed class ApiClient : IDisposable
 
          LastStatusCode = response.StatusCode;
 
-         return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : string.Empty;
+         if ( response.IsSuccessStatusCode )
+         {
+            UpdateRateLimitValues( response.Headers );
+            return await response.Content.ReadAsStringAsync();
+         }
+
+         return string.Empty;
       }
       finally
       {
@@ -95,6 +102,19 @@ internal sealed class ApiClient : IDisposable
             cancelTokenSource.Dispose();
             _ = _cancelTokenSources.Remove( cancelTokenSource );
          }
+      }
+   }
+
+   private void UpdateRateLimitValues( System.Net.Http.Headers.HttpResponseHeaders headers )
+   {
+      if ( headers.TryGetValues( "X-RateLimit-Requests-Limit", out var limitValues ) && limitValues?.Any() == true && int.TryParse( limitValues.First(), out int quotaLimit ) )
+      {
+         _apiVm.QuotaLimit = quotaLimit;
+      }
+
+      if ( headers.TryGetValues( "X-RateLimit-Requests-Remaining", out var remainingValues ) && remainingValues?.Any() == true && int.TryParse( remainingValues.First(), out int quotaRemaining ) )
+      {
+         _apiVm.QuotaRemaining = quotaRemaining;
       }
    }
 }

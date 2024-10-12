@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text.Json.Serialization;
 using ZemotoCommon;
 
 namespace WhatAmIHearing.Shazam;
@@ -27,4 +28,20 @@ internal sealed partial class ApiViewModel : ObservableObject
    partial void OnShazamApiKeyChanged( string value ) => _keyChanged = true;
 
    public bool UseDefaultKey => string.IsNullOrWhiteSpace( _shazamApiKey );
+
+   [ObservableProperty]
+   [NotifyPropertyChangedFor( nameof( QuotaUsed ) )]
+   [NotifyPropertyChangedFor( nameof( HaveQuotaData ) )]
+   [property: JsonIgnore]
+   private int _quotaLimit;
+
+   [ObservableProperty]
+   [NotifyPropertyChangedFor( nameof( QuotaUsed ) )]
+   [NotifyPropertyChangedFor( nameof( HaveQuotaData ) )]
+   [property: JsonIgnore]
+   private int _quotaRemaining;
+
+   public int QuotaUsed => _quotaLimit - _quotaRemaining;
+
+   public bool HaveQuotaData => _quotaLimit > 0 && _quotaRemaining >= 0;
 }
