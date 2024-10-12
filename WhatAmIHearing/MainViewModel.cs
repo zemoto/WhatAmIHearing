@@ -2,15 +2,15 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
-using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Result;
+using WhatAmIHearing.Shazam;
 
 namespace WhatAmIHearing;
 
 internal sealed partial class MainViewModel : ObservableObject
 {
-   public MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, ResultHistory history, ShazamApiSettings shazamSettings, Action<Hotkey> setHotkeyAction, Action<string> openHyperlinkAction )
+   public MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, ResultHistory history, ApiSettings shazamSettings, Action<Hotkey> setHotkeyAction, Action<string> openHyperlinkAction )
    {
       StateVm = stateVm;
       RecorderVm = recorderVm;
@@ -25,7 +25,7 @@ internal sealed partial class MainViewModel : ObservableObject
    public StateViewModel StateVm { get; }
    public RecorderViewModel RecorderVm { get; }
    public ObservableCollection<SongViewModel> History { get; }
-   public ShazamApiSettings ShazamSettings { get; }
+   public ApiSettings ShazamSettings { get; }
 
    [ObservableProperty]
    private string _hotkeyRegisterError;

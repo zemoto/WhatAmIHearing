@@ -43,7 +43,6 @@ internal sealed partial class App : CommonApp
    protected override void OnExit( ExitEventArgs e )
    {
       AppSettings.Instance.Save();
-      Api.ApiClient.StaticDispose();
       base.OnExit( e );
    }
 

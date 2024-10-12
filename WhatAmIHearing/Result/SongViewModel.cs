@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using WhatAmIHearing.Api.Shazam;
+using WhatAmIHearing.Shazam;
 
 namespace WhatAmIHearing.Result;
 

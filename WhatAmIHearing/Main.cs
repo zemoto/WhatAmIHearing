@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using WhatAmIHearing.Api.Shazam;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Result;
+using WhatAmIHearing.Shazam;
 
 namespace WhatAmIHearing;
 
@@ -14,18 +14,18 @@ internal sealed class Main : IDisposable
    private readonly StateViewModel _stateVm;
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager;
-   private readonly ShazamApiSettings _shazamSettings;
-   private readonly ShazamApi _shazamApi;
+   private readonly ApiSettings _apiSettings;
+   private readonly Api _api;
    private readonly ResultHistory _history = ResultHistory.Load();
 
    public Main()
    {
-      _shazamSettings = ShazamApiSettings.Load();
-      _shazamApi = new ShazamApi( _shazamSettings );
+      _apiSettings = ApiSettings.Load();
+      _api = new Api( _apiSettings );
 
       _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm );
-      _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, _shazamSettings, SetHotkey, OpenHyperlink );
+      _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, _apiSettings, SetHotkey, OpenHyperlink );
 
       _window = new MainWindow( _model );
       _window.RecordHotkeyPressed += OnRecordHotkey;
@@ -33,10 +33,10 @@ internal sealed class Main : IDisposable
 
    public void Dispose()
    {
-      _shazamSettings.Save();
+      _apiSettings.Save();
       _history.Save();
       _recordingManager.Dispose();
-      _shazamApi.Dispose();
+      _api.Dispose();
    }
 
    public void Start()
@@ -77,7 +77,7 @@ internal sealed class Main : IDisposable
          }
          case AppState.Identifying:
          {
-            _shazamApi.CancelRequests();
+            _api.CancelRequests();
             break;
          }
       }
@@ -100,7 +100,7 @@ internal sealed class Main : IDisposable
          UseShellExecute = true
       };
 
-      Process.Start( startInfo );
+      _ = Process.Start( startInfo );
    }
 
    private async void HandleRecordingResult( RecordingResult result )
@@ -125,7 +125,7 @@ internal sealed class Main : IDisposable
       DetectedTrackInfo detectedSong;
       try
       {
-         detectedSong = await _shazamApi.DetectSongAsync( result.RecordingData ).ConfigureAwait( true );
+         detectedSong = await _api.DetectSongAsync( result.RecordingData ).ConfigureAwait( true );
       }
       catch ( TaskCanceledException )
       {
@@ -136,18 +136,14 @@ internal sealed class Main : IDisposable
       if ( detectedSong?.IsComplete != true )
       {
          string errorMessage;
-         if ( _shazamApi.LastStatusCode is System.Net.HttpStatusCode.TooManyRequests )
+         if ( _api.LastStatusCode is System.Net.HttpStatusCode.TooManyRequests )
          {
             errorMessage = "Max API quota reached; custom API key required";
             _window.FocusCustomApiKeyTextBox();
          }
-         else if ( _shazamApi.LastStatusCode is System.Net.HttpStatusCode.Forbidden )
-         {
-            errorMessage = "API Key is invalid";
-         }
          else
          {
-            errorMessage = "Shazam could not identify the audio";
+            errorMessage = _api.LastStatusCode is System.Net.HttpStatusCode.Forbidden ? "API Key is invalid" : "Shazam could not identify the audio";
          }
 
          _stateVm.State = AppState.Stopped;

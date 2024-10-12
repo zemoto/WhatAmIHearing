@@ -118,30 +118,35 @@
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
-         <commonControls:AnimatedGroupedExpander Header="API Key"
+         <commonControls:AnimatedGroupedExpander Header="API Settings"
                                                  GroupName="Settings"
                                                  Margin="0,0,0,4">
             <StackPanel Margin="16,2,0,0">
-               <StackPanel Orientation="Horizontal"
-                           Margin="0,0,8,4"
-                           HorizontalAlignment="Left">
-                  <TextBlock Text="API Key:"
+               <Grid Margin="0,0,8,4"
+                     HorizontalAlignment="Left">
+                  <Grid.ColumnDefinitions>
+                     <ColumnDefinition Width="Auto" />
+                     <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  
+                  <TextBlock Grid.Column="0"
+                             Text="API Key:"
                              Margin="0,0,8,0"
                              VerticalAlignment="Center" />
 
-                  <Grid>
-                     <TextBox x:Name="CustomApiKeyTextBox"
-                              Text="{Binding ShazamSettings.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                              Width="270" />
+                  <TextBox Grid.Column="1"
+                           x:Name="CustomApiKeyTextBox"
+                           Text="{Binding ShazamSettings.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                           Width="270" />
 
-                     <TextBlock Text="Using default API Key"
-                                IsHitTestVisible="False"
-                                Margin="4,0,0,0"
-                                Opacity="0.6"
-                                Visibility="{Binding ShazamSettings.ShouldUseDefaultKey, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
-                                VerticalAlignment="Center" />
-                  </Grid>
-               </StackPanel>
+                  <TextBlock Grid.Column="1" 
+                             Text="Using default API Key"
+                             IsHitTestVisible="False"
+                             Margin="4,0,0,0"
+                             Opacity="0.6"
+                             Visibility="{Binding ShazamSettings.UseDefaultKey, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
+                             VerticalAlignment="Center" />
+               </Grid>
 
                <TextBlock VerticalAlignment="Center">
                   <Run Text="To get an API Key, follow" />

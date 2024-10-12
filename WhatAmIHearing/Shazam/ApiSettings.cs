@@ -1,13 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using ZemotoCommon;
 
-namespace WhatAmIHearing.Api.Shazam;
+namespace WhatAmIHearing.Shazam;
 
-internal sealed partial class ShazamApiSettings : ObservableObject
+internal sealed partial class ApiSettings : ObservableObject
 {
    private static readonly SystemFile _keyFile = new( "ShazamApiKey.json" );
 
-   public static ShazamApiSettings Load() => _keyFile.DeserializeContents<ShazamApiSettings>() ?? new();
+   public static ApiSettings Load() => _keyFile.DeserializeContents<ApiSettings>() ?? new();
 
    private bool _keyChanged;
 
@@ -22,9 +22,9 @@ internal sealed partial class ShazamApiSettings : ObservableObject
    public const string DefaultShazamApiKey = "<Placeholder>";
 
    [ObservableProperty]
-   [NotifyPropertyChangedFor( nameof( ShouldUseDefaultKey ) )]
+   [NotifyPropertyChangedFor( nameof( UseDefaultKey ) )]
    private string _shazamApiKey;
    partial void OnShazamApiKeyChanged( string value ) => _keyChanged = true;
 
-   public bool ShouldUseDefaultKey => string.IsNullOrWhiteSpace( _shazamApiKey );
+   public bool UseDefaultKey => string.IsNullOrWhiteSpace( _shazamApiKey );
 }
