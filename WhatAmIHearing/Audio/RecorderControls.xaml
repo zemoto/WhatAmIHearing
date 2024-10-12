@@ -31,7 +31,7 @@
             Height="22"
             VerticalAlignment="Top">
          <ProgressBar Background="White"
-                      Foreground="#69C3FF"
+                      Foreground="{StaticResource ProgressBarFillBrush}"
                       Minimum="0"
                       Maximum="1"
                       Value="{Binding RecordingProgress, Mode=OneWay}" />

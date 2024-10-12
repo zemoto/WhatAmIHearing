@@ -120,13 +120,15 @@
 
          <commonControls:AnimatedGroupedExpander Header="API Settings"
                                                  GroupName="Settings"
-                                                 Margin="0,0,0,4">
+                                                 Margin="0,0,0,4"
+                                                 Grid.IsSharedSizeScope="True">
             <StackPanel Margin="16,2,0,0">
-               <Grid Margin="0,0,8,4"
+               <Grid Margin="0,0,0,4"
                      HorizontalAlignment="Left">
                   <Grid.ColumnDefinitions>
-                     <ColumnDefinition Width="Auto" />
-                     <ColumnDefinition Width="*" />
+                     <ColumnDefinition Width="Auto"
+                                       SharedSizeGroup="ApiSettingsLabels" />
+                     <ColumnDefinition Width="270" />
                   </Grid.ColumnDefinitions>
                   
                   <TextBlock Grid.Column="0"
@@ -136,8 +138,7 @@
 
                   <TextBox Grid.Column="1"
                            x:Name="CustomApiKeyTextBox"
-                           Text="{Binding ApiVm.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                           Width="270" />
+                           Text="{Binding ApiVm.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
                   <TextBlock Grid.Column="1" 
                              Text="Using default API Key"
@@ -146,6 +147,35 @@
                              Opacity="0.6"
                              Visibility="{Binding ApiVm.UseDefaultKey, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                              VerticalAlignment="Center" />
+               </Grid>
+
+               <Grid Margin="0,0,0,4"
+                     Visibility="{Binding ApiVm.CanDisplayQuotaData, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}">
+                  <Grid.ColumnDefinitions>
+                     <ColumnDefinition Width="Auto"
+                                       SharedSizeGroup="ApiSettingsLabels" />
+                     <ColumnDefinition Width="270" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Grid.Column="0"
+                             Text="Quota:"
+                             Margin="0,0,8,0"
+                             VerticalAlignment="Center" />
+
+                  <ProgressBar Grid.Column="1"
+                               Height="18"
+                               Margin="-1,0,1,0"
+                               Background="White"
+                               Foreground="{StaticResource ProgressBarFillBrush}"
+                               Maximum="{Binding ApiVm.QuotaLimit, Mode=OneWay}"
+                               Value="{Binding ApiVm.QuotaUsed, Mode=OneWay}"
+                               ToolTip="Quota values are updated after every audio identification" />
+
+                  <TextBlock Grid.Column="1"
+                             Margin="4,0,0,0"
+                             VerticalAlignment="Center"
+                             IsHitTestVisible="False">
+                     <Run Text="{Binding ApiVm.QuotaUsed, Mode=OneWay}" /> / <Run Text="{Binding ApiVm.QuotaLimit, Mode=OneWay}" />
+                  </TextBlock>
                </Grid>
 
                <TextBlock VerticalAlignment="Center">

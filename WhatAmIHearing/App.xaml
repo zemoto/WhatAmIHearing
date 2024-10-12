@@ -28,6 +28,9 @@
       <SolidColorBrush x:Key="LightBackgroundBrush"
                        Color="#99FFFFFF" />
 
+      <SolidColorBrush x:Key="ProgressBarFillBrush"
+                       Color="#69C3FF" />
+
       <ControlTemplate x:Key="CopyGlyph"
                        TargetType="{x:Type Control}">
          <Path Fill="Black"

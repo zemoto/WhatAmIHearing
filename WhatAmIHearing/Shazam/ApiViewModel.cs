@@ -23,6 +23,11 @@ internal sealed partial class ApiViewModel : ObservableObject
    [NotifyPropertyChangedFor( nameof( UseDefaultKey ) )]
    [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
    private string _shazamApiKey;
+   partial void OnShazamApiKeyChanged( string value )
+   {
+      QuotaLimit = 0;
+      QuotaRemaining = 0;
+   }
 
    public bool UseDefaultKey => string.IsNullOrWhiteSpace( _shazamApiKey );
 
