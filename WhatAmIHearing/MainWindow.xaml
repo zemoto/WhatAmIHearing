@@ -180,7 +180,7 @@
 
                <TextBlock VerticalAlignment="Center">
                   <Run Text="To get an API Key, follow" />
-                  <Hyperlink Command="{Binding OpenHyperlinkCommand, Mode=OneTime}"
+                  <Hyperlink Command="{x:Static commonUi:UtilityCommands.OpenInBrowserCommand}"
                              CommandParameter="https://github.com/zemoto/WhatAmIHearing?tab=readme-ov-file#rate-limiting">these instructions.</Hyperlink>
                </TextBlock>
             </StackPanel>

@@ -790,7 +790,8 @@
                              Margin="0,0,4,0" />
                      <Button Style="{StaticResource MainButtonStyle}"
                              Content="Shazam"
-                             Command="{Binding OpenInShazamCommand, Mode=OneTime}"
+                             Command="{x:Static commonUi:UtilityCommands.OpenInBrowserCommand}"
+                             CommandParameter="{Binding ShazamUrl, Mode=OneTime}"
                              MinWidth="60"
                              Background="#0088FF"
                              commonUi:CustomProperties.MouseOverBrush="#088cff"

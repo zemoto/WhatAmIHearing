@@ -10,7 +10,7 @@ namespace WhatAmIHearing;
 
 internal sealed partial class MainViewModel : ObservableObject
 {
-   public MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, ResultHistory history, ApiViewModel apiVm, Action<Hotkey> setHotkeyAction, Action<string> openHyperlinkAction )
+   public MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, ResultHistory history, ApiViewModel apiVm, Action<Hotkey> setHotkeyAction )
    {
       StateVm = stateVm;
       RecorderVm = recorderVm;
@@ -18,7 +18,6 @@ internal sealed partial class MainViewModel : ObservableObject
       ApiVm = apiVm;
       SetHotkeyCommand = new RelayCommand<Hotkey>( setHotkeyAction );
       DeleteSongFromHistoryCommand = new RelayCommand<SongViewModel>( song => _ = History.Remove( song ) );
-      OpenHyperlinkCommand = new RelayCommand<string>( openHyperlinkAction );
    }
 
    public AppSettings Settings { get; } = AppSettings.Instance;
@@ -35,5 +34,4 @@ internal sealed partial class MainViewModel : ObservableObject
 
    public RelayCommand<Hotkey> SetHotkeyCommand { get; }
    public RelayCommand<SongViewModel> DeleteSongFromHistoryCommand { get; }
-   public RelayCommand<string> OpenHyperlinkCommand { get; }
 }

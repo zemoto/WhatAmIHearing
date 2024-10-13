@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using WhatAmIHearing.Shazam;
+using ZemotoCommon;
 
 namespace WhatAmIHearing.Result;
 
@@ -62,13 +62,8 @@ internal class SongViewModel
    } );
 
    private RelayCommand _findInYouTubeCommand;
-   public RelayCommand FindInYouTubeCommand => _findInYouTubeCommand ??= new RelayCommand( () => OpenInBrowser( string.Format( _youTubeUrl, SearchText ) ) );
+   public RelayCommand FindInYouTubeCommand => _findInYouTubeCommand ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _youTubeUrl, SearchText ) ) );
 
    private RelayCommand _findInSpotifyCommand;
-   public RelayCommand FindInSpotifyCommand => _findInSpotifyCommand ??= new RelayCommand( () => OpenInBrowser( string.Format( _spotifyUrl, SearchText ) ) );
-
-   private RelayCommand _openInShazamCommand;
-   public RelayCommand OpenInShazamCommand => _openInShazamCommand ??= new RelayCommand( () => OpenInBrowser( ShazamUrl ) );
-
-   private static void OpenInBrowser( string url ) => Process.Start( new ProcessStartInfo( url ) { UseShellExecute = true } );
+   public RelayCommand FindInSpotifyCommand => _findInSpotifyCommand ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _spotifyUrl, SearchText ) ) );
 }
