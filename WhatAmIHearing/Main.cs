@@ -111,7 +111,7 @@ internal sealed class Main : IDisposable
          return;
       }
 
-      _model.RecorderVm.RecordingProgress = 1;
+      _model.RecorderVm.RecordingProgress = _model.RecorderVm.RecordPercent; // "100%" in the UI is whatever the target record percent is
       _stateVm.State = AppState.Identifying;
 
       _stateVm.SetStatusText( AppSettings.Instance.ProgressType switch

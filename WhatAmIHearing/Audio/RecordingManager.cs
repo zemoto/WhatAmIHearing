@@ -42,7 +42,7 @@ internal sealed class RecordingManager : IDisposable
 
    private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
    {
-      Model.RecordingProgress = e.Progress;
+      Model.RecordingProgress = e.Progress * Model.RecordPercent; // The recorder does not take the record percent into account, so do it here
       Model.StateVm.SetStatusText( e.StatusText );
    }
 }
