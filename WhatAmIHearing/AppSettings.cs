@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text.Json.Serialization;
 using System.Windows.Input;
 using ZemotoCommon;
 
@@ -28,6 +29,8 @@ internal sealed partial class AppSettings : ObservableObject
 
    private static AppSettings Load() => _configFile.DeserializeContents<AppSettings>() ?? new AppSettings();
 
+   public AppSettings() => _launchOnWindowsStartup = WindowsStartup.GetStartupWithWindows();
+
    public void Save() => _configFile.SerializeInto( this );
 
    [ObservableProperty]
@@ -35,6 +38,17 @@ internal sealed partial class AppSettings : ObservableObject
 
    [ObservableProperty]
    private bool _keepOpenInTray = true;
+
+   [ObservableProperty]
+   [property: JsonIgnore] // Don't write to settings file. Value depends on reg key.
+   private bool _launchOnWindowsStartup;
+   partial void OnLaunchOnWindowsStartupChanged( bool oldValue, bool newValue )
+   {
+      if ( !WindowsStartup.SetStartupWithWindows( newValue ) )
+      {
+         _launchOnWindowsStartup = oldValue;
+      }
+   }
 
    [ObservableProperty]
    private bool _openHidden;

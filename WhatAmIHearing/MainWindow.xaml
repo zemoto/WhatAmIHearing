@@ -1,4 +1,4 @@
-﻿<Window x:Class="WhatAmIHearing.MainWindow"
+<Window x:Class="WhatAmIHearing.MainWindow"
         x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WhatAmIHearing"
         xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
+        xmlns:common="clr-namespace:ZemotoCommon"
         xmlns:commonUi="clr-namespace:ZemotoCommon.UI"
         xmlns:commonControls="clr-namespace:ZemotoCommon.UI.Controls"
         mc:Ignorable="d"
@@ -55,6 +56,12 @@
                                                  Margin="0,0,0,4"
                                                  GroupName="Settings">
             <StackPanel Margin="16,2,0,0">
+               <CheckBox Margin="0,0,0,2"
+                         Content="Launch on Windows startup"
+                         IsEnabled="{x:Static common:WindowsStartup.AllowedToStartWithWindows}"
+                         ToolTip="{x:Static common:WindowsStartup.NotAllowedReason}"
+                         IsChecked="{Binding Settings.LaunchOnWindowsStartup, Mode=TwoWay}" />
+
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
                          Margin="0,0,0,2"
                          Content="Keep open in system tray"

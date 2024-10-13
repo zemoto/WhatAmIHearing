@@ -697,12 +697,8 @@
                      </Trigger>
                      <Trigger Property="IsEnabled"
                               Value="False">
-                        <Setter TargetName="ContentPresenter"
-                                Property="Opacity"
+                        <Setter Property="Opacity"
                                 Value="0.6" />
-                        <Setter TargetName="Square"
-                                Property="Fill"
-                                Value="#F6F6F6" />
                      </Trigger>
                   </ControlTemplate.Triggers>
                </ControlTemplate>
