@@ -31,7 +31,7 @@ internal class SongViewModel
    {
       get
       {
-         if ( _coverArt is null )
+         if ( !string.IsNullOrEmpty( CoverArtUrl ) && _coverArt is null )
          {
             _coverArt = new BitmapImage();
             _coverArt.BeginInit();
