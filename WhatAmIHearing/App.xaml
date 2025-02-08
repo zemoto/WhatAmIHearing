@@ -80,14 +80,6 @@
                  Value="SemiBold" />
          <Setter Property="OverridesDefaultStyle"
                  Value="True" />
-         <Setter Property="Effect">
-            <Setter.Value>
-               <DropShadowEffect BlurRadius="3"
-                                 Opacity="0.4"
-                                 Direction="270"
-                                 ShadowDepth="1" />
-            </Setter.Value>
-         </Setter>
          <Setter Property="FocusVisualStyle"
                  Value="{StaticResource FocusVisualStyle}" />
          <Setter Property="Template">
@@ -97,7 +89,14 @@
                      <Rectangle x:Name="background"
                                 Fill="{TemplateBinding Background}"
                                 RadiusX="4"
-                                RadiusY="4" />
+                                RadiusY="4">
+                        <Rectangle.Effect>
+                           <DropShadowEffect BlurRadius="3"
+                                             Opacity="0.4"
+                                             Direction="270"
+                                             ShadowDepth="1" />
+                        </Rectangle.Effect>
+                     </Rectangle>
 
                      <ContentPresenter Margin="{TemplateBinding Padding}"
                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -383,14 +382,15 @@
                                    IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                         <ToggleButton.Template>
                            <ControlTemplate TargetType="{x:Type ToggleButton}">
-                              <Border CornerRadius="2"
-                                      Background="{DynamicResource MainColorBrush}">
+                              <Rectangle RadiusX="2"
+                                         RadiusY="2"
+                                         Fill="{DynamicResource MainColorBrush}">
                                  <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="CommonStates">
                                        <VisualState x:Name="Normal" />
                                        <VisualState x:Name="MouseOver">
                                           <Storyboard>
-                                             <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                             <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
                                                              To="#3D7CB0"
                                                              Duration="0:0:0.1" />
                                           </Storyboard>
@@ -398,7 +398,7 @@
                                        <VisualState x:Name="Pressed" />
                                        <VisualState x:Name="Disabled">
                                           <Storyboard>
-                                             <DoubleAnimation Storyboard.TargetProperty="(Border.Opacity)"
+                                             <DoubleAnimation Storyboard.TargetProperty="(Shape.Opacity)"
                                                               To="0.7"
                                                               Duration="0:0:0" />
                                           </Storyboard>
@@ -407,30 +407,22 @@
                                     <VisualStateGroup x:Name="CheckStates">
                                        <VisualState x:Name="Checked">
                                           <Storyboard>
-                                             <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                             <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
                                                              To="#3D7CB0"
                                                              Duration="0:0:0.1" />
-                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.CornerRadius)">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0">
-                                                   <DiscreteObjectKeyFrame.Value>
-                                                      <CornerRadius TopLeft="2"
-                                                                    TopRight="2" />
-                                                   </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                             </ObjectAnimationUsingKeyFrames>
                                           </Storyboard>
                                        </VisualState>
                                        <VisualState x:Name="Unchecked" />
                                        <VisualState x:Name="Indeterminate" />
                                     </VisualStateGroup>
                                  </VisualStateManager.VisualStateGroups>
-                                 <Border.Effect>
+                                 <Rectangle.Effect>
                                     <DropShadowEffect BlurRadius="3"
                                                       Opacity="0.4"
                                                       Direction="270"
                                                       ShadowDepth="1" />
-                                 </Border.Effect>
-                              </Border>
+                                 </Rectangle.Effect>
+                              </Rectangle>
                            </ControlTemplate>
                         </ToggleButton.Template>
                      </ToggleButton>
@@ -465,22 +457,22 @@
                             Focusable="False"
                             PopupAnimation="Slide"
                             VerticalOffset="-1">
-                        <Border x:Name="DropDown"
-                                SnapsToDevicePixels="True"
-                                Background="#3D7CB0"
-                                MinWidth="{TemplateBinding ActualWidth}"
-                                MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                CornerRadius="0,2,2,2"
-                                Margin="4,4,4,4">
-                           <Border.Effect>
-                              <DropShadowEffect BlurRadius="3"
-                                                Opacity="0.4"
-                                                Direction="270"
-                                                ShadowDepth="2" />
-                           </Border.Effect>
+                        <Grid SnapsToDevicePixels="True"
+                              MinWidth="{TemplateBinding ActualWidth}"
+                              MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                              Margin="4,4,4,4">
+                           <Border Background="#3D7CB0"
+                                   CornerRadius="0,0,2,2">
+                              <Border.Effect>
+                                 <DropShadowEffect BlurRadius="3"
+                                                   Opacity="0.4"
+                                                   Direction="270"
+                                                   ShadowDepth="2" />
+                              </Border.Effect>
+                           </Border>
                            <StackPanel IsItemsHost="True"
                                        KeyboardNavigation.DirectionalNavigation="Contained" />
-                        </Border>
+                        </Grid>
                      </Popup>
                   </Grid>
                </ControlTemplate>
@@ -553,7 +545,7 @@
                                     </Path.RenderTransform>
                                  </Path>
                                  <ContentPresenter Grid.Column="1"
-                                                   Margin="4,0,0,0" />
+                                                   Margin="4,0.5,0,0" />
                               </Grid>
                               <ControlTemplate.Triggers>
                                  <Trigger Property="IsMouseOver"

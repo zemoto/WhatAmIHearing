@@ -55,7 +55,7 @@
          <commonControls:AnimatedGroupedExpander Header="Window Settings"
                                                  Margin="0,0,0,4"
                                                  GroupName="Settings">
-            <StackPanel Margin="16,2,0,0">
+            <StackPanel Margin="16,4,0,0">
                <CheckBox Margin="0,0,0,2"
                          Content="Launch on Windows startup"
                          IsEnabled="{x:Static common:WindowsStartup.AllowedToStartWithWindows}"
@@ -81,7 +81,7 @@
          <commonControls:AnimatedGroupedExpander Header="Recorder Settings"
                                                  GroupName="Settings"
                                                  Margin="0,0,0,4">
-            <StackPanel Margin="16,2,0,0">
+            <StackPanel Margin="16,4,0,0">
                <StackPanel Orientation="Horizontal"
                            Margin="0,0,8,4"
                            HorizontalAlignment="Left">
@@ -129,7 +129,7 @@
                                                  GroupName="Settings"
                                                  Margin="0,0,0,4"
                                                  Grid.IsSharedSizeScope="True">
-            <StackPanel Margin="16,2,0,0">
+            <StackPanel Margin="16,4,0,0">
                <Grid Margin="0,0,0,4"
                      HorizontalAlignment="Left">
                   <Grid.ColumnDefinitions>
@@ -156,7 +156,7 @@
                              VerticalAlignment="Center" />
                </Grid>
 
-               <Grid Margin="0,0,0,4"
+               <Grid Margin="0,0,0,6"
                      Visibility="{Binding ApiVm.CanDisplayQuotaData, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}">
                   <Grid.ColumnDefinitions>
                      <ColumnDefinition Width="Auto"
