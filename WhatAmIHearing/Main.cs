@@ -126,14 +126,26 @@ internal sealed class Main : IDisposable
       if ( detectedSong?.IsComplete != true )
       {
          string errorMessage;
-         if ( _api.LastStatusCode is System.Net.HttpStatusCode.TooManyRequests )
+         if ( (int)_api.LastStatusCode is >= 200 and <= 299 )
+         {
+            errorMessage = "Shazam could not identify the audio";
+         }
+         else if ( _api.LastStatusCode is System.Net.HttpStatusCode.TooManyRequests )
          {
             errorMessage = "Max API quota reached; custom API key required";
             _window.FocusCustomApiKeyTextBox();
          }
+         else if ( _api.LastStatusCode is System.Net.HttpStatusCode.InternalServerError )
+         {
+            errorMessage = "Shazam API is down";
+         }
+         else if ( _api.LastStatusCode is System.Net.HttpStatusCode.Forbidden )
+         {
+            errorMessage = "API Key is invalid";
+         }
          else
          {
-            errorMessage = _api.LastStatusCode is System.Net.HttpStatusCode.Forbidden ? "API Key is invalid" : "Shazam could not identify the audio";
+            errorMessage = $"Unknown Error ({(int)_api.LastStatusCode}, API may be down";
          }
 
          _stateVm.State = AppState.Stopped;
