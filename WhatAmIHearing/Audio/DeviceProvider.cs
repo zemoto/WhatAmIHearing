@@ -48,9 +48,14 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
    public MMDevice GetSelectedDevice()
    {
       var selectedDevice = AppSettings.Instance.SelectedDevice;
-      return selectedDevice == Constants.DefaultDeviceName
+      if ( string.IsNullOrEmpty( selectedDevice ) )
+      {
+         return null;
+      }
+
+      return selectedDevice.Equals( Constants.DefaultDeviceName, StringComparison.OrdinalIgnoreCase )
          ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
-         : _deviceList.First( x => x.FriendlyName == selectedDevice );
+         : _deviceList.FirstOrDefault( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) );
    }
 
    public void OnDeviceStateChanged( string deviceId, DeviceState newState ) => _notificationTimer.Start();

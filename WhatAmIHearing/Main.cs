@@ -95,6 +95,13 @@ internal sealed class Main : IDisposable
 
    private async void HandleRecordingResult( RecordingResult result )
    {
+      if ( result is null )
+      {
+         _recordingManager.Reset();
+         _stateVm.SetStatusText( "Error initiating recording", isError: true );
+         return;
+      }
+
       if ( result.Cancelled )
       {
          _recordingManager.Reset();

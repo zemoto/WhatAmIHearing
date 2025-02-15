@@ -24,9 +24,14 @@ internal sealed class RecordingManager : IDisposable
 
    public async Task<RecordingResult> RecordAsync()
    {
-      Model.StateVm.State = AppState.Recording;
+      var selectedDevice = _deviceProvider.GetSelectedDevice();
+      if ( selectedDevice is null )
+      {
+         return null;
+      }
 
-      using var recorder = new Recorder( _deviceProvider.GetSelectedDevice(), _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
+      Model.StateVm.State = AppState.Recording;
+      using var recorder = new Recorder( selectedDevice, _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
       recorder.RecordingProgress += OnRecordingProgress;
       return await recorder.RecordAsync();
    }
