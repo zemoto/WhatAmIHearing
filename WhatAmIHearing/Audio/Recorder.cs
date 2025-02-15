@@ -10,7 +10,7 @@ namespace WhatAmIHearing.Audio;
 
 internal sealed class Recorder : IDisposable
 {
-   private readonly WasapiLoopbackCapture _audioCapturer;
+   private readonly WasapiCapture _audioCapturer;
    private readonly WaveFormat _waveFormat;
    private readonly long _bytesToRecord;
    private readonly double _secondsOfAudioToRecord;
@@ -23,7 +23,8 @@ internal sealed class Recorder : IDisposable
 
    public Recorder( MMDevice device, WaveFormat waveFormat, long bytesToRecord, CancellationToken cancelToken )
    {
-      _audioCapturer = new WasapiLoopbackCapture( device ) { WaveFormat = waveFormat };
+      _audioCapturer = device.DataFlow is DataFlow.Render ? new WasapiLoopbackCapture( device ) : new WasapiCapture( device );
+      _audioCapturer.WaveFormat = waveFormat;
       _audioCapturer.DataAvailable += OnDataCaptured;
       _audioCapturer.RecordingStopped += OnRecordingStopped;
 

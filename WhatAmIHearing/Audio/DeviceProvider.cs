@@ -38,7 +38,7 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
 
    private void UpdateDeviceList()
    {
-      _deviceList = [.. _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.Render, DeviceState.Active )];
+      _deviceList = [.. _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active )];
 
       DeviceNames.Clear();
       DeviceNames.Add( Constants.DefaultDeviceName );
