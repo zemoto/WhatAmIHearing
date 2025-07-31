@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
 using ZemotoCommon;
@@ -34,7 +34,7 @@ internal sealed partial class AppSettings : ObservableObject
    public void Save() => _configFile.SerializeInto( this );
 
    [ObservableProperty]
-   private string _selectedDevice = Constants.DefaultDeviceName;
+   private string _selectedDevice = Constants.DefaultOutputDeviceName;
 
    [ObservableProperty]
    private bool _keepOpenInTray = true;

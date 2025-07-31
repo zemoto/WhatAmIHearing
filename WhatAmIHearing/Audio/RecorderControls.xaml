@@ -22,9 +22,30 @@
       </Grid.ColumnDefinitions>
       <ComboBox Grid.Row="0"
                 Grid.Column="0"
-                ItemsSource="{Binding DeviceNameList, Mode=OneTime}"
+                ItemsSource="{Binding Devices, Mode=OneTime}"
+                DisplayMemberPath="Name"
+                SelectedValuePath="Name"
                 SelectedValue="{Binding Settings.SelectedDevice, Mode=TwoWay}"
-                IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static main:AppState.Stopped}, Mode=OneWay}" />
+                IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static main:AppState.Stopped}, Mode=OneWay}">
+         <ComboBox.GroupStyle>
+            <GroupStyle>
+               <GroupStyle.HeaderTemplate>
+                  <DataTemplate>
+                     <StackPanel SnapsToDevicePixels="True"
+                                 Margin="6,2,4,2"
+                                 Opacity="0.9">
+                        <TextBlock Text="{Binding Name, Mode=OneTime}"
+                                   FontWeight="SemiBold" />
+                        <Rectangle Height="1"
+                                   Margin="0,1,0,0"
+                                   VerticalAlignment="Bottom"
+                                   Fill="#80FFFFFF" />
+                     </StackPanel>
+                  </DataTemplate>
+               </GroupStyle.HeaderTemplate>
+            </GroupStyle>
+         </ComboBox.GroupStyle>
+      </ComboBox>
 
       <Grid Grid.Row="2"
             Grid.Column="0"

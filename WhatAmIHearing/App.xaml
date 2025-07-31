@@ -470,8 +470,7 @@
                                                    ShadowDepth="2" />
                               </Border.Effect>
                            </Border>
-                           <StackPanel IsItemsHost="True"
-                                       KeyboardNavigation.DirectionalNavigation="Contained" />
+                           <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
                         </Grid>
                      </Popup>
                   </Grid>
