@@ -142,17 +142,11 @@ internal sealed class Main : IDisposable
             errorMessage = "Max API quota reached; custom API key required";
             _window.FocusCustomApiKeyTextBox();
          }
-         else if ( _api.LastStatusCode is System.Net.HttpStatusCode.InternalServerError )
-         {
-            errorMessage = "Shazam API is down";
-         }
-         else if ( _api.LastStatusCode is System.Net.HttpStatusCode.Forbidden )
-         {
-            errorMessage = "API Key is invalid";
-         }
          else
          {
-            errorMessage = $"Unknown Error ({(int)_api.LastStatusCode}, API may be down";
+            errorMessage = _api.LastStatusCode is System.Net.HttpStatusCode.InternalServerError ? "Shazam API is down"
+                         : _api.LastStatusCode is System.Net.HttpStatusCode.Forbidden ? "API Key is invalid"
+                         : $"Unknown Error ({(int)_api.LastStatusCode}, API may be down";
          }
 
          _stateVm.State = AppState.Stopped;

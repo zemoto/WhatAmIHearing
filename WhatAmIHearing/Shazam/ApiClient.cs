@@ -52,10 +52,7 @@ internal sealed class ApiClient : IDisposable
 
    public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
    {
-      StringContent contentBuilder()
-      {
-         return new( Convert.ToBase64String( data ) );
-      }
+      StringContent contentBuilder() => new( Convert.ToBase64String( data ) );
 
       HttpRequestMessage messageBuilder()
       {

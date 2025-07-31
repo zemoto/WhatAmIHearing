@@ -62,6 +62,7 @@ internal sealed partial class MainWindow
       {
          error = "Failed to register hotkey";
       }
+
       return _recordHotkeyRegistered;
    }
 
@@ -109,6 +110,7 @@ internal sealed partial class MainWindow
          e.Cancel = true;
          Hide();
       }
+
       base.OnClosing( e );
    }
 

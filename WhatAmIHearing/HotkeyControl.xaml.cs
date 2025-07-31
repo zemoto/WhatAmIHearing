@@ -67,10 +67,12 @@ internal sealed partial class HotkeyControl
       {
          _ = sb.Append( "Ctrl + " );
       }
+
       if ( HotkeyModifiers.HasFlag( ModifierKeys.Alt ) )
       {
          _ = sb.Append( "Alt + " );
       }
+
       if ( HotkeyModifiers.HasFlag( ModifierKeys.Shift ) )
       {
          _ = sb.Append( "Shift + " );
