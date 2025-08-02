@@ -7,7 +7,7 @@ namespace WhatAmIHearing.Shazam;
 
 internal sealed class Api( ApiViewModel apiVm ) : IDisposable
 {
-   private const string DetectApiEndpoint = "https://shazam.p.rapidapi.com/songs/detect";
+   private const string DetectApiEndpoint = "https://shazam.p.rapidapi.com/songs/v2/detect";
 
    private readonly ApiClient _client = new( apiVm );
 
