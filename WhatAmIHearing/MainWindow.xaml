@@ -72,8 +72,7 @@
                          Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
 
-               <CheckBox Margin="0,2,0,0"
-                         Content="Keep window on top"
+               <CheckBox Content="Keep window on top"
                          IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
@@ -108,17 +107,21 @@
                             Width="80" />
                </StackPanel>
 
-               <CheckBox Content="Place identified song title on clipboard"
+               <CheckBox Content="Display input devices in device dropdown"
                          Margin="0,6,0,0"
+                         IsChecked="{Binding Settings.DisplayInputDevices, Mode=TwoWay}" />
+
+               <CheckBox Content="Place identified song title on clipboard"
+                         Margin="0,2,0,0"
                          IsChecked="{Binding Settings.PutTitleOnClipboard, Mode=TwoWay}" />
 
                <CheckBox x:Name="OpenShazamCheckbox"
                          Content="Open identified song in Shazam"
-                         Margin="0,4,0,0"
+                         Margin="0,2,0,0"
                          IsChecked="{Binding Settings.OpenShazamOnResultFound, Mode=TwoWay}" />
 
                <CheckBox Content="Minimize to tray after recording is done"
-                         Margin="8,4,0,0"
+                         Margin="8,2,0,0"
                          IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
                          Visibility="{Binding ElementName=OpenShazamCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />

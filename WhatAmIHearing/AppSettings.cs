@@ -57,6 +57,9 @@ internal sealed partial class AppSettings : ObservableObject
    private bool _keepWindowTopmost;
 
    [ObservableProperty]
+   private bool _displayInputDevices;
+
+   [ObservableProperty]
    private bool _putTitleOnClipboard;
 
    [ObservableProperty]

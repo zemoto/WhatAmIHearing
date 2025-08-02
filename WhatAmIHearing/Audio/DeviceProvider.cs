@@ -30,10 +30,17 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       _notificationTimer.Tick += OnTimerTick;
 
       Devices = new ListCollectionView( _devices );
-      Devices.GroupDescriptions.Add( new PropertyGroupDescription( nameof( DeviceListItem.Category ) ) );
 
       UpdateDeviceList();
       _ = _deviceEnumerator.RegisterEndpointNotificationCallback( this );
+
+      AppSettings.Instance.PropertyChanged += ( sender, e ) =>
+      {
+         if ( e.PropertyName == nameof( AppSettings.DisplayInputDevices ) )
+         {
+            UpdateDeviceList();
+         }
+      };
    }
 
    public void Dispose() => _deviceEnumerator.Dispose();
@@ -41,17 +48,16 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
    private void OnTimerTick( object sender, EventArgs e )
    {
       _notificationTimer.Stop();
-
-      var selectedDevice = AppSettings.Instance.SelectedDevice;
       UpdateDeviceList();
-      AppSettings.Instance.SelectedDevice = _deviceList.Any( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) ) ? selectedDevice : Constants.DefaultOutputDeviceName;
    }
 
    private void UpdateDeviceList()
    {
-      _deviceList = [.. _deviceEnumerator.EnumerateAudioEndPoints( DataFlow.All, DeviceState.Active )];
+      var selectedDevice = AppSettings.Instance.SelectedDevice;
+      _deviceList = [.. _deviceEnumerator.EnumerateAudioEndPoints( AppSettings.Instance.DisplayInputDevices ? DataFlow.All : DataFlow.Render, DeviceState.Active )];
 
       _devices.Clear();
+      Devices.GroupDescriptions.Clear();
 
       // Output devices
       _devices.Add( new DeviceListItem( Constants.DefaultOutputDeviceName, Constants.OutputDeviceCategoryName ) );
@@ -61,11 +67,18 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       }
 
       // Input devices
-      _devices.Add( new DeviceListItem( Constants.DefaultInputDeviceName, Constants.InputDeviceCategoryName ) );
-      foreach ( var device in _deviceList.Where( x => x.DataFlow is DataFlow.Capture ).Select( x => new DeviceListItem( x.FriendlyName, Constants.InputDeviceCategoryName ) ) )
+      var inputDevices = _deviceList.Where( x => x.DataFlow is DataFlow.Capture ).ToList();
+      if ( inputDevices.Any() )
       {
-         _devices.Add( device );
+         Devices.GroupDescriptions.Add( new PropertyGroupDescription( nameof( DeviceListItem.Category ) ) );
+
+         _devices.Add( new DeviceListItem( Constants.DefaultInputDeviceName, Constants.InputDeviceCategoryName ) );
+         foreach ( var device in _deviceList.Where( x => x.DataFlow is DataFlow.Capture ).Select( x => new DeviceListItem( x.FriendlyName, Constants.InputDeviceCategoryName ) ) )
+         {
+            _devices.Add( device );
+         }
       }
+      AppSettings.Instance.SelectedDevice = _deviceList.Any( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) ) ? selectedDevice : Constants.DefaultOutputDeviceName;
    }
 
    public MMDevice GetSelectedDevice()
