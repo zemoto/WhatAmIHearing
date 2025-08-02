@@ -7,7 +7,7 @@ internal sealed partial class RecorderViewModel( StateViewModel stateVm, DeviceP
 {
    public AppSettings Settings { get; } = AppSettings.Instance;
    public StateViewModel StateVm { get; } = stateVm;
-   public ListCollectionView Devices => deviceProvider.Devices;
+   public ListCollectionView Devices => deviceProvider.DevicesListView;
 
    [ObservableProperty]
    private double _recordingProgress;
