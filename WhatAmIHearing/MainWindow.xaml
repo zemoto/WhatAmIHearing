@@ -148,19 +148,19 @@
 
                   <TextBox Grid.Column="1"
                            x:Name="CustomApiKeyTextBox"
-                           Text="{Binding ApiVm.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                           Text="{Binding Settings.KeyData.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
                   <TextBlock Grid.Column="1" 
                              Text="Using default API Key"
                              IsHitTestVisible="False"
                              Margin="4,0,0,0"
                              Opacity="0.6"
-                             Visibility="{Binding ApiVm.UseDefaultKey, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
+                             Visibility="{Binding Settings.KeyData.UseDefaultKey, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                              VerticalAlignment="Center" />
                </Grid>
 
                <Grid Margin="0,0,0,6"
-                     Visibility="{Binding ApiVm.CanDisplayQuotaData, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}">
+                     Visibility="{Binding Settings.KeyData.CanDisplayQuotaData, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}">
                   <Grid.ColumnDefinitions>
                      <ColumnDefinition Width="Auto"
                                        SharedSizeGroup="ApiSettingsLabels" />
@@ -176,15 +176,15 @@
                                Margin="-1,0,1,0"
                                Background="White"
                                Foreground="{StaticResource ProgressBarFillBrush}"
-                               Maximum="{Binding ApiVm.QuotaLimit, Mode=OneWay}"
-                               Value="{Binding ApiVm.QuotaUsed, Mode=OneWay}"
+                               Maximum="{Binding Settings.KeyData.QuotaLimit, Mode=OneWay}"
+                               Value="{Binding Settings.KeyData.QuotaUsed, Mode=OneWay}"
                                ToolTip="Quota values are updated after every audio identification" />
 
                   <TextBlock Grid.Column="1"
                              Margin="4,0,0,0"
                              VerticalAlignment="Center"
                              IsHitTestVisible="False">
-                     <Run Text="{Binding ApiVm.QuotaUsed, Mode=OneWay}" /> / <Run Text="{Binding ApiVm.QuotaLimit, Mode=OneWay}" />
+                     <Run Text="{Binding Settings.KeyData.QuotaUsed, Mode=OneWay}" /> / <Run Text="{Binding Settings.KeyData.QuotaLimit, Mode=OneWay}" />
                   </TextBlock>
                </Grid>
 

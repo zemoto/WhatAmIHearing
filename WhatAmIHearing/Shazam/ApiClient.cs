@@ -12,17 +12,14 @@ namespace WhatAmIHearing.Shazam;
 
 internal sealed class ApiClient : IDisposable
 {
-   private readonly ApiViewModel _apiVm;
    private readonly ResiliencePipeline<HttpResponseMessage> _pipeline;
    private readonly HttpClient _client = new();
 
    private readonly List<CancellationTokenSource> _cancelTokenSources = [];
    private readonly object _cancelTokenLock = new();
 
-   public ApiClient( ApiViewModel apiVm )
+   public ApiClient()
    {
-      _apiVm = apiVm;
-
       var retryStrategy = new RetryStrategyOptions<HttpResponseMessage>
       {
          Delay = TimeSpan.FromSeconds( 3 ),
@@ -54,11 +51,12 @@ internal sealed class ApiClient : IDisposable
    {
       StringContent contentBuilder() => new( Convert.ToBase64String( data ) );
 
+      var appSettings = AppSettings.Instance;
       HttpRequestMessage messageBuilder()
       {
          var message = new HttpRequestMessage( HttpMethod.Post, endpoint ) { Content = contentBuilder() };
          message.Headers.Add( "x-rapidapi-host", "shazam.p.rapidapi.com" );
-         message.Headers.Add( "x-rapidapi-key", _apiVm.UseDefaultKey ? ApiViewModel.DefaultShazamApiKey : _apiVm.ShazamApiKey );
+         message.Headers.Add( "x-rapidapi-key", appSettings.KeyData.UseDefaultKey ? ApiKeyData.DefaultShazamApiKey : appSettings.KeyData.ShazamApiKey );
          return message;
       }
 
@@ -107,8 +105,9 @@ internal sealed class ApiClient : IDisposable
       if ( headers.TryGetValues( "X-RateLimit-Requests-Limit", out var limitValues ) && limitValues?.Any() == true && int.TryParse( limitValues.First(), out int quotaLimit ) &&
            headers.TryGetValues( "X-RateLimit-Requests-Remaining", out var remainingValues ) && remainingValues?.Any() == true && int.TryParse( remainingValues.First(), out int quotaRemaining ) )
       {
-         _apiVm.QuotaLimit = quotaLimit;
-         _apiVm.QuotaUsed = quotaLimit - quotaRemaining;
+         var appSettings = AppSettings.Instance;
+         appSettings.KeyData.QuotaLimit = quotaLimit;
+         appSettings.KeyData.QuotaUsed = quotaLimit - quotaRemaining;
       }
    }
 }

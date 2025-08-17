@@ -76,4 +76,34 @@ internal sealed partial class AppSettings : ObservableObject
 
    [ObservableProperty]
    private double _historyHeight = 80;
+
+   [ObservableProperty]
+   private ApiKeyData _keyData;
+}
+
+internal sealed partial class ApiKeyData : ObservableObject
+{
+   public const string DefaultShazamApiKey = "<Placeholder>";
+
+   [ObservableProperty]
+   [NotifyPropertyChangedFor( nameof( UseDefaultKey ) )]
+   [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
+   private string _shazamApiKey;
+   partial void OnShazamApiKeyChanged( string value )
+   {
+      QuotaLimit = 0;
+      QuotaUsed = 0;
+   }
+
+   public bool UseDefaultKey => string.IsNullOrWhiteSpace( _shazamApiKey );
+
+   [ObservableProperty]
+   [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
+   private int _quotaLimit = -1;
+
+   [ObservableProperty]
+   [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
+   private int _quotaUsed = -1;
+
+   public bool CanDisplayQuotaData => !UseDefaultKey && _quotaLimit > 0 && _quotaUsed >= 0;
 }

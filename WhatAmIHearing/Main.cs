@@ -14,18 +14,18 @@ internal sealed class Main : IDisposable
    private readonly StateViewModel _stateVm;
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager;
-   private readonly ApiViewModel _apiVm;
    private readonly Api _api;
    private readonly ResultHistory _history = ResultHistory.Load();
 
    public Main()
    {
-      _apiVm = ApiViewModel.Load();
-      _api = new Api( _apiVm );
+      LegacyLoader.LoadLegacyDataIntoAppSettings();
+
+      _api = new Api();
 
       _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm );
-      _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, _apiVm, SetHotkey );
+      _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, SetHotkey );
 
       _window = new MainWindow( _model );
       _window.RecordHotkeyPressed += OnRecordHotkey;
@@ -33,7 +33,6 @@ internal sealed class Main : IDisposable
 
    public void Dispose()
    {
-      _apiVm.Save();
       _history.Save();
       _recordingManager.Dispose();
       _api.Dispose();
