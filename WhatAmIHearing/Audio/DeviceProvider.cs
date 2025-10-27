@@ -3,6 +3,7 @@ using NAudio.CoreAudioApi.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -21,15 +22,15 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
    private readonly MMDeviceEnumerator _deviceEnumerator = new();
    private List<MMDevice> _deviceList;
 
-   private readonly ObservableCollection<DeviceListItem> _devicesVms = [];
-   public ListCollectionView DevicesListView { get; }
+   private ICollectionView _devicesListView;
+   public ObservableCollection<DeviceListItem> Devices = [];
 
    public DeviceProvider()
    {
       _notificationTimer.Interval = TimeSpan.FromSeconds( 1 );
       _notificationTimer.Tick += OnTimerTick;
 
-      DevicesListView = new ListCollectionView( _devicesVms );
+      _devicesListView = CollectionViewSource.GetDefaultView( Devices );
 
       UpdateDeviceList();
       _ = _deviceEnumerator.RegisterEndpointNotificationCallback( this );
@@ -56,27 +57,38 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       var selectedDevice = AppSettings.Instance.SelectedDevice;
       _deviceList = [.. _deviceEnumerator.EnumerateAudioEndPoints( AppSettings.Instance.DisplayInputDevices ? DataFlow.All : DataFlow.Render, DeviceState.Active )];
 
-      _devicesVms.Clear();
-      DevicesListView.GroupDescriptions.Clear();
+      Devices.Clear();
+      _devicesListView.GroupDescriptions.Clear();
 
       // Output devices
-      _devicesVms.Add( new DeviceListItem( Constants.DefaultOutputDeviceName, Constants.OutputDeviceCategoryName ) );
-      foreach ( var device in _deviceList.Where( x => x.DataFlow is DataFlow.Render ).Select( x => new DeviceListItem( x.FriendlyName, Constants.OutputDeviceCategoryName ) ) )
+      var outputDevices = _deviceList.FindAll( x => x.DataFlow is DataFlow.Render );
+      bool hasOutputDevices = outputDevices.Any();
+      if ( hasOutputDevices )
       {
-         _devicesVms.Add( device );
+         Devices.Add( new DeviceListItem( Constants.DefaultOutputDeviceName, Constants.OutputDeviceCategoryName ) );
+
+         foreach ( var device in outputDevices.ConvertAll( x => new DeviceListItem( x.FriendlyName, Constants.OutputDeviceCategoryName ) ) )
+         {
+            Devices.Add( device );
+         }
       }
 
       // Input devices
-      var inputDevices = _deviceList.Where( x => x.DataFlow is DataFlow.Capture ).ToList();
-      if ( inputDevices.Any() )
+      var inputDevices = _deviceList.FindAll( x => x.DataFlow is DataFlow.Capture );
+      bool hasInputDevices = inputDevices.Any();
+      if ( hasInputDevices )
       {
-         DevicesListView.GroupDescriptions.Add( new PropertyGroupDescription( nameof( DeviceListItem.Category ) ) );
+         Devices.Add( new DeviceListItem( Constants.DefaultInputDeviceName, Constants.InputDeviceCategoryName ) );
 
-         _devicesVms.Add( new DeviceListItem( Constants.DefaultInputDeviceName, Constants.InputDeviceCategoryName ) );
-         foreach ( var device in _deviceList.Where( x => x.DataFlow is DataFlow.Capture ).Select( x => new DeviceListItem( x.FriendlyName, Constants.InputDeviceCategoryName ) ) )
+         foreach ( var device in inputDevices.ConvertAll( x => new DeviceListItem( x.FriendlyName, Constants.InputDeviceCategoryName ) ) )
          {
-            _devicesVms.Add( device );
+            Devices.Add( device );
          }
+      }
+
+      if ( hasInputDevices && hasOutputDevices )
+      {
+         _devicesListView.GroupDescriptions.Add( new PropertyGroupDescription( nameof( DeviceListItem.Category ) ) );
       }
 
       AppSettings.Instance.SelectedDevice = _deviceList.Any( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) ) ? selectedDevice : Constants.DefaultOutputDeviceName;
@@ -84,6 +96,11 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
 
    public MMDevice GetSelectedDevice()
    {
+      if ( _deviceList?.Any() != true )
+      {
+         return null;
+      }
+
       var selectedDevice = AppSettings.Instance.SelectedDevice;
       return string.IsNullOrEmpty( selectedDevice ) ? null
            : selectedDevice.Equals( Constants.DefaultOutputDeviceName, StringComparison.OrdinalIgnoreCase ) ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
