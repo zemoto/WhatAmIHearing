@@ -10,7 +10,8 @@ namespace WhatAmIHearing.Result;
 internal class SongViewModel
 {
    private const string _youTubeUrl = "https://www.youtube.com/results?search_query={0}";
-   private const string _spotifyUrl = "https://open.spotify.com/search/{0}";
+   private const string _spotifySearchUrl = "https://open.spotify.com/search/{0}";
+   private const string _openInSpotifyProtocol = "spotify:search:{0}";
 
    public SongViewModel()
    {
@@ -65,5 +66,10 @@ internal class SongViewModel
    public RelayCommand FindInYouTubeCommand => _findInYouTubeCommand ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _youTubeUrl, SearchText ) ) );
 
    private RelayCommand _findInSpotifyCommand;
-   public RelayCommand FindInSpotifyCommand => _findInSpotifyCommand ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _spotifyUrl, SearchText ) ) );
+   public RelayCommand FindInSpotifyCommand => _findInSpotifyCommand ??= new RelayCommand( FindInSpotify );
+   private void FindInSpotify()
+   {
+      var url = AppSettings.Instance.OpenSpotifyLinksInApp ? _openInSpotifyProtocol : _spotifySearchUrl;
+      UtilityMethods.OpenInBrowser( string.Format( url, SearchText ) );
+   }
 }

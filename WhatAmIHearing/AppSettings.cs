@@ -66,6 +66,9 @@ internal sealed partial class AppSettings : ObservableObject
    private bool _openShazamOnResultFound;
 
    [ObservableProperty]
+   private bool _openSpotifyLinksInApp;
+
+   [ObservableProperty]
    private bool _hideWindowAfterRecord;
 
    [ObservableProperty]

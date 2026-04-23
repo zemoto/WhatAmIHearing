@@ -125,6 +125,12 @@
                          IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
                          Visibility="{Binding ElementName=OpenShazamCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
+
+               <CheckBox x:Name="OpenSpotifyCheckbox"
+                         Content="Open Spotify links in Spotify app"
+                         Margin="0,2,0,0"
+                         IsChecked="{Binding Settings.OpenSpotifyLinksInApp, Mode=TwoWay}"
+                         Visibility="{Binding CanOpenInSpotify, Mode=OneTime, Converter={StaticResource VisibleIfTrue}}" />
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
