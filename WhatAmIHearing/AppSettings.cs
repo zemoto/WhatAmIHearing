@@ -78,7 +78,7 @@ internal sealed partial class AppSettings : ObservableObject
    private double _historyHeight = 80;
 
    [ObservableProperty]
-   private ApiKeyData _keyData;
+   private ApiKeyData _keyData = new();
 }
 
 internal sealed partial class ApiKeyData : ObservableObject
