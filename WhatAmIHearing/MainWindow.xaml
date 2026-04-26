@@ -111,12 +111,12 @@
                          Margin="0,6,0,0"
                          IsChecked="{Binding Settings.DisplayInputDevices, Mode=TwoWay}" />
 
-               <CheckBox Content="Place identified song title on clipboard"
+               <CheckBox Content="Place song title on clipboard after identification"
                          Margin="0,2,0,0"
                          IsChecked="{Binding Settings.PutTitleOnClipboard, Mode=TwoWay}" />
 
                <CheckBox x:Name="OpenShazamCheckbox"
-                         Content="Open identified song in Shazam"
+                         Content="Automatically open identified song in Shazam"
                          Margin="0,2,0,0"
                          IsChecked="{Binding Settings.OpenShazamOnResultFound, Mode=TwoWay}" />
 
@@ -125,6 +125,12 @@
                          IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
                          Visibility="{Binding ElementName=OpenShazamCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
+
+               <CheckBox x:Name="OpenSpotifyCheckbox"
+                         Content="Open Spotify links in Spotify app"
+                         Margin="0,2,0,0"
+                         IsChecked="{Binding Settings.OpenSpotifyLinksInApp, Mode=TwoWay}"
+                         Visibility="{Binding CanOpenInSpotify, Mode=OneTime, Converter={StaticResource VisibleIfTrue}}" />
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 

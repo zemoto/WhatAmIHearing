@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Result;
-using WhatAmIHearing.Shazam;
 
 namespace WhatAmIHearing;
 
@@ -29,6 +29,25 @@ internal sealed partial class MainViewModel : ObservableObject
 
    [ObservableProperty]
    public SongViewModel _selectedSong;
+
+   private bool? _canOpenInSpotify;
+   public bool CanOpenInSpotify
+   {
+      get
+      {
+         if ( _canOpenInSpotify is null )
+         {
+            using RegistryKey key = Registry.ClassesRoot.OpenSubKey( "spotify" );
+            _canOpenInSpotify = key is not null;
+            if ( !_canOpenInSpotify.Value )
+            {
+               Settings.OpenSpotifyLinksInApp = false;
+            }
+         }
+
+         return _canOpenInSpotify.Value;
+      }
+   }
 
    public RelayCommand<Hotkey> SetHotkeyCommand { get; }
    public RelayCommand<SongViewModel> DeleteSongFromHistoryCommand { get; }
