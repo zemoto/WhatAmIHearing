@@ -48,7 +48,9 @@ Uses POST calls to [Shazam's API](https://rapidapi.com/apidojo/api/shazam) with 
 The [NAudio](https://github.com/naudio/NAudio) package is used for recording, resampling, and playback. The [Recorder](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/Audio/Recorder.cs) class handles wrapping all the recording logic.
 
 ### Compiling
-The app is compiled with Visual Studio Community 2026. For building the release version, I use the `Publish` feature in Visual Studio with the following settings:
+The app is compiled with Visual Studio Community 2026. The [default API key](https://github.com/zemoto/WhatAmIHearing/blob/main/WhatAmIHearing/AppSettings.cs#L89) commited to GitHub is a placeholder. If you compile the app yourself it will not work without your own API key.
+
+For building the release version, I use the `Publish` feature in Visual Studio with the following settings:
 - Configuration: `Release` (default configuration provided by Visual Studio)
 - Target Framework: `net6.0-windows`
 - Target Runtime: `win-x64`
