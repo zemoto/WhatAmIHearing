@@ -1,4 +1,4 @@
-﻿using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -104,7 +104,17 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
          _devicesListView.GroupDescriptions.Add( new PropertyGroupDescription( nameof( DeviceListItem.Category ) ) );
       }
 
-      AppSettings.Instance.SelectedDevice = _deviceList.Any( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) ) ? selectedDevice : Constants.DefaultOutputDeviceName;
+      // Reselect the previously selected device if it's still available, otherwise select the default output device
+      if ( selectedDevice.Equals( Constants.DefaultOutputDeviceName, StringComparison.OrdinalIgnoreCase ) ||
+         ( selectedDevice.Equals( Constants.DefaultInputDeviceName, StringComparison.OrdinalIgnoreCase ) && AppSettings.Instance.DisplayInputDevices ) ||
+         _deviceList.Any( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) ) )
+      {
+         AppSettings.Instance.SelectedDevice = selectedDevice;
+      }
+      else
+      {
+         AppSettings.Instance.SelectedDevice = Constants.DefaultOutputDeviceName;
+      }
    }
 
    public MMDevice GetSelectedDevice()
