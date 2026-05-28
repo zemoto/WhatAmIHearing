@@ -27,20 +27,29 @@ internal class SongViewModel
 
    public string CoverArtUrl { get; init; }
 
-   private BitmapImage _coverArt;
    public BitmapImage CoverArt
    {
       get
       {
-         if ( !string.IsNullOrEmpty( CoverArtUrl ) && _coverArt is null )
+         if ( !string.IsNullOrEmpty( CoverArtUrl ) && field is null )
          {
-            _coverArt = new BitmapImage();
-            _coverArt.BeginInit();
-            _coverArt.UriSource = new Uri( CoverArtUrl, UriKind.Absolute );
-            _coverArt.EndInit();
+            field = new BitmapImage();
+            field.BeginInit();
+            field.CacheOption = BitmapCacheOption.OnLoad;
+            field.UriSource = new Uri( CoverArtUrl, UriKind.Absolute );
+            field.EndInit();
+
+            if ( field.IsDownloading )
+            {
+               field.DownloadCompleted += ( s, e ) => ( (BitmapImage)s ).Freeze();
+            }
+            else
+            {
+               field.Freeze();
+            }
          }
 
-         return _coverArt;
+         return field;
       }
    }
 
