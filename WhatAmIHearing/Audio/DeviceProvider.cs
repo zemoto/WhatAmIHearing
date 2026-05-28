@@ -35,16 +35,19 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       UpdateDeviceList();
       _ = _deviceEnumerator.RegisterEndpointNotificationCallback( this );
 
-      AppSettings.Instance.PropertyChanged += ( sender, e ) =>
-      {
-         if ( e.PropertyName == nameof( AppSettings.DisplayInputDevices ) )
-         {
-            UpdateDeviceList();
-         }
-      };
+      AppSettings.Instance.PropertyChanged += OnAppSettingsPropertyChanged;
    }
 
-   public void Dispose() => _deviceEnumerator.Dispose();
+   public void Dispose()
+   {
+      _deviceList?.ForEach( x => x.Dispose() );
+
+      _ = _deviceEnumerator.UnregisterEndpointNotificationCallback( this );
+      _deviceEnumerator.Dispose();
+
+      _notificationTimer.Stop();
+      AppSettings.Instance.PropertyChanged -= OnAppSettingsPropertyChanged;
+   }
 
    private void OnTimerTick( object sender, EventArgs e )
    {
@@ -52,9 +55,19 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       UpdateDeviceList();
    }
 
+   private void OnAppSettingsPropertyChanged( object sender, PropertyChangedEventArgs e )
+   {
+      if ( e.PropertyName == nameof( AppSettings.DisplayInputDevices ) )
+      {
+         UpdateDeviceList();
+      }
+   }
+
    private void UpdateDeviceList()
    {
       var selectedDevice = AppSettings.Instance.SelectedDevice;
+
+      _deviceList?.ForEach( x => x.Dispose() );
       _deviceList = [.. _deviceEnumerator.EnumerateAudioEndPoints( AppSettings.Instance.DisplayInputDevices ? DataFlow.All : DataFlow.Render, DeviceState.Active )];
 
       Devices.Clear();
