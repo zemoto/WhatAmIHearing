@@ -141,9 +141,11 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       }
    }
 
-   public void OnDeviceStateChanged( string deviceId, DeviceState newState ) => _notificationTimer.Start();
-   public void OnDeviceAdded( string pwstrDeviceId ) => _notificationTimer.Start();
-   public void OnDeviceRemoved( string deviceId ) => _notificationTimer.Start();
+   private void ScheduleDeviceListUpdate() => _notificationTimer.Dispatcher.BeginInvoke( _notificationTimer.Start );
+
+   public void OnDeviceStateChanged( string deviceId, DeviceState newState ) => ScheduleDeviceListUpdate();
+   public void OnDeviceAdded( string pwstrDeviceId ) => ScheduleDeviceListUpdate();
+   public void OnDeviceRemoved( string deviceId ) => ScheduleDeviceListUpdate();
    public void OnDefaultDeviceChanged( DataFlow flow, Role role, string defaultDeviceId ) { }
    public void OnPropertyValueChanged( string pwstrDeviceId, PropertyKey key ) { }
 }
