@@ -24,7 +24,7 @@ internal sealed class RecordingManager : IDisposable
 
    public async Task<RecordingResult> RecordAsync()
    {
-      var selectedDevice = _deviceProvider.GetSelectedDevice();
+      using var selectedDevice = _deviceProvider.GetSelectedDevice();
       if ( selectedDevice is null )
       {
          return null;

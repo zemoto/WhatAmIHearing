@@ -117,18 +117,28 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       }
    }
 
+   // Returned MMDevice should be disposed by the caller
    public MMDevice GetSelectedDevice()
    {
-      if ( _deviceList?.Any() != true )
+      var selectedDevice = AppSettings.Instance.SelectedDevice;
+      if ( _deviceList?.Any() != true || string.IsNullOrEmpty( selectedDevice ) )
       {
          return null;
       }
-
-      var selectedDevice = AppSettings.Instance.SelectedDevice;
-      return string.IsNullOrEmpty( selectedDevice ) ? null
-           : selectedDevice.Equals( Constants.DefaultOutputDeviceName, StringComparison.OrdinalIgnoreCase ) ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console )
-           : selectedDevice.Equals( Constants.DefaultInputDeviceName, StringComparison.OrdinalIgnoreCase ) ? _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Capture, Role.Console )
-           : _deviceList.FirstOrDefault( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) );
+      else if ( selectedDevice.Equals( Constants.DefaultOutputDeviceName, StringComparison.OrdinalIgnoreCase ) )
+      {
+         return _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console );
+      }
+      else if ( selectedDevice.Equals( Constants.DefaultInputDeviceName, StringComparison.OrdinalIgnoreCase ) )
+      {
+         return _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Capture, Role.Console );
+      }
+      else
+      {
+         // Make sure we return a copy of the device from the enumerator to ensure it does not get disposed when the device list is updated
+         var device = _deviceList.FirstOrDefault( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) );
+         return device is not null ? _deviceEnumerator.GetDevice( device.ID ) : null;
+      }
    }
 
    public void OnDeviceStateChanged( string deviceId, DeviceState newState ) => _notificationTimer.Start();
