@@ -43,16 +43,16 @@ internal sealed class Recorder : IDisposable
       _audioWriter.Dispose();
       _recordedFileStream.Dispose();
 
-      _audioCapturer.Dispose();
       _audioCapturer.DataAvailable -= OnDataCaptured;
       _audioCapturer.RecordingStopped -= OnRecordingStopped;
+      _audioCapturer.Dispose();
 
       _recordingFinishedEvent.Dispose();
    }
 
    public async Task<RecordingResult> RecordAsync()
    {
-      RecordingProgress.Invoke( this, new RecordingProgressEventArgs( 0, GetStatusText( 0 ) ) );
+      RecordingProgress?.Invoke( this, new RecordingProgressEventArgs( 0, GetStatusText( 0 ) ) );
       _audioCapturer.StartRecording();
 
       _ = await Task.Run( _recordingFinishedEvent.WaitOne );
@@ -76,7 +76,7 @@ internal sealed class Recorder : IDisposable
       else
       {
          _audioWriter.Write( e.Buffer, 0, e.BytesRecorded );
-         RecordingProgress.Invoke( this, new RecordingProgressEventArgs( (double)_audioWriter.Position / _bytesToRecord, GetStatusText( _audioWriter.Position ) ) );
+         RecordingProgress?.Invoke( this, new RecordingProgressEventArgs( (double)_audioWriter.Position / _bytesToRecord, GetStatusText( _audioWriter.Position ) ) );
       }
    }
 

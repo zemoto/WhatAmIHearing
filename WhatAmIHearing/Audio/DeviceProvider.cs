@@ -23,7 +23,7 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
    private List<MMDevice> _deviceList;
 
    private ICollectionView _devicesListView;
-   public ObservableCollection<DeviceListItem> Devices = [];
+   public ObservableCollection<DeviceListItem> Devices { get; } = [];
 
    public DeviceProvider()
    {

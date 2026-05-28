@@ -128,6 +128,13 @@ internal sealed class Main : IDisposable
          _recordingManager.Reset();
          return;
       }
+      catch
+      {
+         _recordingManager.Reset();
+         _stateVm.SetStatusText( "Unknown error communicating with Shazam", isError: true );
+         ShowAndForegroundMainWindow();
+         return;
+      }
 
       if ( detectedSong?.IsComplete != true )
       {
@@ -145,7 +152,7 @@ internal sealed class Main : IDisposable
          {
             errorMessage = _api.LastStatusCode is System.Net.HttpStatusCode.InternalServerError ? "Shazam API is down"
                          : _api.LastStatusCode is System.Net.HttpStatusCode.Forbidden ? "API Key is invalid"
-                         : $"Unknown Error ({(int)_api.LastStatusCode}, API may be down";
+                         : $"Unknown Error ({(int)_api.LastStatusCode}), API may be down";
          }
 
          _stateVm.State = AppState.Stopped;
