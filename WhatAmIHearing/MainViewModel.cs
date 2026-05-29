@@ -38,7 +38,7 @@ internal sealed partial class MainViewModel : ObservableObject
          if ( _canOpenInSpotify is null )
          {
             using RegistryKey key = Registry.ClassesRoot.OpenSubKey( "spotify" );
-            _canOpenInSpotify = key is not null;
+            _canOpenInSpotify = key?.GetValue( "" ) is not null;
             if ( !_canOpenInSpotify.Value )
             {
                Settings.OpenSpotifyLinksInApp = false;
