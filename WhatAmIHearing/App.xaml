@@ -303,6 +303,63 @@
          </Setter>
       </Style>
 
+      <Style x:Key="{x:Type ScrollViewer}"
+             TargetType="{x:Type ScrollViewer}">
+         <Setter Property="Template">
+            <Setter.Value>
+               <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                  <Grid Background="Transparent">
+                     <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
+                                             CanContentScroll="{TemplateBinding CanContentScroll}"
+                                             Content="{TemplateBinding Content}"
+                                             Margin="{TemplateBinding Padding}" />
+
+                     <ScrollBar x:Name="PART_VerticalScrollBar"
+                                HorizontalAlignment="Right"
+                                Value="{TemplateBinding VerticalOffset}"
+                                Maximum="{TemplateBinding ScrollableHeight}"
+                                ViewportSize="{TemplateBinding ViewportHeight}"
+                                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}">
+                        <ScrollBar.Template>
+                           <ControlTemplate TargetType="{x:Type ScrollBar}">
+                              <Track x:Name="PART_Track"
+                                     Focusable="false"
+                                     IsDirectionReversed="true"
+                                     HorizontalAlignment="Right">
+                                 <Track.Thumb>
+                                    <Thumb x:Name="TrackThumb"
+                                           Opacity="0.25"
+                                           Width="6"
+                                           Margin="4,3">
+                                       <Thumb.Template>
+                                          <ControlTemplate TargetType="{x:Type Thumb}">
+                                             <Border Background="White"
+                                                     CornerRadius="4" />
+                                          </ControlTemplate>
+                                       </Thumb.Template>
+                                    </Thumb>
+                                 </Track.Thumb>
+                              </Track>
+                              <ControlTemplate.Triggers>
+                                 <Trigger Property="IsMouseOver"
+                                          Value="True">
+                                    <Setter TargetName="TrackThumb"
+                                            Property="Opacity"
+                                            Value="0.35" />
+                                    <Setter TargetName="TrackThumb"
+                                            Property="Width"
+                                            Value="7" />
+                                 </Trigger>
+                              </ControlTemplate.Triggers>
+                           </ControlTemplate>
+                        </ScrollBar.Template>
+                     </ScrollBar>
+                  </Grid>
+               </ControlTemplate>
+            </Setter.Value>
+         </Setter>
+      </Style>
+
       <Style x:Key="{x:Type ComboBox}"
              TargetType="{x:Type ComboBox}">
          <Setter Property="Foreground"
@@ -470,7 +527,10 @@
                                                    ShadowDepth="2" />
                               </Border.Effect>
                            </Border>
-                           <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                           <ScrollViewer HorizontalScrollBarVisibility="Hidden"
+                                         VerticalScrollBarVisibility="Auto">
+                              <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                           </ScrollViewer>
                         </Grid>
                      </Popup>
                   </Grid>
