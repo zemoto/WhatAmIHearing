@@ -70,14 +70,17 @@
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
                          Margin="0,0,0,2"
                          Content="Keep open in system tray"
+                         ToolTip="When closing this window, WhatAmIHearing will continue to run in the background and can be accessed from the system tray"
                          IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
 
                <CheckBox Margin="8,2"
                          Content="Launch hidden"
+                         ToolTip="WhatAmIHearing will launch hidden, accessible from the system tray"
                          Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
 
                <CheckBox Content="Keep window on top"
+                         ToolTip="WhatAmIHearing will attempt to always stay above other windows"
                          IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
@@ -122,6 +125,7 @@
 
                <CheckBox x:Name="OpenShazamCheckbox"
                          Content="Automatically open identified song in Shazam"
+                         ToolTip="After a successful song identification, WhatAmIHearing will automatically open the song's page in Shazam"
                          Margin="0,2,0,0"
                          IsChecked="{Binding Settings.OpenShazamOnResultFound, Mode=TwoWay}" />
 
@@ -133,6 +137,7 @@
 
                <CheckBox x:Name="OpenSpotifyCheckbox"
                          Content="Open Spotify links in Spotify app"
+                         ToolTip="Whether to use the browser or Spotify app to open Spotify links"
                          Margin="0,2,0,0"
                          IsChecked="{Binding Settings.OpenSpotifyLinksInApp, Mode=TwoWay}"
                          Visibility="{Binding CanOpenInSpotify, Mode=OneTime, Converter={StaticResource VisibleIfTrue}}" />
