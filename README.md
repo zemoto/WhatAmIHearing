@@ -23,7 +23,7 @@ By default, it will install to `%LOCALAPPDATA%\Microsoft\WinGet\Packages` and a 
 
 
 ### Updating
-Settings and history are stored in `config.json` next to `WhatAmIHearing.exe` by default. As of v3.5, there is an option under "Window Settings" to instead save it in App Settings. When updating, if not saving to App Settings, you need to move `config.json` from your previous version and put it next to the new `WhatAmIHearing.exe`.
+Settings and history are stored in `config.json` next to `WhatAmIHearing.exe` by default. As of v3.5, there is an option under "Window Settings" to instead save it in AppData. When updating, if not saving to AppData, you need to move `config.json` from your previous version and put it next to the new `WhatAmIHearing.exe`.
 
 ## Rate Limiting
 
