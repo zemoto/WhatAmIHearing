@@ -10,8 +10,8 @@ internal sealed partial class RecorderViewModel( StateViewModel stateVm, DeviceP
    public ObservableCollection<DeviceListItem> Devices => deviceProvider.Devices;
 
    [ObservableProperty]
-   private double _recordingProgress;
+   public partial double RecordingProgress { get; set; }
 
    [ObservableProperty]
-   private double _recordPercent = 1.0;
+   public partial double RecordPercent { get; set; } = 1.0;
 }

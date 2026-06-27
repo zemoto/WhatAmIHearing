@@ -20,7 +20,7 @@ internal sealed partial class StateViewModel( Action changeStateAction ) : Obser
    }
 
    [ObservableProperty]
-   private AppState _state;
+   public partial AppState State { get; set; }
 
    private string _statusText;
    public string StatusText

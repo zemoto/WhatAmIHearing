@@ -24,10 +24,10 @@ internal sealed partial class MainViewModel : ObservableObject
    public ObservableCollection<SongViewModel> History { get; }
 
    [ObservableProperty]
-   private string _hotkeyRegisterError;
+   public partial string HotkeyRegisterError { get; set; }
 
    [ObservableProperty]
-   public SongViewModel _selectedSong;
+   public partial SongViewModel SelectedSong { get; set; }
 
    private bool? _canOpenInSpotify;
    public bool CanOpenInSpotify

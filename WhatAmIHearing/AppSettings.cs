@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 using System.Windows.Input;
 using WhatAmIHearing.Result;
 using ZemotoCommon;
@@ -25,67 +26,64 @@ internal sealed partial class AppSettings : ObservableObject
 {
    private static readonly SystemFile _configFile = new( "config.json" );
 
-   private static AppSettings _instance;
-   public static AppSettings Instance => _instance ??= Load();
+   public static AppSettings Instance => field ??= _configFile.DeserializeContents<AppSettings>() ?? new AppSettings();
 
-   private static AppSettings Load() => _configFile.DeserializeContents<AppSettings>() ?? new AppSettings();
-
-   public AppSettings() => _launchOnWindowsStartup = WindowsStartup.GetStartupWithWindows();
+   public AppSettings() => LaunchOnWindowsStartup = WindowsStartup.GetStartupWithWindows();
 
    public void Save() => _configFile.SerializeInto( this );
 
    [ObservableProperty]
-   private string _selectedDevice = Constants.DefaultOutputDeviceName;
+   public partial string SelectedDevice { get; set; } = Constants.DefaultOutputDeviceName;
 
    [ObservableProperty]
-   private bool _keepOpenInTray = true;
+   public partial bool KeepOpenInTray { get; set; } = true;
 
    [ObservableProperty]
-   [property: System.Text.Json.Serialization.JsonIgnore] // Don't write to settings file. Value depends on reg key.
-   private bool _launchOnWindowsStartup;
+   [JsonIgnore] // Don't write to settings file. Value depends on reg key.
+   public partial bool LaunchOnWindowsStartup { get; set; }
    partial void OnLaunchOnWindowsStartupChanged( bool oldValue, bool newValue )
    {
       if ( !WindowsStartup.SetStartupWithWindows( newValue ) )
       {
-         _launchOnWindowsStartup = oldValue;
+         LaunchOnWindowsStartup = oldValue;
       }
    }
 
    [ObservableProperty]
-   private bool _openHidden;
+   public partial bool OpenHidden { get; set; }
 
    [ObservableProperty]
-   private bool _keepWindowTopmost;
+   public partial bool KeepWindowTopmost { get; set; }
 
    [ObservableProperty]
-   private bool _displayInputDevices;
+   public partial bool DisplayInputDevices { get; set; }
 
    [ObservableProperty]
-   private bool _putTitleOnClipboard;
+   public partial bool PutTitleOnClipboard { get; set; }
 
    [ObservableProperty]
-   private bool _openShazamOnResultFound;
+   public partial bool OpenShazamOnResultFound { get; set; }
 
    [ObservableProperty]
-   private bool _openSpotifyLinksInApp = true;
+   public partial bool OpenSpotifyLinksInApp { get; set; } = true;
 
    [ObservableProperty]
-   private bool _hideWindowAfterRecord;
+   public partial bool HideWindowAfterRecord { get; set; }
 
    [ObservableProperty]
-   private ProgressDisplayType _progressType = ProgressDisplayType.Seconds;
+   public partial ProgressDisplayType ProgressType { get; set; } = ProgressDisplayType.Seconds;
 
    [ObservableProperty]
-   private Hotkey _recordHotkey = new( Key.F2, ModifierKeys.Shift );
+   public partial Hotkey RecordHotkey { get; set; } = new( Key.F2, ModifierKeys.Shift );
 
    [ObservableProperty]
-   private double _historyHeight = 80;
+   public partial double HistoryHeight { get; set; } = 80;
 
    [ObservableProperty]
-   private ApiKeyData _keyData = new();
+   public partial ApiKeyData KeyData { get; set; } = new();
 
    [ObservableProperty]
-   private ObservableCollection<SongViewModel> _history = [];
+   public partial ObservableCollection<SongViewModel> History { get; set; } = [];
 }
 
 internal sealed partial class ApiKeyData : ObservableObject
@@ -95,22 +93,23 @@ internal sealed partial class ApiKeyData : ObservableObject
    [ObservableProperty]
    [NotifyPropertyChangedFor( nameof( UseDefaultKey ) )]
    [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
-   private string _shazamApiKey;
+   public partial string ShazamApiKey { get; set; }
+
    partial void OnShazamApiKeyChanged( string value )
    {
       QuotaLimit = 0;
       QuotaUsed = 0;
    }
 
-   public bool UseDefaultKey => string.IsNullOrWhiteSpace( _shazamApiKey );
+   public bool UseDefaultKey => string.IsNullOrWhiteSpace( ShazamApiKey );
 
    [ObservableProperty]
    [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
-   private int _quotaLimit = -1;
+   public partial int QuotaLimit { get; set; } = -1;
 
    [ObservableProperty]
    [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
-   private int _quotaUsed = -1;
+   public partial int QuotaUsed { get; set; } = -1;
 
-   public bool CanDisplayQuotaData => !UseDefaultKey && _quotaLimit > 0 && _quotaUsed >= 0;
+   public bool CanDisplayQuotaData => !UseDefaultKey && QuotaLimit > 0 && QuotaUsed >= 0;
 }
