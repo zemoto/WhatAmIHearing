@@ -23,7 +23,7 @@ By default, it will install to `%LOCALAPPDATA%\Microsoft\WinGet\Packages` and a 
 
 
 ### Updating
-Settings are stored in a `config.json` and history is stored in `history.json`. Both files are kept next to your `WhatAmIHearing.exe`. When updating, to keep your settings you need to move those files from your previous version and put them next to the new `WhatAmIHearing.exe`.
+Settings and history are stored in `config.json` next to `WhatAmIHearing.exe` by default. As of v3.5, there is an option under "Window Settings" to instead save it in App Settings. When updating, if not saving to App Settings, you need to move `config.json` from your previous version and put it next to the new `WhatAmIHearing.exe`.
 
 ## Rate Limiting
 
@@ -32,7 +32,7 @@ Shazam's API has a monthly quota of 500 requests per month on the free tier. To 
 To get an API key:
 1. Go to https://rapidapi.com and make an account.
 2. Go to https://rapidapi.com/apidojo/api/shazam and subscribe to the free tier. This should not require any additional info.
-3. Go to https://rapidapi.com/developer/dashboard to see a new Shazam app created for you. Should be named something like `default-application_#######`.
+3. Go to https://rapidapi.com/developer/dashboard to see a new Shazam app created for you.
 4. The Authorization section of that app contains the API key which can be pasted in the API Key text box in the app. WhatAmIHearing will immediately start using the new key without having to restart. 
 
 Feel free to ask any questions or report any issues by creating a [new Issue](https://github.com/zemoto/WhatAmIHearing/issues).
