@@ -209,7 +209,7 @@
                         Height="{Binding Settings.HistoryHeight, Mode=TwoWay}"
                         MinHeight="60"
                         Style="{StaticResource HistoryListBoxStyle}"
-                        ItemsSource="{Binding History, Mode=OneWay}"
+                        ItemsSource="{Binding Settings.History, Mode=OneWay}"
                         SelectedItem="{Binding SelectedSong, Mode=TwoWay}" />
                <commonControls:ResizeGripper Focusable="False"
                                              Template="{StaticResource HistoryResizeGripperTemplate}"

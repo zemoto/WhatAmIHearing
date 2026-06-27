@@ -15,7 +15,6 @@ internal sealed class Main : IDisposable
    private readonly MainWindow _window;
    private readonly RecordingManager _recordingManager;
    private readonly Api _api;
-   private readonly ResultHistory _history = ResultHistory.Load();
 
    public Main()
    {
@@ -25,7 +24,7 @@ internal sealed class Main : IDisposable
 
       _stateVm = new StateViewModel( ChangeStateAsync );
       _recordingManager = new RecordingManager( _stateVm );
-      _model = new MainViewModel( _stateVm, _recordingManager.Model, _history, SetHotkey );
+      _model = new MainViewModel( _stateVm, _recordingManager.Model, SetHotkey );
 
       _window = new MainWindow( _model );
       _window.RecordHotkeyPressed += OnRecordHotkey;
@@ -33,7 +32,6 @@ internal sealed class Main : IDisposable
 
    public void Dispose()
    {
-      _history.Save();
       _recordingManager.Dispose();
       _api.Dispose();
    }
@@ -165,19 +163,21 @@ internal sealed class Main : IDisposable
       _recordingManager.Reset();
 
       var songVm = new SongViewModel( detectedSong );
-      _history.Insert( 0, songVm );
+
+      var appSettings = AppSettings.Instance;
+      appSettings.History.Insert( 0, songVm );
       _model.SelectedSong = songVm;
 
-      if ( AppSettings.Instance.PutTitleOnClipboard )
+      if ( appSettings.PutTitleOnClipboard )
       {
          _model.SelectedSong.CopyTitleToClipboard.Execute( null );
       }
 
-      if ( AppSettings.Instance.OpenShazamOnResultFound )
+      if ( appSettings.OpenShazamOnResultFound )
       {
          UtilityMethods.OpenInBrowser( _model.SelectedSong.ShazamUrl );
 
-         if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.HideWindowAfterRecord )
+         if ( appSettings.KeepOpenInTray && appSettings.HideWindowAfterRecord )
          {
             _window.Hide();
          }

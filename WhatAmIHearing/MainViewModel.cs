@@ -10,11 +10,10 @@ namespace WhatAmIHearing;
 
 internal sealed partial class MainViewModel : ObservableObject
 {
-   public MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, ResultHistory history, Action<Hotkey> setHotkeyAction )
+   public MainViewModel( StateViewModel stateVm, RecorderViewModel recorderVm, Action<Hotkey> setHotkeyAction )
    {
       StateVm = stateVm;
       RecorderVm = recorderVm;
-      History = history;
       SetHotkeyCommand = new RelayCommand<Hotkey>( setHotkeyAction );
       DeleteSongFromHistoryCommand = new RelayCommand<SongViewModel>( song => _ = History.Remove( song ) );
    }

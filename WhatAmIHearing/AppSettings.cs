@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Text.Json.Serialization;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
+using WhatAmIHearing.Result;
 using ZemotoCommon;
 
 namespace WhatAmIHearing;
@@ -40,7 +41,7 @@ internal sealed partial class AppSettings : ObservableObject
    private bool _keepOpenInTray = true;
 
    [ObservableProperty]
-   [property: JsonIgnore] // Don't write to settings file. Value depends on reg key.
+   [property: System.Text.Json.Serialization.JsonIgnore] // Don't write to settings file. Value depends on reg key.
    private bool _launchOnWindowsStartup;
    partial void OnLaunchOnWindowsStartupChanged( bool oldValue, bool newValue )
    {
@@ -82,6 +83,9 @@ internal sealed partial class AppSettings : ObservableObject
 
    [ObservableProperty]
    private ApiKeyData _keyData = new();
+
+   [ObservableProperty]
+   private ObservableCollection<SongViewModel> _history = [];
 }
 
 internal sealed partial class ApiKeyData : ObservableObject
