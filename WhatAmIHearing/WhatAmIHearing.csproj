@@ -22,9 +22,9 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="ConfigureAwait.Fody" Version="3.4.0" PrivateAssets="All" />
+    <PackageReference Include="ConfigureAwait.Fody" Version="3.4.1" PrivateAssets="All" />
     <PackageReference Include="NAudio" Version="2.3.0" />
-    <PackageReference Include="Polly" Version="8.6.6" />
+    <PackageReference Include="Polly" Version="8.7.0" />
   </ItemGroup>
 
   <ItemGroup>
