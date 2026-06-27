@@ -57,6 +57,11 @@
                                                  GroupName="Settings">
             <StackPanel Margin="16,4,0,0">
                <CheckBox Margin="0,0,0,2"
+                         Content="Save settings in app data"
+                         ToolTip="Save setting in Roaming AppData folder instead of next to application"
+                         IsChecked="{Binding Settings.SaveSettingsInAppData, Mode=TwoWay}" />
+
+               <CheckBox Margin="0,0,0,2"
                          Content="Launch on Windows startup"
                          IsEnabled="{x:Static common:WindowsStartup.AllowedToStartWithWindows}"
                          ToolTip="{x:Static common:WindowsStartup.NotAllowedReason}"

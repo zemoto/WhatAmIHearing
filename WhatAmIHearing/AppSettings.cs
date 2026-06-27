@@ -1,6 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text.Json.Serialization;
+using System.Windows;
 using System.Windows.Input;
 using WhatAmIHearing.Result;
 using ZemotoCommon;
@@ -24,9 +27,31 @@ internal readonly struct Hotkey( Key key, ModifierKeys modifiers )
 
 internal sealed partial class AppSettings : ObservableObject
 {
-   private static readonly SystemFile _configFile = new( "config.json" );
+   private const string _settingsFileName = "config.json";
+   private static readonly string _appDataFolderPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData ), Constants.AppName );
+   private static readonly string _localFolderPath = AppContext.BaseDirectory;
 
-   public static AppSettings Instance => field ??= _configFile.DeserializeContents<AppSettings>() ?? new AppSettings();
+   private static SystemFile _configFile;
+
+   static AppSettings()
+   {
+      bool? saveSettingsInAppData;
+      _configFile = new( Path.Combine( _appDataFolderPath, _settingsFileName ) );
+      if ( _configFile.Exists() )
+      {
+         saveSettingsInAppData = true;
+      }
+      else
+      {
+         _configFile = new( Path.Combine( _localFolderPath, _settingsFileName ) );
+         saveSettingsInAppData = false;
+      }
+
+      Instance = _configFile.DeserializeContents<AppSettings>() ?? new AppSettings();
+      Instance.SaveSettingsInAppData = saveSettingsInAppData;
+   }
+
+   public static AppSettings Instance { get; }
 
    public AppSettings() => LaunchOnWindowsStartup = WindowsStartup.GetStartupWithWindows();
 
@@ -37,6 +62,35 @@ internal sealed partial class AppSettings : ObservableObject
 
    [ObservableProperty]
    public partial bool KeepOpenInTray { get; set; } = true;
+
+   public bool? SaveSettingsInAppData
+   {
+      get;
+      set
+      {
+         if ( !field.HasValue || value is null )
+         {
+            field = value;
+            return;
+         }
+
+         if ( field.Value != value.Value )
+         {
+            var newFolder = value.Value ? _appDataFolderPath : _localFolderPath;
+            UtilityMethods.CreateDirectory( newFolder );
+            if ( _configFile.MoveTo( Path.Combine( newFolder, _settingsFileName ), overwrite: true, out var newConfigFile ) )
+            {
+               _configFile = newConfigFile;
+               field = value;
+               OnPropertyChanged( nameof( SaveSettingsInAppData ) );
+            }
+            else
+            {
+               _ = MessageBox.Show( "Failed to move settings file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error );
+            }
+         }
+      }
+   }
 
    [ObservableProperty]
    [JsonIgnore] // Don't write to settings file. Value depends on reg key.
