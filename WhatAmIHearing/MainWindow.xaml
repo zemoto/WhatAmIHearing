@@ -58,8 +58,8 @@
                                                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
             <StackPanel>
                <CheckBox Margin="0,0,0,2"
-                         Content="Save settings in app data"
-                         ToolTip="Save setting in Roaming AppData folder instead of next to application"
+                         Content="Save app settings in user settings folder"
+                         ToolTip="Checked: Settings are saved in Roaming AppData (Tied to system and user)&#x0a;Unchecked: Settings are saved in the same folder as the exe (Self-contained and portable)"
                          IsChecked="{Binding Settings.SaveSettingsInAppData, Mode=TwoWay}" />
 
                <CheckBox Margin="0,0,0,2"

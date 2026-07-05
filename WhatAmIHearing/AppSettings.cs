@@ -71,6 +71,7 @@ internal sealed partial class AppSettings : ObservableObject
    [ObservableProperty]
    public partial bool KeepOpenInTray { get; set; } = true;
 
+   [JsonIgnore] // Don't write to settings file. Value depends whether there is a settings file in AppData or not.
    public bool? SaveSettingsInAppData
    {
       get;
