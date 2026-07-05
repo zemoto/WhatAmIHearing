@@ -54,7 +54,8 @@
 
          <commonControls:AnimatedGroupedExpander Header="Window Settings"
                                                  Margin="0,0,0,4"
-                                                 GroupName="Settings">
+                                                 GroupName="Settings"
+                                                 IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
             <StackPanel Margin="16,4,0,0">
                <CheckBox Margin="0,0,0,2"
                          Content="Save settings in app data"
@@ -87,7 +88,8 @@
 
          <commonControls:AnimatedGroupedExpander Header="Recorder Settings"
                                                  GroupName="Settings"
-                                                 Margin="0,0,0,4">
+                                                 Margin="0,0,0,4"
+                                                 IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
             <StackPanel Margin="16,4,0,0">
                <StackPanel Orientation="Horizontal"
                            Margin="0,0,8,4"
@@ -168,7 +170,8 @@
          <commonControls:AnimatedGroupedExpander Header="API Settings"
                                                  GroupName="Settings"
                                                  Margin="0,0,0,4"
-                                                 Grid.IsSharedSizeScope="True">
+                                                 Grid.IsSharedSizeScope="True"
+                                                 IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
             <StackPanel Margin="16,4,0,0">
                <Grid Margin="0,0,0,4"
                      HorizontalAlignment="Left">
@@ -233,9 +236,9 @@
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
-         <commonControls:AnimatedGroupedExpander Header="History">
-            <Grid Margin="0,4,0,0"
-                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
+         <commonControls:AnimatedGroupedExpander Header="History"
+                                                 IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
+            <Grid Margin="0,4,0,0">
                <ListBox x:Name="HistoryListBox"
                         Height="{Binding Settings.HistoryHeight, Mode=TwoWay}"
                         MinHeight="60"
