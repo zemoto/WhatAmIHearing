@@ -277,6 +277,15 @@ namespace WhatAmIHearing.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Window.
+        /// </summary>
+        public static string OpenWindow {
+            get {
+                return ResourceManager.GetString("OpenWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Output Devices.
         /// </summary>
         public static string OutputDevicesHeader {

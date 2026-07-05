@@ -246,4 +246,7 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="OpenWindow" xml:space="preserve">
+    <value>Open Window</value>
+  </data>
 </root>
