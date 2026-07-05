@@ -56,7 +56,7 @@
                                                  Margin="0,0,0,4"
                                                  GroupName="Settings"
                                                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
-            <StackPanel Margin="16,4,0,0">
+            <StackPanel>
                <CheckBox Margin="0,0,0,2"
                          Content="Save settings in app data"
                          ToolTip="Save setting in Roaming AppData folder instead of next to application"
@@ -90,49 +90,50 @@
                                                  GroupName="Settings"
                                                  Margin="0,0,0,4"
                                                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
-            <StackPanel Margin="16,4,0,0">
-               <StackPanel Orientation="Horizontal"
-                           Margin="0,0,8,4"
-                           HorizontalAlignment="Left">
-                  <TextBlock Text="Record Hotkey:"
-                             Margin="0,0,8,0"
-                             VerticalAlignment="Center" />
-
-                  <local:HotkeyControl x:Name="RecordHotkeyControl"
-                                       Hotkey="{Binding Settings.RecordHotkey.Key, Mode=OneWay}"
-                                       HotkeyModifiers="{Binding Settings.RecordHotkey.Modifiers, Mode=OneWay}"
-                                       SetHotkeyCommand="{Binding SetHotkeyCommand, Mode=OneTime}"
-                                       ErrorMessage="{Binding HotkeyRegisterError, Mode=OneWay}" />
-               </StackPanel>
-
-               <Grid Margin="0,4,0,0">
+            <StackPanel>
+               <Grid>
                   <Grid.RowDefinitions>
+                     <RowDefinition Height="Auto" />
+                     <RowDefinition Height="6" />
                      <RowDefinition Height="Auto" />
                      <RowDefinition Height="6" />
                      <RowDefinition Height="Auto" />
                   </Grid.RowDefinitions>
                   <Grid.ColumnDefinitions>
                      <ColumnDefinition Width="Auto" />
-                     <ColumnDefinition Width="150" />
+                     <ColumnDefinition Width="4" />
+                     <ColumnDefinition Width="200" />
                   </Grid.ColumnDefinitions>
-                  <TextBlock Text="Progress Display:"
+                  <TextBlock Text="Record Hotkey:"
                              Grid.Row="0"
                              Grid.Column="0"
-                             Margin="0,0,4,1"
                              VerticalAlignment="Center" />
-                  <ComboBox Grid.Row="0"
-                            Grid.Column="1"
+
+                  <local:HotkeyControl x:Name="RecordHotkeyControl"
+                                       Grid.Row="0"
+                                       Grid.Column="2"
+                                       HorizontalAlignment="Left"
+                                       Hotkey="{Binding Settings.RecordHotkey.Key, Mode=OneWay}"
+                                       HotkeyModifiers="{Binding Settings.RecordHotkey.Modifiers, Mode=OneWay}"
+                                       SetHotkeyCommand="{Binding SetHotkeyCommand, Mode=OneTime}"
+                                       ErrorMessage="{Binding HotkeyRegisterError, Mode=OneWay}" />
+
+                  <TextBlock Text="Progress Display:"
+                             Grid.Row="2"
+                             Grid.Column="0"
+                             VerticalAlignment="Center" />
+                  <ComboBox Grid.Row="2"
+                            Grid.Column="2"
                             ItemsSource="{commonUi:GetEnumValues local:ProgressDisplayType}"
                             SelectedValue="{Binding Settings.ProgressType, Mode=TwoWay}"
                             Height="22" />
 
                   <TextBlock Text="Stop Behavior:"
-                             Grid.Row="2"
+                             Grid.Row="4"
                              Grid.Column="0"
-                             Margin="0,0,4,1"
                              VerticalAlignment="Center" />
-                  <ComboBox Grid.Row="2"
-                            Grid.Column="1"
+                  <ComboBox Grid.Row="4"
+                            Grid.Column="2"
                             ToolTip="What happens when stopping a recording"
                             ItemsSource="{commonUi:GetEnumValues local:StopBehaviorType}"
                             SelectedValue="{Binding Settings.StopBehavior, Mode=TwoWay}"
@@ -172,7 +173,7 @@
                                                  Margin="0,0,0,4"
                                                  Grid.IsSharedSizeScope="True"
                                                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
-            <StackPanel Margin="16,4,0,0">
+            <StackPanel>
                <Grid Margin="0,0,0,4"
                      HorizontalAlignment="Left">
                   <Grid.ColumnDefinitions>
@@ -237,8 +238,9 @@
          </commonControls:AnimatedGroupedExpander>
 
          <commonControls:AnimatedGroupedExpander Header="History"
+                                                 Padding="0,4,0,0"
                                                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
-            <Grid Margin="0,4,0,0">
+            <Grid>
                <ListBox x:Name="HistoryListBox"
                         Height="{Binding Settings.HistoryHeight, Mode=TwoWay}"
                         MinHeight="60"

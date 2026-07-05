@@ -545,6 +545,8 @@
              TargetType="{x:Type commonControls:AnimatedGroupedExpander}">
          <Setter Property="OverridesDefaultStyle"
                  Value="True" />
+         <Setter Property="Padding"
+                 Value="16,4,0,0" />
          <Setter Property="Template">
             <Setter.Value>
                <ControlTemplate TargetType="{x:Type commonControls:AnimatedGroupedExpander}">
@@ -625,8 +627,9 @@
                            </ControlTemplate>
                         </ToggleButton.Template>
                      </ToggleButton>
-                     <StackPanel x:Name="PART_ContentContainer">
-                        <ContentPresenter x:Name="PART_Content" />
+                     <StackPanel x:Name="PART_ContentContainer"
+                                 Margin="{TemplateBinding Padding}">
+                        <ContentPresenter x:Name="PART_Content"/>
                      </StackPanel>
                   </StackPanel>
                </ControlTemplate>

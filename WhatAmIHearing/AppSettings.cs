@@ -19,9 +19,9 @@ internal enum ProgressDisplayType
 
 internal enum StopBehaviorType
 {
-   [Description( "Cancel and reset" )]
+   [Description( "Cancel recording" )]
    Cancel,
-   [Description( "Send recorded audio" )]
+   [Description( "Send recorded audio (min 20%)" )]
    Send,
 }
 
