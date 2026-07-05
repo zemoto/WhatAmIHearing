@@ -1,10 +1,7 @@
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Data;
 using System.Windows.Threading;
 
@@ -20,7 +17,7 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
 {
    private readonly DispatcherTimer _notificationTimer = new();
    private readonly MMDeviceEnumerator _deviceEnumerator = new();
-   private List<MMDevice> _deviceList;
+   private List<MMDevice> _deviceList = [];
 
    private ICollectionView _devicesListView;
    public ObservableCollection<DeviceListItem> Devices { get; } = [];
@@ -40,7 +37,7 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
 
    public void Dispose()
    {
-      _deviceList?.ForEach( x => x.Dispose() );
+      _deviceList.ForEach( x => x.Dispose() );
 
       _ = _deviceEnumerator.UnregisterEndpointNotificationCallback( this );
       _deviceEnumerator.Dispose();
@@ -49,13 +46,13 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       AppSettings.Instance.PropertyChanged -= OnAppSettingsPropertyChanged;
    }
 
-   private void OnTimerTick( object sender, EventArgs e )
+   private void OnTimerTick( object? sender, EventArgs e )
    {
       _notificationTimer.Stop();
       UpdateDeviceList();
    }
 
-   private void OnAppSettingsPropertyChanged( object sender, PropertyChangedEventArgs e )
+   private void OnAppSettingsPropertyChanged( object? sender, PropertyChangedEventArgs e )
    {
       if ( e.PropertyName == nameof( AppSettings.DisplayInputDevices ) )
       {
@@ -67,7 +64,7 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
    {
       var selectedDevice = AppSettings.Instance.SelectedDevice;
 
-      _deviceList?.ForEach( x => x.Dispose() );
+      _deviceList.ForEach( x => x.Dispose() );
       _deviceList = [.. _deviceEnumerator.EnumerateAudioEndPoints( AppSettings.Instance.DisplayInputDevices ? DataFlow.All : DataFlow.Render, DeviceState.Active )];
 
       Devices.Clear();
@@ -75,7 +72,7 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
 
       // Output devices
       var outputDevices = _deviceList.FindAll( x => x.DataFlow is DataFlow.Render );
-      bool hasOutputDevices = outputDevices.Any();
+      bool hasOutputDevices = outputDevices.Count != 0;
       if ( hasOutputDevices )
       {
          Devices.Add( new DeviceListItem( Constants.DefaultOutputDeviceName, Constants.OutputDeviceCategoryName ) );
@@ -88,7 +85,7 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
 
       // Input devices
       var inputDevices = _deviceList.FindAll( x => x.DataFlow is DataFlow.Capture );
-      bool hasInputDevices = inputDevices.Any();
+      bool hasInputDevices = inputDevices.Count != 0;
       if ( hasInputDevices )
       {
          Devices.Add( new DeviceListItem( Constants.DefaultInputDeviceName, Constants.InputDeviceCategoryName ) );
@@ -118,10 +115,10 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
    }
 
    // Returned MMDevice should be disposed by the caller
-   public MMDevice GetSelectedDevice()
+   public MMDevice? GetSelectedDevice()
    {
       var selectedDevice = AppSettings.Instance.SelectedDevice;
-      if ( _deviceList?.Any() != true || string.IsNullOrEmpty( selectedDevice ) )
+      if ( _deviceList.Count == 0 || string.IsNullOrEmpty( selectedDevice ) )
       {
          return null;
       }

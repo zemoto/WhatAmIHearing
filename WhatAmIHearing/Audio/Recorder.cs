@@ -1,10 +1,7 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave;
-using System;
 using System.ComponentModel;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Audio;
 
@@ -19,7 +16,7 @@ internal sealed class Recorder : IDisposable
    private readonly MemoryStream _recordedFileStream;
    private readonly ManualResetEvent _recordingFinishedEvent = new( false );
 
-   public event EventHandler<RecordingProgressEventArgs> RecordingProgress;
+   public event EventHandler<RecordingProgressEventArgs>? RecordingProgress;
 
    public Recorder( MMDevice device, WaveFormat waveFormat, long bytesToRecord, CancellationToken cancelToken )
    {
@@ -57,7 +54,7 @@ internal sealed class Recorder : IDisposable
 
       _ = await Task.Run( _recordingFinishedEvent.WaitOne );
 
-      byte[] data = null;
+      byte[] data = [];
       if ( !_cancelToken.IsCancellationRequested )
       {
          _audioWriter.Flush();
@@ -67,7 +64,7 @@ internal sealed class Recorder : IDisposable
       return new RecordingResult( data, _waveFormat );
    }
 
-   private void OnDataCaptured( object sender, WaveInEventArgs e )
+   private void OnDataCaptured( object? sender, WaveInEventArgs e )
    {
       if ( _cancelToken.IsCancellationRequested || _audioWriter.Position + e.BytesRecorded >= _bytesToRecord )
       {
@@ -80,7 +77,7 @@ internal sealed class Recorder : IDisposable
       }
    }
 
-   private void OnRecordingStopped( object sender, StoppedEventArgs e ) => _recordingFinishedEvent.Set();
+   private void OnRecordingStopped( object? sender, StoppedEventArgs e ) => _recordingFinishedEvent.Set();
 
    private string GetStatusText( long bytesRecorded )
    {

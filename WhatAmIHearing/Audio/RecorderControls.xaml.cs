@@ -5,7 +5,7 @@ namespace WhatAmIHearing.Audio;
 
 internal sealed partial class RecorderControls
 {
-   private RecorderViewModel _model;
+   private RecorderViewModel? _model;
 
    public RecorderControls() => InitializeComponent();
 
@@ -15,7 +15,7 @@ internal sealed partial class RecorderControls
 
    private void OnRecordPercentSliderDragDelta( object sender, DragDeltaEventArgs e ) => SetRecordPercentStatusText();
 
-   private void OnRecordPercentSliderDragCompleted( object sender, DragCompletedEventArgs e ) => _model.StateVm.SetStatusText( string.Empty );
+   private void OnRecordPercentSliderDragCompleted( object sender, DragCompletedEventArgs e ) => _model?.StateVm.SetStatusText( string.Empty );
 
-   private void SetRecordPercentStatusText() => _model.StateVm.SetStatusText( $"Record {(int)( _model.RecordPercent * 100 )}% of allowed audio" );
+   private void SetRecordPercentStatusText() => _model?.StateVm.SetStatusText( $"Record {(int)( _model.RecordPercent * 100 )}% of allowed audio" );
 }

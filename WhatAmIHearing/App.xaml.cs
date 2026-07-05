@@ -52,7 +52,7 @@ internal sealed partial class App : CommonApp
       base.OnPingedByOtherProcess();
    }
 
-   private void OnTrayIconClicked( object sender, System.Windows.Forms.MouseEventArgs e )
+   private void OnTrayIconClicked( object? sender, System.Windows.Forms.MouseEventArgs e )
    {
       if ( e.Button is System.Windows.Forms.MouseButtons.Left )
       {

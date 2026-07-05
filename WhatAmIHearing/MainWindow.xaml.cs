@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -20,7 +19,7 @@ internal sealed partial class MainWindow
 
    private const int _recordingHotkeyId = 1;
 
-   public event EventHandler RecordHotkeyPressed;
+   public event Action? RecordHotkeyPressed;
 
    private bool _recordHotkeyRegistered;
    private readonly IntPtr _handle;
@@ -94,7 +93,7 @@ internal sealed partial class MainWindow
          }
          else
          {
-            RecordHotkeyPressed?.Invoke( this, EventArgs.Empty );
+            RecordHotkeyPressed?.Invoke();
          }
 
          handled = true;

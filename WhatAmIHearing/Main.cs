@@ -1,6 +1,4 @@
-using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Result;
 using WhatAmIHearing.Shazam;
@@ -90,7 +88,7 @@ internal sealed class Main : IDisposable
       _model.HotkeyRegisterError = error;
    }
 
-   private async void HandleRecordingResult( RecordingResult result )
+   private async void HandleRecordingResult( RecordingResult? result )
    {
       if ( result is null )
       {
@@ -116,7 +114,7 @@ internal sealed class Main : IDisposable
          _ => throw new InvalidEnumArgumentException()
       } );
 
-      DetectedTrackInfo detectedSong;
+      DetectedTrackInfo? detectedSong;
       try
       {
          detectedSong = await _api.DetectSongAsync( result.RecordingData ).ConfigureAwait( true );
@@ -184,7 +182,7 @@ internal sealed class Main : IDisposable
       }
    }
 
-   private void OnRecordHotkey( object sender, EventArgs e )
+   private void OnRecordHotkey()
    {
       if ( _stateVm.State is AppState.Stopped )
       {

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using WhatAmIHearing.Shazam;
@@ -7,7 +6,7 @@ using ZemotoCommon;
 
 namespace WhatAmIHearing.Result;
 
-internal class SongViewModel
+internal sealed class SongViewModel
 {
    private const string _youTubeUrl = "https://www.youtube.com/results?search_query={0}";
    private const string _spotifySearchUrl = "https://open.spotify.com/search/{0}";
@@ -19,15 +18,15 @@ internal class SongViewModel
 
    public SongViewModel( DetectedTrackInfo songInfo )
    {
-      CoverArtUrl = songInfo.ShareInfo.CoverArtUrl;
+      CoverArtUrl = songInfo.ShareInfo?.CoverArtUrl ?? string.Empty;
       Title = songInfo.Title;
       Subtitle = songInfo.Subtitle;
-      ShazamUrl = songInfo.ShareInfo.ShazamUrl;
+      ShazamUrl = songInfo.ShareInfo?.ShazamUrl ?? string.Empty;
    }
 
-   public string CoverArtUrl { get; init; }
+   public string CoverArtUrl { get; init; } = string.Empty;
 
-   public BitmapImage CoverArt
+   public BitmapImage? CoverArt
    {
       get
       {
@@ -41,7 +40,7 @@ internal class SongViewModel
 
             if ( field.IsDownloading )
             {
-               field.DownloadCompleted += ( s, e ) => ( (BitmapImage)s ).Freeze();
+               field.DownloadCompleted += ( s, e ) => ( s as BitmapImage )?.Freeze();
             }
             else
             {
@@ -53,16 +52,15 @@ internal class SongViewModel
       }
    }
 
-   public string Title { get; init; }
+   public string Title { get; init; } = string.Empty;
 
-   public string Subtitle { get; init; }
+   public string Subtitle { get; init; } = string.Empty;
 
-   public string ShazamUrl { get; init; }
+   public string ShazamUrl { get; init; } = string.Empty;
 
    public string SearchText => $"{Title} - {Subtitle}";
 
-   private RelayCommand _copyTitleToClipboard;
-   public RelayCommand CopyTitleToClipboard => _copyTitleToClipboard ??= new RelayCommand( () =>
+   public RelayCommand CopyTitleToClipboard => field ??= new RelayCommand( () =>
    {
       try
       {
@@ -71,14 +69,11 @@ internal class SongViewModel
       catch { }
    } );
 
-   private RelayCommand _findInYouTubeCommand;
-   public RelayCommand FindInYouTubeCommand => _findInYouTubeCommand ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _youTubeUrl, SearchText ) ) );
+   public RelayCommand FindInYouTubeCommand => field ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _youTubeUrl, SearchText ) ) );
 
-   private RelayCommand _findInSpotifyCommand;
-   public RelayCommand FindInSpotifyCommand => _findInSpotifyCommand ??= new RelayCommand( FindInSpotify );
-   private void FindInSpotify()
+   public RelayCommand FindInSpotifyCommand => field ??= new RelayCommand( () =>
    {
       var url = AppSettings.Instance.OpenSpotifyLinksInApp ? _openInSpotifyProtocol : _spotifySearchUrl;
       UtilityMethods.OpenInBrowser( string.Format( url, SearchText ) );
-   }
+   } );
 }

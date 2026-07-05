@@ -1,7 +1,5 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace WhatAmIHearing.Shazam;
 
@@ -17,7 +15,7 @@ internal sealed class Api : IDisposable
 
    public void CancelRequests() => _client.CancelRequests();
 
-   public async Task<DetectedTrackInfo> DetectSongAsync( byte[] audioData )
+   public async Task<DetectedTrackInfo?> DetectSongAsync( byte[] audioData )
    {
       var detectResponse = await _client.SendPostRequestAsync( DetectApiEndpoint, audioData );
       if ( string.IsNullOrEmpty( detectResponse ) )

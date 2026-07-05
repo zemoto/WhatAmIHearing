@@ -1,6 +1,4 @@
 using NAudio.Wave;
-using System;
-using System.Threading.Tasks;
 using ZemotoCommon;
 
 namespace WhatAmIHearing.Audio;
@@ -22,7 +20,7 @@ internal sealed class RecordingManager : IDisposable
       _cancelTokenProvider.Dispose();
    }
 
-   public async Task<RecordingResult> RecordAsync()
+   public async Task<RecordingResult?> RecordAsync()
    {
       using var selectedDevice = _deviceProvider.GetSelectedDevice();
       if ( selectedDevice is null )
@@ -45,7 +43,7 @@ internal sealed class RecordingManager : IDisposable
       Model.RecordingProgress = 0;
    }
 
-   private void OnRecordingProgress( object sender, RecordingProgressEventArgs e )
+   private void OnRecordingProgress( object? sender, RecordingProgressEventArgs e )
    {
       Model.RecordingProgress = e.Progress * Model.RecordPercent; // The recorder does not take the record percent into account, so do it here
       Model.StateVm.SetStatusText( e.StatusText );

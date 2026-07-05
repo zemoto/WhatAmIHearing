@@ -6,7 +6,7 @@ namespace WhatAmIHearing.Shazam;
 internal sealed class DetectSongResponse
 {
    [JsonPropertyName( "track" )]
-   public DetectedTrackInfo Track { get; set; }
+   public DetectedTrackInfo? Track { get; set; }
 }
 
 internal sealed class DetectedTrackInfo
@@ -14,23 +14,23 @@ internal sealed class DetectedTrackInfo
    public bool IsComplete => !string.IsNullOrEmpty( Title ) && !string.IsNullOrEmpty( Subtitle ) && !string.IsNullOrEmpty( Url );
 
    [JsonPropertyName( "title" )]
-   public string Title { get; set; }
+   public string Title { get; set; } = string.Empty;
 
    [JsonPropertyName( "subtitle" )]
-   public string Subtitle { get; set; }
+   public string Subtitle { get; set; } = string.Empty;
 
    [JsonPropertyName( "url" )]
-   public string Url { get; set; }
+   public string Url { get; set; } = string.Empty;
 
    [JsonPropertyName( "share" )]
-   public DetectedTrackShareInfo ShareInfo { get; set; }
+   public DetectedTrackShareInfo? ShareInfo { get; set; }
 }
 
 internal sealed class DetectedTrackShareInfo
 {
    [JsonPropertyName( "image" )]
-   public string CoverArtUrl { get; set; }
+   public string CoverArtUrl { get; set; } = string.Empty;
 
    [JsonPropertyName( "href" )]
-   public string ShazamUrl { get; set; }
+   public string ShazamUrl { get; set; } = string.Empty;
 }

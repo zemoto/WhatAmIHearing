@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
 
 namespace WhatAmIHearing;
 
@@ -22,19 +21,11 @@ internal sealed partial class StateViewModel( Action changeStateAction ) : Obser
    [ObservableProperty]
    public partial AppState State { get; set; }
 
-   private string _statusText;
-   public string StatusText
-   {
-      get => _statusText;
-      private set => SetProperty( ref _statusText, value );
-   }
+   [ObservableProperty]
+   public partial string StatusText { get; set; }
 
-   private bool _showingErrorText;
-   public bool ShowingErrorText
-   {
-      get => _showingErrorText;
-      private set => SetProperty( ref _showingErrorText, value );
-   }
+   [ObservableProperty]
+   public partial bool ShowingErrorText { get; set; }
 
    public RelayCommand ChangeStateCommand { get; } = new( changeStateAction );
 }
