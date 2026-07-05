@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
-using System.Collections.ObjectModel;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Result;
 
@@ -15,13 +14,12 @@ internal sealed partial class MainViewModel : ObservableObject
       StateVm = stateVm;
       RecorderVm = recorderVm;
       SetHotkeyCommand = new RelayCommand<Hotkey>( setHotkeyAction );
-      DeleteSongFromHistoryCommand = new RelayCommand<SongViewModel>( song => _ = History.Remove( song ) );
+      DeleteSongFromHistoryCommand = new RelayCommand<SongViewModel>( song => _ = Settings.History.Remove( song ) );
    }
 
    public AppSettings Settings { get; } = AppSettings.Instance;
    public StateViewModel StateVm { get; }
    public RecorderViewModel RecorderVm { get; }
-   public ObservableCollection<SongViewModel> History { get; }
 
    [ObservableProperty]
    public partial string HotkeyRegisterError { get; set; }
