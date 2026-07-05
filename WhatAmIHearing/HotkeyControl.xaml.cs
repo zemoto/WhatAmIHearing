@@ -58,7 +58,7 @@ internal sealed partial class HotkeyControl
       if ( Hotkey is Key.None )
       {
          Foreground = Brushes.Gray;
-         Text = "No hotkey set";
+         Text = Properties.Resources.NoHotkeySetText;
          return;
       }
 
@@ -98,7 +98,7 @@ internal sealed partial class HotkeyControl
    private void OnGotKeyboardFocus( object sender, RoutedEventArgs e )
    {
       Foreground = Brushes.Gray;
-      Text = "Enter hotkey (ESC to clear)";
+      Text = Properties.Resources.EnterHotkeyInstructions;
    }
 
    private void OnLostKeyboardFocus( object sender, KeyboardFocusChangedEventArgs e )

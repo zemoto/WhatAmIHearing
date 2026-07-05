@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WhatAmIHearing"
+        xmlns:props="clr-namespace:WhatAmIHearing.Properties"
         xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
         xmlns:common="clr-namespace:ZemotoCommon"
         xmlns:commonUi="clr-namespace:ZemotoCommon.UI"
@@ -31,7 +32,7 @@
          <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <TextBlock Grid.Row="0"
-                 Text="What Am I Hearing?"
+                 Text="{x:Static props:Resources.WindowTitle}"
                  FontSize="14"
                  Margin="0,3,0,0"
                  HorizontalAlignment="Center"
@@ -52,41 +53,41 @@
 
          <audio:RecorderControls DataContext="{Binding RecorderVm, Mode=OneTime}" />
 
-         <commonControls:AnimatedGroupedExpander Header="Window Settings"
+         <commonControls:AnimatedGroupedExpander Header="{x:Static props:Resources.WindowSettingsHeader}"
                                                  Margin="0,0,0,4"
                                                  GroupName="Settings"
                                                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
             <StackPanel>
                <CheckBox Margin="0,0,0,2"
-                         Content="Save app settings in user settings folder"
-                         ToolTip="Checked: Settings are saved in Roaming AppData (Tied to system and user)&#x0a;Unchecked: Settings are saved in the same folder as the exe (Self-contained and portable)"
+                         Content="{x:Static props:Resources.SettingsLocationCheckboxLabel}"
+                         ToolTip="{x:Static props:Resources.SettingsLocationCheckboxToolTip}"
                          IsChecked="{Binding Settings.SaveSettingsInAppData, Mode=TwoWay}" />
 
                <CheckBox Margin="0,0,0,2"
-                         Content="Launch on Windows startup"
+                         Content="{x:Static props:Resources.LaunchOnWindowsStartupCheckboxLabel}"
                          IsEnabled="{x:Static common:WindowsStartup.AllowedToStartWithWindows}"
                          ToolTip="{x:Static common:WindowsStartup.NotAllowedReason}"
                          IsChecked="{Binding Settings.LaunchOnWindowsStartup, Mode=TwoWay}" />
 
                <CheckBox x:Name="KeepOpenInTrayCheckbox"
                          Margin="0,0,0,2"
-                         Content="Keep open in system tray"
-                         ToolTip="When closing this window, WhatAmIHearing will continue to run in the background and can be accessed from the system tray"
+                         Content="{x:Static props:Resources.KeepOpenInTrayCheckboxLabel}"
+                         ToolTip="{x:Static props:Resources.KeepOpenInTrayCheckboxToolTip}"
                          IsChecked="{Binding Settings.KeepOpenInTray, Mode=TwoWay}" />
 
                <CheckBox Margin="8,2"
-                         Content="Launch hidden"
-                         ToolTip="WhatAmIHearing will launch hidden, accessible from the system tray"
+                         Content="{x:Static props:Resources.LaunchHiddenCheckboxLabel}"
+                         ToolTip="{x:Static props:Resources.LaunchHiddenCheckboxToolTip}"
                          Visibility="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.OpenHidden, Mode=TwoWay}" />
 
-               <CheckBox Content="Keep window on top"
-                         ToolTip="WhatAmIHearing will attempt to always stay above other windows"
+               <CheckBox Content="{x:Static props:Resources.TopmostWindowCheckboxLabel}"
+                         ToolTip="{x:Static props:Resources.TopmostWindowCheckboxToolTip}"
                          IsChecked="{Binding Settings.KeepWindowTopmost, Mode=TwoWay}" />
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
-         <commonControls:AnimatedGroupedExpander Header="Recorder Settings"
+         <commonControls:AnimatedGroupedExpander Header="{x:Static props:Resources.RecorderSettingsHeader}"
                                                  GroupName="Settings"
                                                  Margin="0,0,0,4"
                                                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
@@ -104,7 +105,7 @@
                      <ColumnDefinition Width="4" />
                      <ColumnDefinition Width="200" />
                   </Grid.ColumnDefinitions>
-                  <TextBlock Text="Record Hotkey:"
+                  <TextBlock Text="{x:Static props:Resources.RecordHotkeyLabel}"
                              Grid.Row="0"
                              Grid.Column="0"
                              VerticalAlignment="Center" />
@@ -118,7 +119,7 @@
                                        SetHotkeyCommand="{Binding SetHotkeyCommand, Mode=OneTime}"
                                        ErrorMessage="{Binding HotkeyRegisterError, Mode=OneWay}" />
 
-                  <TextBlock Text="Progress Display:"
+                  <TextBlock Text="{x:Static props:Resources.ProgressDisplayLabel}"
                              Grid.Row="2"
                              Grid.Column="0"
                              VerticalAlignment="Center" />
@@ -128,47 +129,47 @@
                             SelectedValue="{Binding Settings.ProgressType, Mode=TwoWay}"
                             Height="22" />
 
-                  <TextBlock Text="Stop Behavior:"
+                  <TextBlock Text="{x:Static props:Resources.StopBehaviorLabel}"
                              Grid.Row="4"
                              Grid.Column="0"
                              VerticalAlignment="Center" />
                   <ComboBox Grid.Row="4"
                             Grid.Column="2"
-                            ToolTip="What happens when stopping a recording"
+                            ToolTip="{x:Static props:Resources.StopBehaviorComboBoxToolTip}"
                             ItemsSource="{commonUi:GetEnumValues local:StopBehaviorType}"
                             SelectedValue="{Binding Settings.StopBehavior, Mode=TwoWay}"
                             Height="22" />
                </Grid>
 
-               <CheckBox Content="Display input devices in device dropdown"
+               <CheckBox Content="{x:Static props:Resources.DisplayInputDevicesCheckboxLabel}"
                          Margin="0,6,0,0"
                          IsChecked="{Binding Settings.DisplayInputDevices, Mode=TwoWay}" />
 
-               <CheckBox Content="Place song title on clipboard after identification"
+               <CheckBox Content="{x:Static props:Resources.PutTitleOnClipboardCheckboxLabel}"
                          Margin="0,2,0,0"
                          IsChecked="{Binding Settings.PutTitleOnClipboard, Mode=TwoWay}" />
 
                <CheckBox x:Name="OpenShazamCheckbox"
-                         Content="Automatically open identified song in Shazam"
-                         ToolTip="After a successful song identification, WhatAmIHearing will automatically open the song's page in Shazam"
+                         Content="{x:Static props:Resources.OpenShazamCheckboxLabel}"
+                         ToolTip="{x:Static props:Resources.OpenShazamCheckboxToolTip}"
                          Margin="0,2,0,0"
                          IsChecked="{Binding Settings.OpenShazamOnResultFound, Mode=TwoWay}" />
 
-               <CheckBox Content="Minimize to tray after recording is done"
+               <CheckBox Content="{x:Static props:Resources.HideAfterRecordingCheckboxLabel}"
                          Margin="8,2,0,0"
                          IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
                          Visibility="{Binding ElementName=OpenShazamCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
 
-               <CheckBox Content="Open Spotify links in Spotify app"
-                         ToolTip="Whether to use the browser or Spotify app to open Spotify links"
+               <CheckBox Content="{x:Static props:Resources.UseSpotifyAppCheckboxLabel}"
+                         ToolTip="{x:Static props:Resources.UseSpotifyAppCheckboxToolTip}"
                          Margin="0,2,0,0"
                          IsChecked="{Binding Settings.OpenSpotifyLinksInApp, Mode=TwoWay}"
                          Visibility="{Binding CanOpenInSpotify, Mode=OneTime, Converter={StaticResource VisibleIfTrue}}" />
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
-         <commonControls:AnimatedGroupedExpander Header="API Settings"
+         <commonControls:AnimatedGroupedExpander Header="{x:Static props:Resources.ApiSettingsHeader}"
                                                  GroupName="Settings"
                                                  Margin="0,0,0,4"
                                                  Grid.IsSharedSizeScope="True"
@@ -183,7 +184,7 @@
                   </Grid.ColumnDefinitions>
                   
                   <TextBlock Grid.Column="0"
-                             Text="API Key:"
+                             Text="{x:Static props:Resources.ApiKeyLabel}"
                              Margin="0,0,8,0"
                              VerticalAlignment="Center" />
 
@@ -192,7 +193,7 @@
                            Text="{Binding Settings.KeyData.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
                   <TextBlock Grid.Column="1" 
-                             Text="Using default API Key"
+                             Text="{x:Static props:Resources.UsingDefaultApiKey}"
                              IsHitTestVisible="False"
                              Margin="4,0,0,0"
                              Opacity="0.6"
@@ -208,7 +209,7 @@
                      <ColumnDefinition Width="270" />
                   </Grid.ColumnDefinitions>
                   <TextBlock Grid.Column="0"
-                             Text="Quota:"
+                             Text="{x:Static props:Resources.QuotaLabel}"
                              Margin="0,0,8,0"
                              VerticalAlignment="Center" />
 
@@ -219,7 +220,7 @@
                                Foreground="{StaticResource ProgressBarFillBrush}"
                                Maximum="{Binding Settings.KeyData.QuotaLimit, Mode=OneWay}"
                                Value="{Binding Settings.KeyData.QuotaUsed, Mode=OneWay}"
-                               ToolTip="Quota values are updated after every audio identification" />
+                               ToolTip="{x:Static props:Resources.QuotaToolTip}" />
 
                   <TextBlock Grid.Column="1"
                              Margin="4,0,0,0"
@@ -230,14 +231,16 @@
                </Grid>
 
                <TextBlock VerticalAlignment="Center">
-                  <Run Text="To get an API Key, follow" />
+                  <Run Text="{x:Static props:Resources.ApiKeyInstructions}" />
                   <Hyperlink Command="{x:Static commonUi:UtilityCommands.OpenInBrowserCommand}"
-                             CommandParameter="https://github.com/zemoto/WhatAmIHearing?tab=readme-ov-file#rate-limiting">these instructions.</Hyperlink>
+                             CommandParameter="https://github.com/zemoto/WhatAmIHearing?tab=readme-ov-file#rate-limiting">
+                     <Run Text="{x:Static props:Resources.Link}" />
+                  </Hyperlink>
                </TextBlock>
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 
-         <commonControls:AnimatedGroupedExpander Header="History"
+         <commonControls:AnimatedGroupedExpander Header="{x:Static props:Resources.HistoryHeader}"
                                                  Padding="0,4,0,0"
                                                  IsEnabled="{Binding StateVm.State, Converter={StaticResource IsEqual}, ConverterParameter={x:Static local:AppState.Stopped}, Mode=OneWay}">
             <Grid>

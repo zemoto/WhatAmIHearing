@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows.Threading;
+using WhatAmIHearing.Properties;
 
 namespace WhatAmIHearing.Audio;
 
@@ -75,9 +76,9 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       bool hasOutputDevices = outputDevices.Count != 0;
       if ( hasOutputDevices )
       {
-         Devices.Add( new DeviceListItem( Constants.DefaultOutputDeviceName, Constants.OutputDeviceCategoryName ) );
+         Devices.Add( new DeviceListItem( Resources.DefaultOutputDeviceName, Resources.OutputDevicesHeader ) );
 
-         foreach ( var device in outputDevices.ConvertAll( x => new DeviceListItem( x.FriendlyName, Constants.OutputDeviceCategoryName ) ) )
+         foreach ( var device in outputDevices.ConvertAll( x => new DeviceListItem( x.FriendlyName, Resources.OutputDevicesHeader ) ) )
          {
             Devices.Add( device );
          }
@@ -88,9 +89,9 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       bool hasInputDevices = inputDevices.Count != 0;
       if ( hasInputDevices )
       {
-         Devices.Add( new DeviceListItem( Constants.DefaultInputDeviceName, Constants.InputDeviceCategoryName ) );
+         Devices.Add( new DeviceListItem( Resources.DefaultInputDeviceName, Resources.InputDevicesHeader ) );
 
-         foreach ( var device in inputDevices.ConvertAll( x => new DeviceListItem( x.FriendlyName, Constants.InputDeviceCategoryName ) ) )
+         foreach ( var device in inputDevices.ConvertAll( x => new DeviceListItem( x.FriendlyName, Resources.InputDevicesHeader ) ) )
          {
             Devices.Add( device );
          }
@@ -102,15 +103,15 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       }
 
       // Reselect the previously selected device if it's still available, otherwise select the default output device
-      if ( selectedDevice.Equals( Constants.DefaultOutputDeviceName, StringComparison.OrdinalIgnoreCase ) ||
-         ( selectedDevice.Equals( Constants.DefaultInputDeviceName, StringComparison.OrdinalIgnoreCase ) && AppSettings.Instance.DisplayInputDevices ) ||
+      if ( selectedDevice.Equals( Resources.DefaultOutputDeviceName, StringComparison.OrdinalIgnoreCase ) ||
+         ( selectedDevice.Equals( Resources.DefaultInputDeviceName, StringComparison.OrdinalIgnoreCase ) && AppSettings.Instance.DisplayInputDevices ) ||
          _deviceList.Any( x => x.FriendlyName.Equals( selectedDevice, StringComparison.OrdinalIgnoreCase ) ) )
       {
          AppSettings.Instance.SelectedDevice = selectedDevice;
       }
       else
       {
-         AppSettings.Instance.SelectedDevice = Constants.DefaultOutputDeviceName;
+         AppSettings.Instance.SelectedDevice = Resources.DefaultOutputDeviceName;
       }
    }
 
@@ -122,11 +123,11 @@ internal sealed class DeviceProvider : IDisposable, IMMNotificationClient
       {
          return null;
       }
-      else if ( selectedDevice.Equals( Constants.DefaultOutputDeviceName, StringComparison.OrdinalIgnoreCase ) )
+      else if ( selectedDevice.Equals( Resources.DefaultOutputDeviceName, StringComparison.OrdinalIgnoreCase ) )
       {
          return _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Render, Role.Console );
       }
-      else if ( selectedDevice.Equals( Constants.DefaultInputDeviceName, StringComparison.OrdinalIgnoreCase ) )
+      else if ( selectedDevice.Equals( Resources.DefaultInputDeviceName, StringComparison.OrdinalIgnoreCase ) )
       {
          return _deviceEnumerator.GetDefaultAudioEndpoint( DataFlow.Capture, Role.Console );
       }

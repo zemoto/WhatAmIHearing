@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Input;
+using WhatAmIHearing.Properties;
 using WhatAmIHearing.Result;
 using ZemotoCommon;
 
@@ -19,9 +19,9 @@ internal enum ProgressDisplayType
 
 internal enum StopBehaviorType
 {
-   [Description( "Cancel recording" )]
+   [LocalizedDescription( "CancelStopBehavior", typeof( Resources ) )]
    Cancel,
-   [Description( "Send recorded audio (min 20%)" )]
+   [LocalizedDescription( "SendStopBehavior", typeof( Resources ) )]
    Send,
 }
 
@@ -66,7 +66,7 @@ internal sealed partial class AppSettings : ObservableObject
    public void Save() => _configFile.SerializeInto( this );
 
    [ObservableProperty]
-   public partial string SelectedDevice { get; set; } = Constants.DefaultOutputDeviceName;
+   public partial string SelectedDevice { get; set; } = Resources.DefaultOutputDeviceName;
 
    [ObservableProperty]
    public partial bool KeepOpenInTray { get; set; } = true;
@@ -95,7 +95,7 @@ internal sealed partial class AppSettings : ObservableObject
             }
             else
             {
-               _ = MessageBox.Show( "Failed to move settings file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error );
+               _ = MessageBox.Show( Resources.FailedToMoveSettingsFileErrorText, Resources.Error, MessageBoxButton.OK, MessageBoxImage.Error );
             }
          }
       }

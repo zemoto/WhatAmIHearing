@@ -17,5 +17,5 @@ internal sealed partial class RecorderControls
 
    private void OnRecordPercentSliderDragCompleted( object sender, DragCompletedEventArgs e ) => _model?.StateVm.SetStatusText( string.Empty );
 
-   private void SetRecordPercentStatusText() => _model?.StateVm.SetStatusText( $"Record {(int)( _model.RecordPercent * 100 )}% of allowed audio" );
+   private void SetRecordPercentStatusText() => _model?.StateVm.SetStatusText( string.Format( Properties.Resources.LimitAudioRecordingLabel, (int)( _model.RecordPercent * 100 ) ) );
 }

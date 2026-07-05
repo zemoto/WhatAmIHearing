@@ -21,7 +21,7 @@ internal sealed partial class App : CommonApp
       _trayIcon = new TrayIcon { Icon = new System.Drawing.Icon( GetType(), "Icon.ico" ) };
       _trayIcon.MouseClick += OnTrayIconClicked;
       _trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-      _ = _trayIcon.ContextMenuStrip.Items.Add( "Close", null, ( s, a ) => Shutdown() );
+      _ = _trayIcon.ContextMenuStrip.Items.Add( WhatAmIHearing.Properties.Resources.Close, null, ( s, a ) => Shutdown() );
       _trayIcon.Visible = true;
 
       OverrideDefaultValues();
