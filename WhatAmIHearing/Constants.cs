@@ -8,4 +8,7 @@ internal static class Constants
    public const string DefaultInputDeviceName = "Default Input Device";
    public const string OutputDeviceCategoryName = "Output Devices";
    public const string InputDeviceCategoryName = "Input Devices";
+
+   public const double MinRecordingPercentForIdentification = 0.2;
+   public const double MinSelectableRecordPercent = 0.25;
 }

@@ -14,4 +14,11 @@ internal sealed partial class RecorderViewModel( StateViewModel stateVm, DeviceP
 
    [ObservableProperty]
    public partial double RecordPercent { get; set; } = 1.0;
+   partial void OnRecordPercentChanged( double value )
+   {
+      if ( value < Constants.MinSelectableRecordPercent )
+      {
+         RecordPercent = Constants.MinSelectableRecordPercent;
+      }
+   }
 }

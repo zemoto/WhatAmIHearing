@@ -368,8 +368,10 @@
                  Value="true" />
          <Setter Property="FocusVisualStyle"
                  Value="{StaticResource FocusVisualStyle}" />
+         <Setter Property="Height"
+                 Value="24" />
          <Setter Property="Padding"
-                 Value="8,0,0,1" />
+                 Value="6,0,0,0" />
          <Setter Property="ItemContainerStyle">
             <Setter.Value>
                <Style TargetType="{x:Type ComboBoxItem}">

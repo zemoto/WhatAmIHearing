@@ -103,17 +103,39 @@
                                        ErrorMessage="{Binding HotkeyRegisterError, Mode=OneWay}" />
                </StackPanel>
 
-               <StackPanel Orientation="Horizontal"
-                           Margin="0,4,0,0">
+               <Grid Margin="0,4,0,0">
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="Auto" />
+                     <RowDefinition Height="6" />
+                     <RowDefinition Height="Auto" />
+                  </Grid.RowDefinitions>
+                  <Grid.ColumnDefinitions>
+                     <ColumnDefinition Width="Auto" />
+                     <ColumnDefinition Width="150" />
+                  </Grid.ColumnDefinitions>
                   <TextBlock Text="Progress Display:"
+                             Grid.Row="0"
+                             Grid.Column="0"
                              Margin="0,0,4,1"
                              VerticalAlignment="Center" />
-                  <ComboBox ItemsSource="{commonUi:GetEnumValues local:ProgressDisplayType}"
+                  <ComboBox Grid.Row="0"
+                            Grid.Column="1"
+                            ItemsSource="{commonUi:GetEnumValues local:ProgressDisplayType}"
                             SelectedValue="{Binding Settings.ProgressType, Mode=TwoWay}"
-                            Height="20"
-                            Padding="6,0,0,2"
-                            Width="80" />
-               </StackPanel>
+                            Height="22" />
+
+                  <TextBlock Text="Stop Behavior:"
+                             Grid.Row="2"
+                             Grid.Column="0"
+                             Margin="0,0,4,1"
+                             VerticalAlignment="Center" />
+                  <ComboBox Grid.Row="2"
+                            Grid.Column="1"
+                            ToolTip="What happens when stopping a recording"
+                            ItemsSource="{commonUi:GetEnumValues local:StopBehaviorType}"
+                            SelectedValue="{Binding Settings.StopBehavior, Mode=TwoWay}"
+                            Height="22" />
+               </Grid>
 
                <CheckBox Content="Display input devices in device dropdown"
                          Margin="0,6,0,0"
@@ -135,8 +157,7 @@
                          Visibility="{Binding ElementName=OpenShazamCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
 
-               <CheckBox x:Name="OpenSpotifyCheckbox"
-                         Content="Open Spotify links in Spotify app"
+               <CheckBox Content="Open Spotify links in Spotify app"
                          ToolTip="Whether to use the browser or Spotify app to open Spotify links"
                          Margin="0,2,0,0"
                          IsChecked="{Binding Settings.OpenSpotifyLinksInApp, Mode=TwoWay}"

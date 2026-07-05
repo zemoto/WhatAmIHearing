@@ -1,4 +1,4 @@
-﻿using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System.ComponentModel;
 using System.IO;
@@ -63,6 +63,8 @@ internal sealed class Recorder : IDisposable
 
       return new RecordingResult( data, _waveFormat );
    }
+
+   public void Stop() => _audioCapturer.StopRecording();
 
    private void OnDataCaptured( object? sender, WaveInEventArgs e )
    {

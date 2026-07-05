@@ -67,7 +67,16 @@ internal sealed class Main : IDisposable
          }
          case AppState.Recording:
          {
-            _recordingManager.CancelRecording();
+            switch ( _model.Settings.StopBehavior )
+            {
+               case StopBehaviorType.Send:
+                  _recordingManager.StopAndSendRecordedData();
+                  break;
+               default: // StopBehaviorType.Cancel
+                  _recordingManager.CancelRecording();
+                  break;
+            }
+
             break;
          }
          case AppState.Identifying:
@@ -97,7 +106,8 @@ internal sealed class Main : IDisposable
          return;
       }
 
-      if ( result.Cancelled )
+      // If cancelled or recorded too little, discard the result and reset.
+      if ( result.Cancelled || _model.RecorderVm.RecordingProgress < Constants.MinRecordingPercentForIdentification )
       {
          _recordingManager.Reset();
          return;

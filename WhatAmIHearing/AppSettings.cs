@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Windows;
@@ -14,6 +15,14 @@ internal enum ProgressDisplayType
    None,
    Bytes,
    Seconds
+}
+
+internal enum StopBehaviorType
+{
+   [Description( "Cancel and reset" )]
+   Cancel,
+   [Description( "Send recorded audio" )]
+   Send,
 }
 
 internal readonly struct Hotkey( Key key, ModifierKeys modifiers )
@@ -125,6 +134,9 @@ internal sealed partial class AppSettings : ObservableObject
 
    [ObservableProperty]
    public partial ProgressDisplayType ProgressType { get; set; } = ProgressDisplayType.Seconds;
+
+   [ObservableProperty]
+   public partial StopBehaviorType StopBehavior { get; set; } = StopBehaviorType.Cancel;
 
    [ObservableProperty]
    public partial Hotkey RecordHotkey { get; set; } = new( Key.F2, ModifierKeys.Shift );

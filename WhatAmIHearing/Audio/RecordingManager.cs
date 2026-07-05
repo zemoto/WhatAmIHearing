@@ -10,6 +10,8 @@ internal sealed class RecordingManager : IDisposable
    private readonly long _maxBytesToRecord = 500 * 1000; // 500KB. Max recording size according to Shazam API
    private readonly CancelTokenProvider _cancelTokenProvider = new();
 
+   private Recorder? _currentRecorder;
+
    public RecorderViewModel Model { get; }
 
    public RecordingManager( StateViewModel stateVm ) => Model = new RecorderViewModel( stateVm, _deviceProvider );
@@ -29,12 +31,22 @@ internal sealed class RecordingManager : IDisposable
       }
 
       Model.StateVm.State = AppState.Recording;
-      using var recorder = new Recorder( selectedDevice, _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
-      recorder.RecordingProgress += OnRecordingProgress;
-      return await recorder.RecordAsync();
+
+      _currentRecorder = new Recorder( selectedDevice, _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
+      _currentRecorder.RecordingProgress += OnRecordingProgress;
+      using var scopeGuard = new ScopeGuard( () =>
+      {
+         _currentRecorder.RecordingProgress -= OnRecordingProgress;
+         _currentRecorder.Dispose();
+         _currentRecorder = null;
+      } );
+
+      return await _currentRecorder.RecordAsync();
    }
 
    public void CancelRecording() => _cancelTokenProvider.Cancel();
+
+   public void StopAndSendRecordedData() => _currentRecorder?.Stop();
 
    public void Reset()
    {
