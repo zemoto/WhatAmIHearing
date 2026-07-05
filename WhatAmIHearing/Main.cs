@@ -184,11 +184,11 @@ internal sealed class Main : IDisposable
       if ( appSettings.OpenShazamOnResultFound )
       {
          UtilityMethods.OpenInBrowser( _model.SelectedSong.ShazamUrl );
+      }
 
-         if ( appSettings.KeepOpenInTray && appSettings.HideWindowAfterRecord )
-         {
-            _window.Hide();
-         }
+      if ( appSettings.KeepOpenInTray && appSettings.HideWindowAfterRecord )
+      {
+         _window.Hide();
       }
    }
 

@@ -156,9 +156,8 @@
                          IsChecked="{Binding Settings.OpenShazamOnResultFound, Mode=TwoWay}" />
 
                <CheckBox Content="{x:Static props:Resources.HideAfterRecordingCheckboxLabel}"
-                         Margin="8,2,0,0"
-                         IsEnabled="{Binding ElementName=KeepOpenInTrayCheckbox, Path=IsChecked, Mode=OneWay}"
-                         Visibility="{Binding ElementName=OpenShazamCheckbox, Path=IsChecked, Converter={StaticResource VisibleIfTrue}, Mode=OneWay}"
+                         Margin="0,2,0,0"
+                         Visibility="{Binding Settings.KeepOpenInTray, Mode=OneWay, Converter={StaticResource VisibleIfTrue}}"
                          IsChecked="{Binding Settings.HideWindowAfterRecord, Mode=TwoWay}" />
 
                <CheckBox Content="{x:Static props:Resources.UseSpotifyAppCheckboxLabel}"
