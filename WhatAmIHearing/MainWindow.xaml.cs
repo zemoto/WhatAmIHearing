@@ -23,10 +23,11 @@ internal sealed partial class MainWindow
 
    private bool _recordHotkeyRegistered;
    private readonly IntPtr _handle;
+   private readonly MainViewModel _model;
 
    public MainWindow( MainViewModel model )
    {
-      DataContext = model;
+      DataContext = _model = model;
       DwmHelper.EnableDwmManagementOfWindow( this );
       InitializeComponent();
 
@@ -36,6 +37,8 @@ internal sealed partial class MainWindow
 
       var source = HwndSource.FromHwnd( _handle );
       source?.AddHook( WndProc );
+
+      CustomApiKeyTextBox.Password = _model.Settings.KeyData.ShazamApiKey;
    }
 
    public new void Hide()
@@ -43,6 +46,8 @@ internal sealed partial class MainWindow
       ShowInTaskbar = false;
       base.Hide();
    }
+
+   private void OnCustomApiKeyChanged( object sender, RoutedEventArgs e ) => _model.Settings.KeyData.ShazamApiKey = CustomApiKeyTextBox.Password.Trim();
 
    public bool RegisterRecordHotkey( Hotkey hotkey, out string error )
    {

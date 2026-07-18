@@ -187,9 +187,13 @@
                              Margin="0,0,8,0"
                              VerticalAlignment="Center" />
 
-                  <TextBox Grid.Column="1"
-                           x:Name="CustomApiKeyTextBox"
-                           Text="{Binding Settings.KeyData.ShazamApiKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                  <PasswordBox Grid.Column="1"
+                               x:Name="CustomApiKeyTextBox"
+                               VerticalContentAlignment="Center"
+                               Padding="0,0,0,1"
+                               FontSize="8.5"
+                               Height="19"
+                               PasswordChanged="OnCustomApiKeyChanged" />
 
                   <TextBlock Grid.Column="1" 
                              Text="{x:Static props:Resources.UsingDefaultApiKey}"
