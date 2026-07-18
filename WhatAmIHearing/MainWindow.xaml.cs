@@ -1,22 +1,14 @@
 ﻿using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using ZemotoCommon.UI;
+using ZemotoCommon.Unsafe;
 
 namespace WhatAmIHearing;
 
 internal sealed partial class MainWindow
 {
-   [DllImport( "user32.dll" )]
-   [DefaultDllImportSearchPaths( DllImportSearchPath.System32 )]
-   private static extern bool RegisterHotKey( IntPtr hWnd, int id, uint fsModifiers, uint vk );
-
-   [DllImport( "user32.dll" )]
-   [DefaultDllImportSearchPaths( DllImportSearchPath.System32 )]
-   private static extern bool UnregisterHotKey( IntPtr hWnd, int id );
-
    private const int _recordingHotkeyId = 1;
 
    public event Action? RecordHotkeyPressed;
@@ -61,7 +53,7 @@ internal sealed partial class MainWindow
          return true;
       }
 
-      _recordHotkeyRegistered = RegisterHotKey( _handle, _recordingHotkeyId, (uint)hotkey.Modifiers, (uint)KeyInterop.VirtualKeyFromKey( hotkey.Key ) );
+      _recordHotkeyRegistered = NativeMethods.RegisterHotKey( _handle, _recordingHotkeyId, (uint)hotkey.Modifiers, (uint)KeyInterop.VirtualKeyFromKey( hotkey.Key ) );
       if ( !_recordHotkeyRegistered )
       {
          error = "Failed to register hotkey";
@@ -75,7 +67,7 @@ internal sealed partial class MainWindow
    private bool UnregisterRecordHotkey( out string error )
    {
       error = string.Empty;
-      if ( _recordHotkeyRegistered && !UnregisterHotKey( _handle, _recordingHotkeyId ) )
+      if ( _recordHotkeyRegistered && !NativeMethods.UnregisterHotKey( _handle, _recordingHotkeyId ) )
       {
          error = "Failed to unregister hotkey";
          return false;

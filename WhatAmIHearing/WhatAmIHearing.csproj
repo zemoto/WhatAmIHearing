@@ -12,14 +12,15 @@
 	<AssemblyVersion>3.5.0.0</AssemblyVersion>
 	<FileVersion>3.5.0.0</FileVersion>
 	<Authors>Zemoto</Authors>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants);ZEMOTOUI</DefineConstants>
+    <DefineConstants>$(DefineConstants);ZEMOTOUI;ZEMOTOUNSAFE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>$(DefineConstants);ZEMOTOUI</DefineConstants>
+    <DefineConstants>$(DefineConstants);ZEMOTOUI;ZEMOTOUNSAFE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
