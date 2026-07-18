@@ -80,7 +80,7 @@ internal sealed partial class HotkeyControl
 
       _ = sb.Append( Hotkey );
 
-      Foreground = Brushes.Black;
+      ClearValue( ForegroundProperty );
       Text = sb.ToString();
    }
 
@@ -89,6 +89,7 @@ internal sealed partial class HotkeyControl
       var parentWindow = Window.GetWindow( this );
       if ( parentWindow is not null )
       {
+         parentWindow.PreviewMouseDown -= OnPreviewMouseDownAnywhereInWindow;
          parentWindow.PreviewMouseDown += OnPreviewMouseDownAnywhereInWindow;
       }
 

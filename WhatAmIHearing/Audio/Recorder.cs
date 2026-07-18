@@ -14,7 +14,7 @@ internal sealed class Recorder : IDisposable
    private readonly CancellationToken _cancelToken;
    private readonly WaveFileWriter _audioWriter;
    private readonly MemoryStream _recordedFileStream;
-   private readonly ManualResetEvent _recordingFinishedEvent = new( false );
+   private readonly TaskCompletionSource _recordingStoppedTcs = new( TaskCreationOptions.RunContinuationsAsynchronously );
 
    public event EventHandler<RecordingProgressEventArgs>? RecordingProgress;
 
@@ -43,8 +43,6 @@ internal sealed class Recorder : IDisposable
       _audioCapturer.DataAvailable -= OnDataCaptured;
       _audioCapturer.RecordingStopped -= OnRecordingStopped;
       _audioCapturer.Dispose();
-
-      _recordingFinishedEvent.Dispose();
    }
 
    public async Task<RecordingResult> RecordAsync()
@@ -52,16 +50,17 @@ internal sealed class Recorder : IDisposable
       RecordingProgress?.Invoke( this, new RecordingProgressEventArgs( 0, GetStatusText( 0 ) ) );
       _audioCapturer.StartRecording();
 
-      _ = await Task.Run( _recordingFinishedEvent.WaitOne );
+      await _recordingStoppedTcs.Task;
 
+      bool cancelled = _cancelToken.IsCancellationRequested;
       byte[] data = [];
-      if ( !_cancelToken.IsCancellationRequested )
+      if ( !cancelled )
       {
          _audioWriter.Flush();
          data = _recordedFileStream.ToArray();
       }
 
-      return new RecordingResult( data, _waveFormat );
+      return new RecordingResult( data, _waveFormat, cancelled );
    }
 
    public void Stop() => _audioCapturer.StopRecording();
@@ -79,7 +78,7 @@ internal sealed class Recorder : IDisposable
       }
    }
 
-   private void OnRecordingStopped( object? sender, StoppedEventArgs e ) => _recordingFinishedEvent.Set();
+   private void OnRecordingStopped( object? sender, StoppedEventArgs e ) => _recordingStoppedTcs.TrySetResult();
 
    private string GetStatusText( long bytesRecorded )
    {

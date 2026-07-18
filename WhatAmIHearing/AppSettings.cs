@@ -159,7 +159,7 @@ internal sealed partial class ApiKeyData : ObservableObject
    [ObservableProperty]
    [NotifyPropertyChangedFor( nameof( UseDefaultKey ) )]
    [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
-   public partial string ShazamApiKey { get; set; }
+   public partial string ShazamApiKey { get; set; } = string.Empty;
 
    partial void OnShazamApiKeyChanged( string value )
    {

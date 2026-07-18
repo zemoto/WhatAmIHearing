@@ -44,7 +44,8 @@ internal sealed class ApiClient : IDisposable
 
    public async Task<string> SendPostRequestAsync( string endpoint, byte[] data )
    {
-      StringContent contentBuilder() => new( Convert.ToBase64String( data ) );
+      string base64Data = Convert.ToBase64String( data );
+      StringContent contentBuilder() => new( base64Data );
 
       var appSettings = AppSettings.Instance;
       HttpRequestMessage messageBuilder()
@@ -69,21 +70,16 @@ internal sealed class ApiClient : IDisposable
 
       try
       {
-         var response = await _pipeline.ExecuteAsync( async token =>
+         using var response = await _pipeline.ExecuteAsync( async token =>
          {
             using var message = messageBuilder();
             return await _client.SendAsync( message, token );
          }, cancelTokenSource.Token );
 
          LastStatusCode = response.StatusCode;
+         UpdateRateLimitValues( response.Headers );
 
-         if ( response.IsSuccessStatusCode )
-         {
-            UpdateRateLimitValues( response.Headers );
-            return await response.Content.ReadAsStringAsync();
-         }
-
-         return string.Empty;
+         return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : string.Empty;
       }
       finally
       {

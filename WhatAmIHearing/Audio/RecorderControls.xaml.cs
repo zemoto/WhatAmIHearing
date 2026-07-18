@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls.Primitives;
+﻿using System.Windows.Controls.Primitives;
 
 namespace WhatAmIHearing.Audio;
 
@@ -7,9 +6,11 @@ internal sealed partial class RecorderControls
 {
    private RecorderViewModel? _model;
 
-   public RecorderControls() => InitializeComponent();
-
-   private void OnLoaded( object sender, RoutedEventArgs e ) => _model = (RecorderViewModel)DataContext;
+   public RecorderControls()
+   {
+      InitializeComponent();
+      DataContextChanged += ( s, e ) => _model = DataContext as RecorderViewModel;
+   }
 
    private void OnRecordPercentSliderDragStarted( object sender, DragStartedEventArgs e ) => SetRecordPercentStatusText();
 

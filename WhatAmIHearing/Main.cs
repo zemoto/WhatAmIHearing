@@ -40,7 +40,7 @@ internal sealed class Main : IDisposable
 
       if ( AppSettings.Instance.KeepOpenInTray && AppSettings.Instance.OpenHidden )
       {
-         _window.Hide();
+         _window.HideToTray();
       }
       else
       {
@@ -129,7 +129,7 @@ internal sealed class Main : IDisposable
       {
          detectedSong = await _api.DetectSongAsync( result.RecordingData ).ConfigureAwait( true );
       }
-      catch ( TaskCanceledException )
+      catch ( OperationCanceledException )
       {
          _recordingManager.Reset();
          return;
@@ -161,9 +161,8 @@ internal sealed class Main : IDisposable
                          : $"Unknown Error ({(int)_api.LastStatusCode}), API may be down";
          }
 
-         _stateVm.State = AppState.Stopped;
+         _recordingManager.Reset();
          _stateVm.SetStatusText( errorMessage, isError: true );
-         _model.RecorderVm.RecordingProgress = 0;
          ShowAndForegroundMainWindow();
          return;
       }
@@ -188,7 +187,7 @@ internal sealed class Main : IDisposable
 
       if ( appSettings.KeepOpenInTray && appSettings.HideWindowAfterRecord )
       {
-         _window.Hide();
+         _window.HideToTray();
       }
    }
 

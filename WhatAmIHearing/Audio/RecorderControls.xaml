@@ -7,8 +7,7 @@
              xmlns:main="clr-namespace:WhatAmIHearing"
              xmlns:audio="clr-namespace:WhatAmIHearing.Audio"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type audio:RecorderViewModel}}"
-             Loaded="OnLoaded">
+             d:DataContext="{d:DesignInstance Type={x:Type audio:RecorderViewModel}}">
    <Grid>
       <Grid.RowDefinitions>
          <RowDefinition Height="24" />

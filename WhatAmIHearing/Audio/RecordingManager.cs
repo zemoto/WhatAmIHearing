@@ -5,9 +5,10 @@ namespace WhatAmIHearing.Audio;
 
 internal sealed class RecordingManager : IDisposable
 {
+   private const long _maxBytesToRecord = 500 * 1000; // 500KB. Max recording size according to Shazam API
+
    private readonly DeviceProvider _deviceProvider = new();
    private readonly WaveFormat _waveFormat = new( rate: 44100, bits: 16, channels: 1 ); // Format required by Shazam API
-   private readonly long _maxBytesToRecord = 500 * 1000; // 500KB. Max recording size according to Shazam API
    private readonly CancelTokenProvider _cancelTokenProvider = new();
 
    private Recorder? _currentRecorder;
@@ -24,24 +25,34 @@ internal sealed class RecordingManager : IDisposable
 
    public async Task<RecordingResult?> RecordAsync()
    {
-      using var selectedDevice = _deviceProvider.GetSelectedDevice();
-      if ( selectedDevice is null )
+      try
+      {
+         using var selectedDevice = _deviceProvider.GetSelectedDevice();
+         if ( selectedDevice is null )
+         {
+            return null;
+         }
+
+         Model.StateVm.State = AppState.Recording;
+
+         _currentRecorder = new Recorder( selectedDevice, _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
+         _currentRecorder.RecordingProgress += OnRecordingProgress;
+
+         return await _currentRecorder.RecordAsync();
+      }
+      catch
       {
          return null;
       }
-
-      Model.StateVm.State = AppState.Recording;
-
-      _currentRecorder = new Recorder( selectedDevice, _waveFormat, (long)( Model.RecordPercent * _maxBytesToRecord ), _cancelTokenProvider.GetToken() );
-      _currentRecorder.RecordingProgress += OnRecordingProgress;
-      using var scopeGuard = new ScopeGuard( () =>
+      finally
       {
-         _currentRecorder.RecordingProgress -= OnRecordingProgress;
-         _currentRecorder.Dispose();
-         _currentRecorder = null;
-      } );
-
-      return await _currentRecorder.RecordAsync();
+         if ( _currentRecorder is not null )
+         {
+            _currentRecorder.RecordingProgress -= OnRecordingProgress;
+            _currentRecorder.Dispose();
+            _currentRecorder = null;
+         }
+      }
    }
 
    public void CancelRecording() => _cancelTokenProvider.Cancel();

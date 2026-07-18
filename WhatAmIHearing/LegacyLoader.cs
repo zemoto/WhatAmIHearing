@@ -4,7 +4,7 @@ using ZemotoCommon;
 
 namespace WhatAmIHearing;
 
-internal sealed class LegacyLoader
+internal static class LegacyLoader
 {
    private static readonly SystemFile _legacyKeyFile = new( "ShazamApiKey.json" );
    private static readonly SystemFile _legacyHistoryFile = new( "history.json" );

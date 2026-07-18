@@ -22,7 +22,7 @@ internal sealed partial class StateViewModel( Action changeStateAction ) : Obser
    public partial AppState State { get; set; }
 
    [ObservableProperty]
-   public partial string StatusText { get; set; }
+   public partial string StatusText { get; set; } = string.Empty;
 
    [ObservableProperty]
    public partial bool ShowingErrorText { get; set; }

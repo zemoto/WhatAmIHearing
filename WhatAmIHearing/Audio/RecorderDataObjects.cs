@@ -6,15 +6,13 @@ internal sealed class RecordingResult
 {
    public byte[] RecordingData { get; }
    public double AudioDurationInSeconds { get; }
-   public bool Cancelled => RecordingData is null;
+   public bool Cancelled { get; }
 
-   public RecordingResult( byte[] recordedData, WaveFormat audioFormat )
+   public RecordingResult( byte[] recordedData, WaveFormat audioFormat, bool cancelled )
    {
       RecordingData = recordedData;
-      if ( recordedData is not null )
-      {
-         AudioDurationInSeconds = Math.Round( (double)recordedData.Length / audioFormat.AverageBytesPerSecond, 2 );
-      }
+      AudioDurationInSeconds = Math.Round( (double)recordedData.Length / audioFormat.AverageBytesPerSecond, 2 );
+      Cancelled = cancelled;
    }
 }
 

@@ -14,6 +14,13 @@ internal sealed partial class MainViewModel : ObservableObject
       RecorderVm = recorderVm;
       SetHotkeyCommand = new RelayCommand<Hotkey>( setHotkeyAction );
       DeleteSongFromHistoryCommand = new RelayCommand<SongViewModel>( song => _ = Settings.History.Remove( song! ) );
+
+      using RegistryKey? key = Registry.ClassesRoot.OpenSubKey( "spotify" );
+      CanOpenInSpotify = key?.GetValue( "" ) is not null;
+      if ( !CanOpenInSpotify )
+      {
+         Settings.OpenSpotifyLinksInApp = false;
+      }
    }
 
    public AppSettings Settings { get; } = AppSettings.Instance;
@@ -26,24 +33,7 @@ internal sealed partial class MainViewModel : ObservableObject
    [ObservableProperty]
    public partial SongViewModel? SelectedSong { get; set; }
 
-   private bool? _canOpenInSpotify;
-   public bool CanOpenInSpotify
-   {
-      get
-      {
-         if ( _canOpenInSpotify is null )
-         {
-            using RegistryKey? key = Registry.ClassesRoot.OpenSubKey( "spotify" );
-            _canOpenInSpotify = key?.GetValue( "" ) is not null;
-            if ( !_canOpenInSpotify.Value )
-            {
-               Settings.OpenSpotifyLinksInApp = false;
-            }
-         }
-
-         return _canOpenInSpotify.Value;
-      }
-   }
+   public bool CanOpenInSpotify { get; }
 
    public RelayCommand<Hotkey> SetHotkeyCommand { get; }
    public RelayCommand<SongViewModel> DeleteSongFromHistoryCommand { get; }

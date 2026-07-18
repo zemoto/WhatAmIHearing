@@ -33,10 +33,10 @@ internal sealed partial class MainWindow
       CustomApiKeyTextBox.Password = _model.Settings.KeyData.ShazamApiKey;
    }
 
-   public new void Hide()
+   public void HideToTray()
    {
       ShowInTaskbar = false;
-      base.Hide();
+      Hide();
    }
 
    private void OnCustomApiKeyChanged( object sender, RoutedEventArgs e ) => _model.Settings.KeyData.ShazamApiKey = CustomApiKeyTextBox.Password.Trim();
@@ -104,7 +104,7 @@ internal sealed partial class MainWindow
       if ( AppSettings.Instance.KeepOpenInTray )
       {
          e.Cancel = true;
-         Hide();
+         HideToTray();
       }
 
       base.OnClosing( e );
