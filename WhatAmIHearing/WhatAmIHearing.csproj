@@ -9,8 +9,8 @@
 	<LangVersion>latest</LangVersion>
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
-	<AssemblyVersion>3.5.0.0</AssemblyVersion>
-	<FileVersion>3.5.0.0</FileVersion>
+	<AssemblyVersion>4.0.0.0</AssemblyVersion>
+	<FileVersion>4.0.0.0</FileVersion>
 	<Authors>Zemoto</Authors>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
