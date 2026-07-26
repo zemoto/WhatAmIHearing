@@ -52,6 +52,6 @@ The app is compiled with Visual Studio Community 2026. The [default API key](htt
 
 For building the release version, I use the `Publish` feature in Visual Studio with the following settings:
 - Configuration: `Release` (default configuration provided by Visual Studio)
-- Target Framework: `net6.0-windows`
+- Target Framework: `net10.0-windows7.0`
 - Target Runtime: `win-x64`
 - Deployment Mode: `Framework-dependant` or `Self-contained` depending on the version I am building.
