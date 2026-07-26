@@ -151,6 +151,60 @@ namespace WhatAmIHearing.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown error communicating with Shazam.
+        /// </summary>
+        public static string ErrorCommunicating {
+            get {
+                return ResourceManager.GetString("ErrorCommunicating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error initiating recording.
+        /// </summary>
+        public static string ErrorInitiating {
+            get {
+                return ResourceManager.GetString("ErrorInitiating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to API Key is invalid.
+        /// </summary>
+        public static string ErrorInvalidKey {
+            get {
+                return ResourceManager.GetString("ErrorInvalidKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shazam API is down.
+        /// </summary>
+        public static string ErrorServerDown {
+            get {
+                return ResourceManager.GetString("ErrorServerDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown Error ({0}), API may be down.
+        /// </summary>
+        public static string ErrorUnknownServerError {
+            get {
+                return ResourceManager.GetString("ErrorUnknownServerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shazam could not identify the audio.
+        /// </summary>
+        public static string FailedToIdentify {
+            get {
+                return ResourceManager.GetString("FailedToIdentify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to move settings file..
         /// </summary>
         public static string FailedToMoveSettingsFileErrorText {
@@ -322,6 +376,24 @@ namespace WhatAmIHearing.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max API quota reached for the month.
+        /// </summary>
+        public static string QuotaReachedUsingCustom {
+            get {
+                return ResourceManager.GetString("QuotaReachedUsingCustom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max API quota reached; custom API key required.
+        /// </summary>
+        public static string QuotaReachedUsingDefault {
+            get {
+                return ResourceManager.GetString("QuotaReachedUsingDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quota values are updated after every audio identification.
         /// </summary>
         public static string QuotaToolTip {
@@ -345,6 +417,33 @@ namespace WhatAmIHearing.Properties {
         public static string RecordHotkeyLabel {
             get {
                 return ResourceManager.GetString("RecordHotkeyLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sending {0} bytes of audio to Shazam.
+        /// </summary>
+        public static string SendingBytes {
+            get {
+                return ResourceManager.GetString("SendingBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sending {0} seconds of audio to Shazam.
+        /// </summary>
+        public static string SendingSeconds {
+            get {
+                return ResourceManager.GetString("SendingSeconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sending recorded audio to Shazam.
+        /// </summary>
+        public static string SendingWithNoUnits {
+            get {
+                return ResourceManager.GetString("SendingWithNoUnits", resourceCulture);
             }
         }
         

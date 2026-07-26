@@ -249,4 +249,37 @@
   <data name="OpenWindow" xml:space="preserve">
     <value>Open Window</value>
   </data>
+  <data name="ErrorCommunicating" xml:space="preserve">
+    <value>Unknown error communicating with Shazam</value>
+  </data>
+  <data name="FailedToIdentify" xml:space="preserve">
+    <value>Shazam could not identify the audio</value>
+  </data>
+  <data name="QuotaReachedUsingDefault" xml:space="preserve">
+    <value>Max API quota reached; custom API key required</value>
+  </data>
+  <data name="QuotaReachedUsingCustom" xml:space="preserve">
+    <value>Max API quota reached for the month</value>
+  </data>
+  <data name="ErrorServerDown" xml:space="preserve">
+    <value>Shazam API is down</value>
+  </data>
+  <data name="ErrorInvalidKey" xml:space="preserve">
+    <value>API Key is invalid</value>
+  </data>
+  <data name="ErrorUnknownServerError" xml:space="preserve">
+    <value>Unknown Error ({0}), API may be down</value>
+  </data>
+  <data name="ErrorInitiating" xml:space="preserve">
+    <value>Error initiating recording</value>
+  </data>
+  <data name="SendingWithNoUnits" xml:space="preserve">
+    <value>Sending recorded audio to Shazam</value>
+  </data>
+  <data name="SendingBytes" xml:space="preserve">
+    <value>Sending {0} bytes of audio to Shazam</value>
+  </data>
+  <data name="SendingSeconds" xml:space="preserve">
+    <value>Sending {0} seconds of audio to Shazam</value>
+  </data>
 </root>

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using WhatAmIHearing.Audio;
+using WhatAmIHearing.Properties;
 using WhatAmIHearing.Result;
 using WhatAmIHearing.Shazam;
 using ZemotoCommon;
@@ -102,7 +103,7 @@ internal sealed class Main : IDisposable
       if ( result is null )
       {
          _recordingManager.Reset();
-         _stateVm.SetStatusText( "Error initiating recording", isError: true );
+         _stateVm.SetStatusText( Resources.ErrorInitiating, isError: true );
          return;
       }
 
@@ -118,9 +119,9 @@ internal sealed class Main : IDisposable
 
       _stateVm.SetStatusText( AppSettings.Instance.ProgressType switch
       {
-         ProgressDisplayType.None => "Sending recorded audio to Shazam",
-         ProgressDisplayType.Bytes => $"Sending {result.RecordingData.Length} bytes of audio to Shazam",
-         ProgressDisplayType.Seconds => $"Sending {result.AudioDurationInSeconds} seconds of audio to Shazam",
+         ProgressDisplayType.None => Resources.SendingWithNoUnits,
+         ProgressDisplayType.Bytes => string.Format( Resources.SendingBytes, result.RecordingData.Length ),
+         ProgressDisplayType.Seconds => string.Format( Resources.SendingSeconds, result.AudioDurationInSeconds ),
          _ => throw new InvalidEnumArgumentException()
       } );
 
@@ -137,7 +138,7 @@ internal sealed class Main : IDisposable
       catch
       {
          _recordingManager.Reset();
-         _stateVm.SetStatusText( "Unknown error communicating with Shazam", isError: true );
+         _stateVm.SetStatusText( Resources.ErrorCommunicating, isError: true );
          ShowAndForegroundMainWindow();
          return;
       }
@@ -147,18 +148,20 @@ internal sealed class Main : IDisposable
          string errorMessage;
          if ( (int)_api.LastStatusCode is >= 200 and <= 299 )
          {
-            errorMessage = "Shazam could not identify the audio";
+            errorMessage = Resources.FailedToIdentify;
          }
          else if ( _api.LastStatusCode is System.Net.HttpStatusCode.TooManyRequests )
          {
-            errorMessage = "Max API quota reached; custom API key required";
+            errorMessage = _model.Settings.KeyData.UseDefaultKey
+               ?  Resources.QuotaReachedUsingDefault
+               :  Resources.QuotaReachedUsingCustom;
             _window.FocusCustomApiKeyTextBox();
          }
          else
          {
-            errorMessage = _api.LastStatusCode is System.Net.HttpStatusCode.InternalServerError ? "Shazam API is down"
-                         : _api.LastStatusCode is System.Net.HttpStatusCode.Forbidden ? "API Key is invalid"
-                         : $"Unknown Error ({(int)_api.LastStatusCode}), API may be down";
+            errorMessage = _api.LastStatusCode is System.Net.HttpStatusCode.InternalServerError ? Resources.ErrorServerDown
+                         : _api.LastStatusCode is System.Net.HttpStatusCode.Forbidden ? Resources.ErrorInvalidKey
+                         : string.Format( Resources.ErrorUnknownServerError, (int)_api.LastStatusCode );
          }
 
          _recordingManager.Reset();
