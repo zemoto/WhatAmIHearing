@@ -1,9 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using WhatAmIHearing.Properties;
 using WhatAmIHearing.Result;
 using ZemotoCommon;
@@ -57,13 +59,40 @@ internal sealed partial class AppSettings : ObservableObject
 
       Instance = _configFile.DeserializeContents<AppSettings>() ?? new AppSettings();
       Instance.SaveSettingsInAppData = saveSettingsInAppData;
+      Instance._passiveSavingEnabled = true;
    }
 
    public static AppSettings Instance { get; }
 
-   public AppSettings() => LaunchOnWindowsStartup = WindowsStartup.GetStartupWithWindows();
+   private readonly DispatcherTimer _passiveSaveTimer;
+   private bool _passiveSavingEnabled = false;
 
-   public void Save() => _configFile.SerializeInto( this );
+   public AppSettings()
+   {
+      LaunchOnWindowsStartup = WindowsStartup.GetStartupWithWindows();
+
+      _passiveSaveTimer = new DispatcherTimer( DispatcherPriority.Normal, Application.Current.Dispatcher ) { Interval = TimeSpan.FromSeconds( 3 ) };
+      _passiveSaveTimer.Tick += OnSaveTimerTick;
+
+      KeyData.ApiKeyChanged += OnApiKeyChanged;
+      History.CollectionChanged += OnHistoryCollectionChanged;
+   }
+
+   public void Save()
+   {
+      _passiveSaveTimer.Stop();
+      _ = _configFile.SerializeInto( this );
+   }
+
+   private void PassiveSave()
+   {
+      if ( _passiveSavingEnabled )
+      {
+         _passiveSaveTimer.Start();
+      }
+   }
+
+   private void OnSaveTimerTick( object? sender, EventArgs e ) => Save();
 
    [ObservableProperty]
    public partial string SelectedDevice { get; set; } = Resources.DefaultOutputDeviceName;
@@ -147,24 +176,38 @@ internal sealed partial class AppSettings : ObservableObject
 
    [ObservableProperty]
    public partial ApiKeyData KeyData { get; set; } = new();
+   partial void OnKeyDataChanged( ApiKeyData oldValue, ApiKeyData newValue )
+   {
+      oldValue?.ApiKeyChanged -= OnApiKeyChanged;
+      newValue?.ApiKeyChanged += OnApiKeyChanged;
+   }
+   private void OnApiKeyChanged() => PassiveSave();
 
    [ObservableProperty]
    public partial ObservableCollection<SongViewModel> History { get; set; } = [];
+   partial void OnHistoryChanged( ObservableCollection<SongViewModel> oldValue, ObservableCollection<SongViewModel> newValue )
+   {
+      oldValue?.CollectionChanged -= OnHistoryCollectionChanged;
+      newValue?.CollectionChanged += OnHistoryCollectionChanged;
+   }
+   private void OnHistoryCollectionChanged( object? sender, NotifyCollectionChangedEventArgs e ) => PassiveSave();
 }
 
 internal sealed partial class ApiKeyData : ObservableObject
 {
    public const string DefaultShazamApiKey = "<Placeholder>";
 
+   public event Action? ApiKeyChanged;
+
    [ObservableProperty]
    [NotifyPropertyChangedFor( nameof( UseDefaultKey ) )]
    [NotifyPropertyChangedFor( nameof( CanDisplayQuotaData ) )]
    public partial string ShazamApiKey { get; set; } = string.Empty;
-
    partial void OnShazamApiKeyChanged( string value )
    {
       QuotaLimit = 0;
       QuotaUsed = 0;
+      ApiKeyChanged?.Invoke();
    }
 
    public bool UseDefaultKey => string.IsNullOrWhiteSpace( ShazamApiKey );
