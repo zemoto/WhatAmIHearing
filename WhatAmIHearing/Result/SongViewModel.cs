@@ -69,7 +69,7 @@ internal sealed class SongViewModel
       catch { }
    } );
 
-   public RelayCommand FindInYouTubeCommand => field ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _youTubeUrl, SearchText ) ) );
+   public RelayCommand FindInYouTubeCommand => field ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _youTubeUrl, Uri.EscapeDataString(SearchText) ) ) );
 
    public RelayCommand FindInSpotifyCommand => field ??= new RelayCommand( () =>
    {
