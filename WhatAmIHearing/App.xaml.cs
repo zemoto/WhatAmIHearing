@@ -47,6 +47,12 @@ internal sealed partial class App : CommonApp
       base.OnExit( e );
    }
 
+   protected override void OnSessionEnding( SessionEndingCancelEventArgs e )
+   {
+      AppSettings.Instance.Save();
+      base.OnSessionEnding( e );
+   }
+
    protected override void OnPingedByOtherProcess()
    {
       Dispatcher.Invoke( _main.ShowAndForegroundMainWindow );
