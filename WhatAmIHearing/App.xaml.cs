@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using ZemotoCommon.UI;
@@ -72,4 +73,6 @@ internal sealed partial class App : CommonApp
       ToolTipService.ShowOnDisabledProperty.OverrideMetadata( typeof( FrameworkElement ), new FrameworkPropertyMetadata( true ) );
       ToolTipService.InitialShowDelayProperty.OverrideMetadata( typeof( FrameworkElement ), new FrameworkPropertyMetadata( 750 ) );
    }
+
+   public static string AppVersion => Assembly.GetExecutingAssembly().GetName().Version?.ToString( 2 ) ?? string.Empty;
 }

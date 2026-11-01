@@ -32,11 +32,13 @@
          <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <TextBlock Grid.Row="0"
-                 Text="{x:Static props:Resources.WindowTitle}"
                  FontSize="14"
                  Margin="0,3,0,0"
                  HorizontalAlignment="Center"
-                 VerticalAlignment="Top" />
+                 VerticalAlignment="Top">
+         <Run Text="{x:Static props:Resources.WindowTitle}" />
+         <Run Text="{Binding Source={x:Static local:App.AppVersion}, StringFormat=v{0}, Mode=OneTime}" />
+      </TextBlock>
 
       <Button Grid.Row="0"
               Margin="0,1,1,0"
@@ -180,7 +182,7 @@
                                        SharedSizeGroup="ApiSettingsLabels" />
                      <ColumnDefinition Width="270" />
                   </Grid.ColumnDefinitions>
-                  
+
                   <TextBlock Grid.Column="0"
                              Text="{x:Static props:Resources.ApiKeyLabel}"
                              Margin="0,0,8,0"
@@ -194,7 +196,7 @@
                                Height="19"
                                PasswordChanged="OnCustomApiKeyChanged" />
 
-                  <TextBlock Grid.Column="1" 
+                  <TextBlock Grid.Column="1"
                              Text="{x:Static props:Resources.UsingDefaultApiKey}"
                              IsHitTestVisible="False"
                              Margin="4,0,0,0"
