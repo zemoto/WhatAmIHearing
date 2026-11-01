@@ -69,11 +69,11 @@ internal sealed class SongViewModel
       catch { }
    } );
 
-   public RelayCommand FindInYouTubeCommand => field ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _youTubeUrl, Uri.EscapeDataString(SearchText) ) ) );
+   public RelayCommand FindInYouTubeCommand => field ??= new RelayCommand( () => UtilityMethods.OpenInBrowser( string.Format( _youTubeUrl, Uri.EscapeDataString( SearchText ) ) ) );
 
    public RelayCommand FindInSpotifyCommand => field ??= new RelayCommand( () =>
    {
       var url = AppSettings.Instance.OpenSpotifyLinksInApp ? _openInSpotifyProtocol : _spotifySearchUrl;
-      UtilityMethods.OpenInBrowser( string.Format( url, SearchText ) );
+      UtilityMethods.OpenInBrowser( string.Format( url, Uri.EscapeDataString( SearchText ) ) );
    } );
 }
