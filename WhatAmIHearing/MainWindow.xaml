@@ -163,8 +163,7 @@
                <CheckBox Content="{x:Static props:Resources.UseSpotifyAppCheckboxLabel}"
                          ToolTip="{x:Static props:Resources.UseSpotifyAppCheckboxToolTip}"
                          Margin="0,2,0,0"
-                         IsChecked="{Binding Settings.OpenSpotifyLinksInApp, Mode=TwoWay}"
-                         Visibility="{Binding CanOpenInSpotify, Mode=OneTime, Converter={StaticResource VisibleIfTrue}}" />
+                         IsChecked="{Binding Settings.OpenSpotifyLinksInApp, Mode=TwoWay}" />
             </StackPanel>
          </commonControls:AnimatedGroupedExpander>
 

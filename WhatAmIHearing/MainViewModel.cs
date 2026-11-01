@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using WhatAmIHearing.Audio;
 using WhatAmIHearing.Result;
 
@@ -14,13 +13,6 @@ internal sealed partial class MainViewModel : ObservableObject
       RecorderVm = recorderVm;
       SetHotkeyCommand = new RelayCommand<Hotkey>( setHotkeyAction );
       DeleteSongFromHistoryCommand = new RelayCommand<SongViewModel>( song => _ = Settings.History.Remove( song! ) );
-
-      using RegistryKey? key = Registry.ClassesRoot.OpenSubKey( "spotify" );
-      CanOpenInSpotify = key?.GetValue( "" ) is not null;
-      if ( !CanOpenInSpotify )
-      {
-         Settings.OpenSpotifyLinksInApp = false;
-      }
    }
 
    public AppSettings Settings { get; } = AppSettings.Instance;
@@ -32,8 +24,6 @@ internal sealed partial class MainViewModel : ObservableObject
 
    [ObservableProperty]
    public partial SongViewModel? SelectedSong { get; set; }
-
-   public bool CanOpenInSpotify { get; }
 
    public RelayCommand<Hotkey> SetHotkeyCommand { get; }
    public RelayCommand<SongViewModel> DeleteSongFromHistoryCommand { get; }
