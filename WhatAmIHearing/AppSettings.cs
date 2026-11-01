@@ -38,6 +38,7 @@ internal readonly struct Hotkey( Key key, ModifierKeys modifiers )
 internal sealed partial class AppSettings : ObservableObject
 {
    private const string _settingsFileName = "config.json";
+   private const string _backupExtension = ".bak";
    private static readonly string _appDataFolderPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData ), Constants.AppName );
    private static readonly string _localFolderPath = AppContext.BaseDirectory;
 
@@ -47,25 +48,43 @@ internal sealed partial class AppSettings : ObservableObject
    {
       bool? saveSettingsInAppData;
       _configFile = new( Path.Combine( _appDataFolderPath, _settingsFileName ) );
-      if ( _configFile.Exists() )
+      var localConfigFile = new SystemFile( Path.Combine( _localFolderPath, _settingsFileName ) );
+
+      if ( _configFile.Exists() || ( !localConfigFile.Exists() && GetBackupFile().Exists() ) )
       {
          saveSettingsInAppData = true;
       }
       else
       {
-         _configFile = new( Path.Combine( _localFolderPath, _settingsFileName ) );
+         _configFile = localConfigFile;
          saveSettingsInAppData = false;
       }
 
-      Instance = _configFile.DeserializeContents<AppSettings>() ?? new AppSettings();
+      Instance = LoadSettings();
       Instance.SaveSettingsInAppData = saveSettingsInAppData;
       Instance._passiveSavingEnabled = true;
    }
 
    public static AppSettings Instance { get; }
 
+   private static SystemFile GetBackupFile() => new( _configFile.FullPath + _backupExtension );
+
+   private static AppSettings LoadSettings()
+   {
+      var backupFile = GetBackupFile();
+      var settings = _configFile.DeserializeContents<AppSettings>();
+      if ( settings is not null )
+      {
+         _ = _configFile.CopyTo( backupFile, overwrite: true, out _ );
+         return settings;
+      }
+
+      // Failed to load, fall back to the backup if available. The bad config gets replaced on the next save.
+      return backupFile.DeserializeContents<AppSettings>() ?? new AppSettings();
+   }
+
    private readonly DispatcherTimer _passiveSaveTimer;
-   private bool _passiveSavingEnabled = false;
+   private bool _passiveSavingEnabled;
 
    public AppSettings()
    {
@@ -116,8 +135,13 @@ internal sealed partial class AppSettings : ObservableObject
          {
             var newFolder = value.Value ? _appDataFolderPath : _localFolderPath;
             UtilityMethods.CreateDirectory( newFolder );
+
+            Save(); // Ensure settings are created and up to date before moving
+
+            var oldBackupFile = GetBackupFile();
             if ( _configFile.MoveTo( Path.Combine( newFolder, _settingsFileName ), overwrite: true, out var newConfigFile ) )
             {
+               _ = oldBackupFile.MoveTo( newConfigFile.FullPath + _backupExtension, overwrite: true, out _ );
                _configFile = newConfigFile;
                field = value;
                OnPropertyChanged( nameof( SaveSettingsInAppData ) );
